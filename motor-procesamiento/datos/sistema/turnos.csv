@@ -1,0 +1,13 @@
+posicion,linea,id_empleado,nombre,puesto,orden
+L1-T1,L1,EMP-101,Carlos Mendoza,Operador de Corte CNC,1
+L1-T2,L1,EMP-102,Marco Antonio Ríos,Soldador de Estructura,2
+L1-T3,L1,EMP-103,Luis Fernando Vega,Técnico de Troquelado,3
+L1-T4,L1,EMP-104,Jorge Alberto Soto,Operador de Prensa,4
+L2-T1,L2,EMP-201,Ricardo Morales,Operador de Montacargas,5
+L2-T2,L2,EMP-202,Roberto Domínguez,Auxiliar de Maniobras,6
+L2-T3,L2,EMP-203,Daniel Espinoza,Supervisor de Patio,7
+L2-T4,L2,EMP-204,Héctor Navarro,Almacenista de Acero,8
+L3-T1,L3,EMP-301,Alejandro Cabrera,Inspector de Calidad,9
+L3-T2,L3,EMP-302,Sergio Valenzuela,Operador de Esmerilado,10
+L3-T3,L3,EMP-303,Miguel Ángel Luna,Técnico de Mantenimiento,11
+L3-T4,L3,EMP-304,Eduardo Castañeda,Armador de Subensambles,12

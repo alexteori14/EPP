@@ -1,0 +1,22 @@
+# Entorno y claves
+.env
+.superpowers/
+
+# Python y motor
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+motor-procesamiento/datasets/
+motor-procesamiento/datos_kaggle/
+motor-procesamiento/runs/
+motor-procesamiento/video/
+motor-procesamiento/salida*/
+motor-procesamiento/analisis/
+motor-procesamiento/cache/
+motor-procesamiento/yolo*.pt
+
+# Frontend Next.js
+Frontend/node_modules/
+Frontend/.next/
+Frontend/out/

@@ -1,0 +1,15 @@
+# Python 3.12. Probado en Linux con GPU NVIDIA RTX 4050 (6 GB) y en CPU.
+#
+#   uv venv .venv --python 3.12
+#   uv pip install --python .venv/bin/python -r requirements.txt
+#   uv pip uninstall --python .venv/bin/python opencv-python opencv-contrib-python
+#   uv pip install --python .venv/bin/python opencv-contrib-python==4.10.0.84
+
+numpy<2.4
+opencv-contrib-python==4.10.0.84
+ultralytics>=8.3
+torch
+torchvision
+pillow
+pyyaml
+pytest

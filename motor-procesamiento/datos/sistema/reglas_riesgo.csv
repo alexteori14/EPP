@@ -1,0 +1,7 @@
+tipo,titulo,norma,explicacion
+sin_lentes,Falta protección ocular (Lentes ANSI Z87.1),NOM-017-STPS / OSHA 1910.133,Exposición directa a partículas proyectadas y rebabas metálicas; riesgo de incapacidad ocular y sanción por ingreso sin gafas.
+sin_guantes,Faltan guantes anticorte (Nivel A4),NOM-017-STPS / OSHA 1910.138,Riesgo de corte por rebaba o atrapamiento manual en línea; segunda causa más frecuente de incapacidad temporal en planta.
+sin_chaleco,Falta chaleco de alta visibilidad (Clase 2),NOM-006-STPS / ANSI 107,Baja visibilidad del trabajador en pasillos de circulación de montacargas y grúas viajeras.
+multiples_epp_faltantes,Múltiples equipos faltantes en inicio de turno,NOM-017-STPS Art. 5.6,Incumplimiento compuesto de dos o más prendas obligatorias; se suma la exposición diaria de cada equipo omitido.
+epp_faltante_agotado,EPP faltante y agotado en caseta de planta,NOM-017-STPS Art. 5.3,La planta no cuenta con stock de reposición inmediata en caseta: obliga a detener el puesto y refleja falla sistémica de abastecimiento.
+revisar,Lectura dudosa o zona anatómica oculta,Principio de Integridad Vigía EPP,La cámara vio la zona borrosa o fuera de cuadro: se solicita verificación rápida en caseta sin sumar dinero ni sancionar.
