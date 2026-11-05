@@ -1,0 +1,201 @@
+{
+  "planta": "Planta Monterrey Norte · Aceros & Logística InduSafe",
+  "turno": "Turno Matutino 06:00",
+  "fecha": "2026-11-04",
+  "posiciones": [
+    {
+      "posicion": "L1-T1",
+      "linea": "L1",
+      "id_empleado": "EMP-101",
+      "nombre": "Carlos Mendoza",
+      "puesto": "Operador de Corte CNC",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "nota": "EPP completo (3/3)"
+    },
+    {
+      "posicion": "L1-T2",
+      "linea": "L1",
+      "id_empleado": "EMP-102",
+      "nombre": "Marco Antonio Ríos",
+      "puesto": "Soldador de Estructura",
+      "prendas": {
+        "lentes": "falta",
+        "chaleco": "ok",
+        "guantes": "falta"
+      },
+      "nota": "Soldador sin lentes ni guantes (múltiples EPP faltantes: US$760/día)"
+    },
+    {
+      "posicion": "L1-T3",
+      "linea": "L1",
+      "id_empleado": "EMP-103",
+      "nombre": "Luis Fernando Vega",
+      "puesto": "Técnico de Troquelado",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "nota": "EPP completo (3/3)"
+    },
+    {
+      "posicion": "L1-T4",
+      "linea": "L1",
+      "id_empleado": "EMP-104",
+      "nombre": "Jorge Alberto Soto",
+      "puesto": "Operador de Prensa",
+      "prendas": {
+        "lentes": "falta",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "nota": "Operador de prensa sin lentes de seguridad (US$420/día)"
+    },
+    {
+      "posicion": "L2-T1",
+      "linea": "L2",
+      "id_empleado": "EMP-201",
+      "nombre": "Ricardo Morales",
+      "puesto": "Operador de Montacargas",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "falta",
+        "guantes": "ok"
+      },
+      "nota": "Operador de montacargas sin chaleco de alta visibilidad (US$290/día)"
+    },
+    {
+      "posicion": "L2-T2",
+      "linea": "L2",
+      "id_empleado": "EMP-202",
+      "nombre": "Roberto Domínguez",
+      "puesto": "Auxiliar de Maniobras",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "falta"
+      },
+      "nota": "Auxiliar de maniobras sin guantes anticorte (US$340/día)"
+    },
+    {
+      "posicion": "L2-T3",
+      "linea": "L2",
+      "id_empleado": "EMP-203",
+      "nombre": "Daniel Espinoza",
+      "puesto": "Supervisor de Patio",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "dudoso"
+      },
+      "nota": "Manos parcialmente fuera de cuadro: lectura dudosa (revisar en caseta, US$0)"
+    },
+    {
+      "posicion": "L2-T4",
+      "linea": "L2",
+      "id_empleado": "EMP-204",
+      "nombre": "Héctor Navarro",
+      "puesto": "Almacenista de Acero",
+      "prendas": {
+        "lentes": "falta",
+        "chaleco": "falta",
+        "guantes": "ok"
+      },
+      "nota": "Almacenista sin lentes ni chaleco (múltiples EPP faltantes: US$710/día)"
+    },
+    {
+      "posicion": "L3-T1",
+      "linea": "L3",
+      "id_empleado": "EMP-301",
+      "nombre": "Alejandro Cabrera",
+      "puesto": "Inspector de Calidad",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "nota": "EPP completo (3/3)"
+    },
+    {
+      "posicion": "L3-T2",
+      "linea": "L3",
+      "id_empleado": "EMP-302",
+      "nombre": "Sergio Valenzuela",
+      "puesto": "Operador de Esmerilado",
+      "prendas": {
+        "lentes": "falta",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "nota": "Operador de esmerilado sin lentes de seguridad (US$420/día)"
+    },
+    {
+      "posicion": "L3-T3",
+      "linea": "L3",
+      "id_empleado": "EMP-303",
+      "nombre": "Miguel Ángel Luna",
+      "puesto": "Técnico de Mantenimiento",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "falta"
+      },
+      "nota": "Técnico de mantenimiento sin guantes anticorte (US$340/día)"
+    },
+    {
+      "posicion": "L3-T4",
+      "linea": "L3",
+      "id_empleado": "EMP-304",
+      "nombre": "Eduardo Castañeda",
+      "puesto": "Armador de Subensambles",
+      "prendas": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "nota": "EPP completo (3/3)"
+    }
+  ],
+  "tarjetas_jurado": {
+    "sin_lentes": {
+      "posicion": "L1-T1",
+      "cambio": {
+        "lentes": "falta",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "descripcion": "Carlos Mendoza (L1-T1) intenta ingresar sin lentes de seguridad"
+    },
+    "sin_guantes": {
+      "posicion": "L1-T3",
+      "cambio": {
+        "lentes": "ok",
+        "chaleco": "ok",
+        "guantes": "falta"
+      },
+      "descripcion": "Luis Fernando Vega (L1-T3) intenta ingresar sin guantes anticorte"
+    },
+    "sin_chaleco": {
+      "posicion": "L3-T1",
+      "cambio": {
+        "lentes": "ok",
+        "chaleco": "falta",
+        "guantes": "ok"
+      },
+      "descripcion": "Alejandro Cabrera (L3-T1) intenta ingresar sin chaleco reflejante"
+    },
+    "multiple_faltante": {
+      "posicion": "L3-T4",
+      "cambio": {
+        "lentes": "falta",
+        "chaleco": "falta",
+        "guantes": "falta"
+      },
+      "descripcion": "Eduardo Castañeda (L3-T4) intenta ingresar sin ningún equipo de protección"
+    }
+  }
+}
