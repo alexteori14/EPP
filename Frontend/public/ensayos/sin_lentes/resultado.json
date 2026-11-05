@@ -1,0 +1,56 @@
+{
+  "status": "completado",
+  "completado": true,
+  "tarjeta": "sin_lentes",
+  "segundos_proceso": 3.2,
+  "hallazgo_nuevo": {
+    "id": "hallazgo-l1-t1",
+    "tipo": "sin_lentes",
+    "codigo": "L1-T1",
+    "trabajador": "Carlos Mendoza",
+    "id_empleado": "EMP-101",
+    "puesto": "Operador de Corte CNC",
+    "linea": 1,
+    "posicion": 1,
+    "prendas_faltantes": [
+      "lentes"
+    ],
+    "prendas_completas": 2,
+    "prendas_requeridas": 3,
+    "impacto_diario": 420.0,
+    "cuadro": 9,
+    "segundo": 0.38,
+    "descripcion": "Carlos Mendoza (Operador de Corte CNC) se presentó en la fila sin lentes de seguridad.",
+    "accion_sugerida": "Entregar Lentes Policarbonato Anti-Impacto ANSI Z87.1 en caseta (18 piezas disponibles) y re-escanear en kiosco.",
+    "evidencia_crop": "/ensayos/sin_lentes/recortes/L1-T1_zona.jpg",
+    "evidencia_persona": "/ensayos/sin_lentes/recortes/L1-T1.jpg",
+    "corregido": false,
+    "confianza": 0.9
+  },
+  "hallazgos_nuevos": [
+    {
+      "id": "hallazgo-l1-t1",
+      "tipo": "sin_lentes",
+      "codigo": "L1-T1",
+      "trabajador": "Carlos Mendoza",
+      "id_empleado": "EMP-101",
+      "puesto": "Operador de Corte CNC",
+      "linea": 1,
+      "posicion": 1,
+      "prendas_faltantes": [
+        "lentes"
+      ],
+      "prendas_completas": 2,
+      "prendas_requeridas": 3,
+      "impacto_diario": 420.0,
+      "cuadro": 9,
+      "segundo": 0.38,
+      "descripcion": "Carlos Mendoza (Operador de Corte CNC) se presentó en la fila sin lentes de seguridad.",
+      "accion_sugerida": "Entregar Lentes Policarbonato Anti-Impacto ANSI Z87.1 en caseta (18 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/ensayos/sin_lentes/recortes/L1-T1_zona.jpg",
+      "evidencia_persona": "/ensayos/sin_lentes/recortes/L1-T1.jpg",
+      "corregido": false,
+      "confianza": 0.9
+    }
+  ]
+}

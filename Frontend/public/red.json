@@ -1,0 +1,94 @@
+{
+  "red": {
+    "plantas_total": 18,
+    "otras_plantas": 17,
+    "moneda": "US$",
+    "medido_diario": 3280.0,
+    "sistemico_diario": 1470.0,
+    "local_diario": 1810.0,
+    "problemas_sistemicos": 2,
+    "problemas_locales": 5,
+    "dias_mes": 30,
+    "supuestos_calculo": "Falta Lentes ANSI Z87.1: US$420/día (exposición ocular y multa NOM-017-STPS). Faltan Guantes Anticorte A4: US$340/día (riesgo de lesión manual). Falta Chaleco Clase 2: US$290/día (baja visibilidad en pasillos de montacargas). Múltiples EPP faltantes: suma del riesgo diario de cada prenda omitida. EPP agotado en caseta: riesgo diario + costo de paro de puesto (sistémico). Lectura dudosa (zona oculta o confianza < 60 %): US$0.00 (no se estima dinero sin certeza).",
+    "dataset_label": "Filtro pre-turno · Datos reales de Kaggle + planta demostrativa InduSafe",
+    "fecha_corte": "2026-11-05",
+    "origen": "recorrido_turno.mp4"
+  },
+  "escenarios": [
+    {
+      "id": "bajo",
+      "etiqueta": "Bajo (10 % de plantas)",
+      "fraccion": 0.1,
+      "plantas": 2,
+      "diario": 2940.0,
+      "mensual": 88200.0
+    },
+    {
+      "id": "central",
+      "etiqueta": "Central (25 % de plantas)",
+      "fraccion": 0.25,
+      "plantas": 4,
+      "diario": 5880.0,
+      "mensual": 176400.0
+    },
+    {
+      "id": "alto",
+      "etiqueta": "Alto (50 % de plantas)",
+      "fraccion": 0.5,
+      "plantas": 8,
+      "diario": 11760.0,
+      "mensual": 352800.0
+    },
+    {
+      "id": "peor_caso",
+      "etiqueta": "Peor caso (toda la red)",
+      "fraccion": 1.0,
+      "plantas": 17,
+      "diario": 24990.0,
+      "mensual": 749700.0
+    }
+  ],
+  "sistemicos": [
+    {
+      "codigo": "L1-T2",
+      "trabajador": "Marco Antonio Ríos",
+      "puesto": "Soldador de Estructura",
+      "tipo": "multiples_epp_faltantes",
+      "prendas_faltantes": [
+        "lentes",
+        "guantes"
+      ],
+      "impacto_diario": 760.0,
+      "peor_caso_diario": 12920.0
+    },
+    {
+      "codigo": "L2-T4",
+      "trabajador": "Héctor Navarro",
+      "puesto": "Almacenista de Acero",
+      "tipo": "multiples_epp_faltantes",
+      "prendas_faltantes": [
+        "lentes",
+        "chaleco"
+      ],
+      "impacto_diario": 710.0,
+      "peor_caso_diario": 12070.0
+    }
+  ],
+  "locales": [
+    {
+      "tipo": "sin_lentes",
+      "cantidad": 2,
+      "impacto_diario": 840.0
+    },
+    {
+      "tipo": "sin_guantes",
+      "cantidad": 2,
+      "impacto_diario": 680.0
+    },
+    {
+      "tipo": "sin_chaleco",
+      "cantidad": 1,
+      "impacto_diario": 290.0
+    }
+  ]
+}

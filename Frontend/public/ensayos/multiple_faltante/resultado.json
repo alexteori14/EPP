@@ -1,0 +1,60 @@
+{
+  "status": "completado",
+  "completado": true,
+  "tarjeta": "multiple_faltante",
+  "segundos_proceso": 3.2,
+  "hallazgo_nuevo": {
+    "id": "hallazgo-l3-t4",
+    "tipo": "multiples_epp_faltantes",
+    "codigo": "L3-T4",
+    "trabajador": "Eduardo Castañeda",
+    "id_empleado": "EMP-304",
+    "puesto": "Armador de Subensambles",
+    "linea": 3,
+    "posicion": 4,
+    "prendas_faltantes": [
+      "lentes",
+      "chaleco",
+      "guantes"
+    ],
+    "prendas_completas": 0,
+    "prendas_requeridas": 3,
+    "impacto_diario": 1050.0,
+    "cuadro": 207,
+    "segundo": 8.62,
+    "descripcion": "Eduardo Castañeda (Armador de Subensambles) intentó ingresar al turno sin Lentes de seguridad, Chaleco reflejante y Guantes anticorte.",
+    "accion_sugerida": "Detener en filtro y entregar Lentes de seguridad, Chaleco reflejante y Guantes anticorte desde caseta (Lentes de seguridad: 18 en caseta, Chaleco reflejante: 12 en caseta, Guantes anticorte: 24 en caseta) antes de autorizar el pase.",
+    "evidencia_crop": "/ensayos/multiple_faltante/recortes/L3-T4_zona.jpg",
+    "evidencia_persona": "/ensayos/multiple_faltante/recortes/L3-T4.jpg",
+    "corregido": false,
+    "confianza": 0.9
+  },
+  "hallazgos_nuevos": [
+    {
+      "id": "hallazgo-l3-t4",
+      "tipo": "multiples_epp_faltantes",
+      "codigo": "L3-T4",
+      "trabajador": "Eduardo Castañeda",
+      "id_empleado": "EMP-304",
+      "puesto": "Armador de Subensambles",
+      "linea": 3,
+      "posicion": 4,
+      "prendas_faltantes": [
+        "lentes",
+        "chaleco",
+        "guantes"
+      ],
+      "prendas_completas": 0,
+      "prendas_requeridas": 3,
+      "impacto_diario": 1050.0,
+      "cuadro": 207,
+      "segundo": 8.62,
+      "descripcion": "Eduardo Castañeda (Armador de Subensambles) intentó ingresar al turno sin Lentes de seguridad, Chaleco reflejante y Guantes anticorte.",
+      "accion_sugerida": "Detener en filtro y entregar Lentes de seguridad, Chaleco reflejante y Guantes anticorte desde caseta (Lentes de seguridad: 18 en caseta, Chaleco reflejante: 12 en caseta, Guantes anticorte: 24 en caseta) antes de autorizar el pase.",
+      "evidencia_crop": "/ensayos/multiple_faltante/recortes/L3-T4_zona.jpg",
+      "evidencia_persona": "/ensayos/multiple_faltante/recortes/L3-T4.jpg",
+      "corregido": false,
+      "confianza": 0.9
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+import { getHallazgosData } from '@/lib/data/loader';
+import { ResumenView } from '@/components/resumen/ResumenView';
+
+export const dynamic = 'force-dynamic';
+
+export default async function ResumenPage() {
+  const data = await getHallazgosData();
+  return <ResumenView data={data} />;
+}

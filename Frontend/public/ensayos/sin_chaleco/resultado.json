@@ -1,0 +1,56 @@
+{
+  "status": "completado",
+  "completado": true,
+  "tarjeta": "sin_chaleco",
+  "segundos_proceso": 3.2,
+  "hallazgo_nuevo": {
+    "id": "hallazgo-l3-t1",
+    "tipo": "sin_chaleco",
+    "codigo": "L3-T1",
+    "trabajador": "Alejandro Cabrera",
+    "id_empleado": "EMP-301",
+    "puesto": "Inspector de Calidad",
+    "linea": 3,
+    "posicion": 1,
+    "prendas_faltantes": [
+      "chaleco"
+    ],
+    "prendas_completas": 2,
+    "prendas_requeridas": 3,
+    "impacto_diario": 290.0,
+    "cuadro": 153,
+    "segundo": 6.38,
+    "descripcion": "Alejandro Cabrera (Inspector de Calidad) se presentó en la fila sin chaleco reflejante.",
+    "accion_sugerida": "Entregar Chaleco Reflejante Clase 2 Alta Visibilidad en caseta (12 piezas disponibles) y re-escanear en kiosco.",
+    "evidencia_crop": "/ensayos/sin_chaleco/recortes/L3-T1_zona.jpg",
+    "evidencia_persona": "/ensayos/sin_chaleco/recortes/L3-T1.jpg",
+    "corregido": false,
+    "confianza": 0.9
+  },
+  "hallazgos_nuevos": [
+    {
+      "id": "hallazgo-l3-t1",
+      "tipo": "sin_chaleco",
+      "codigo": "L3-T1",
+      "trabajador": "Alejandro Cabrera",
+      "id_empleado": "EMP-301",
+      "puesto": "Inspector de Calidad",
+      "linea": 3,
+      "posicion": 1,
+      "prendas_faltantes": [
+        "chaleco"
+      ],
+      "prendas_completas": 2,
+      "prendas_requeridas": 3,
+      "impacto_diario": 290.0,
+      "cuadro": 153,
+      "segundo": 6.38,
+      "descripcion": "Alejandro Cabrera (Inspector de Calidad) se presentó en la fila sin chaleco reflejante.",
+      "accion_sugerida": "Entregar Chaleco Reflejante Clase 2 Alta Visibilidad en caseta (12 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/ensayos/sin_chaleco/recortes/L3-T1_zona.jpg",
+      "evidencia_persona": "/ensayos/sin_chaleco/recortes/L3-T1.jpg",
+      "corregido": false,
+      "confianza": 0.9
+    }
+  ]
+}

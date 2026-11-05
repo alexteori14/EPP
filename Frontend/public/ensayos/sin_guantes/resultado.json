@@ -1,0 +1,56 @@
+{
+  "status": "completado",
+  "completado": true,
+  "tarjeta": "sin_guantes",
+  "segundos_proceso": 3.2,
+  "hallazgo_nuevo": {
+    "id": "hallazgo-l1-t3",
+    "tipo": "sin_guantes",
+    "codigo": "L1-T3",
+    "trabajador": "Luis Fernando Vega",
+    "id_empleado": "EMP-103",
+    "puesto": "Técnico de Troquelado",
+    "linea": 1,
+    "posicion": 3,
+    "prendas_faltantes": [
+      "guantes"
+    ],
+    "prendas_completas": 2,
+    "prendas_requeridas": 3,
+    "impacto_diario": 340.0,
+    "cuadro": 45,
+    "segundo": 1.88,
+    "descripcion": "Luis Fernando Vega (Técnico de Troquelado) se presentó en la fila sin guantes anticorte.",
+    "accion_sugerida": "Entregar Guantes Nitrilo Anticorte Nivel A4 en caseta (24 piezas disponibles) y re-escanear en kiosco.",
+    "evidencia_crop": "/ensayos/sin_guantes/recortes/L1-T3_zona.jpg",
+    "evidencia_persona": "/ensayos/sin_guantes/recortes/L1-T3.jpg",
+    "corregido": false,
+    "confianza": 0.9
+  },
+  "hallazgos_nuevos": [
+    {
+      "id": "hallazgo-l1-t3",
+      "tipo": "sin_guantes",
+      "codigo": "L1-T3",
+      "trabajador": "Luis Fernando Vega",
+      "id_empleado": "EMP-103",
+      "puesto": "Técnico de Troquelado",
+      "linea": 1,
+      "posicion": 3,
+      "prendas_faltantes": [
+        "guantes"
+      ],
+      "prendas_completas": 2,
+      "prendas_requeridas": 3,
+      "impacto_diario": 340.0,
+      "cuadro": 45,
+      "segundo": 1.88,
+      "descripcion": "Luis Fernando Vega (Técnico de Troquelado) se presentó en la fila sin guantes anticorte.",
+      "accion_sugerida": "Entregar Guantes Nitrilo Anticorte Nivel A4 en caseta (24 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/ensayos/sin_guantes/recortes/L1-T3_zona.jpg",
+      "evidencia_persona": "/ensayos/sin_guantes/recortes/L1-T3.jpg",
+      "corregido": false,
+      "confianza": 0.9
+    }
+  ]
+}
