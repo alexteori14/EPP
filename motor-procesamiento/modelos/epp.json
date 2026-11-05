@@ -1,0 +1,15 @@
+{
+  "mAP50": 0.672,
+  "mAP50-95": 0.3367,
+  "precision": 0.6639,
+  "recall": 0.6008,
+  "por_clase": {
+    "persona": 0.9411,
+    "chaleco": 0.8676,
+    "sin_chaleco": 0.755,
+    "lentes": 0.4188,
+    "sin_lentes": 0.5272,
+    "guantes": 0.6804,
+    "sin_guantes": 0.514
+  }
+}
