@@ -342,7 +342,10 @@ def preguntar(
         respuesta = _responder_rag_local(pregunta, datos, diag, contextos)
         modelo_usado = "rag-local-determinista"
 
-    fuentes = [{"id": f.id, "titulo": f.titulo} for f in contextos[:4]]
+    fuentes = [
+        {"id": f.id, "titulo": f.titulo, "tipo": "fragmento", "texto": f.texto[:240]}
+        for f in contextos[:4]
+    ]
     return {
         "respuesta": respuesta,
         "fuentes": fuentes,

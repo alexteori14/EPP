@@ -90,3 +90,6 @@ def test_chat_fragmentos_rag():
     assert len(fragmentos) >= 5
     ids = {f.id for f in fragmentos}
     assert "resumen" in ids
+    resp = chat.preguntar(Path("motor-procesamiento"), "demo", "¿Quién tiene el mayor riesgo?")
+    assert resp["fuentes"]
+    assert all("texto" in f and len(f["texto"]) > 0 for f in resp["fuentes"])

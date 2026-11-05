@@ -15,7 +15,7 @@ export interface EvaluacionZonaKiosco {
 
 export interface RespuestaKiosco {
   personas_detectadas: number;
-  estado_acceso: 'autorizado' | 'detenido' | 'revisar' | 'sin_persona';
+  estado_acceso: 'autorizado' | 'bloqueado' | 'revisar' | 'sin_persona';
   mensaje: string;
   prendas_completas: number;
   prendas_requeridas: number;

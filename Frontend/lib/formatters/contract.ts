@@ -8,6 +8,7 @@ export const DICCIONARIO_HALLAZGOS: Record<TipoHallazgo, string> = {
   sin_guantes: 'Faltan guantes anticorte',
   sin_chaleco: 'Falta chaleco reflejante',
   multiples_epp_faltantes: 'Faltan múltiples prendas de EPP',
+  epp_faltante_agotado: 'Prenda agotada en caseta',
   epp_agotado_en_caseta: 'Prenda agotada en caseta',
   revisar: 'Lectura dudosa: revisar en caseta',
 };
@@ -36,7 +37,7 @@ export const FAMILIAS_HALLAZGO: { id: string; nombre: string; tipos: TipoHallazg
   {
     id: 'multiples',
     nombre: 'Múltiples prendas omitidas (crítico)',
-    tipos: ['multiples_epp_faltantes', 'epp_agotado_en_caseta'],
+    tipos: ['multiples_epp_faltantes', 'epp_faltante_agotado', 'epp_agotado_en_caseta'],
   },
   {
     id: 'ocular',

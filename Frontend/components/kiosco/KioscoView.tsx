@@ -141,7 +141,9 @@ export function KioscoView() {
     reader.readAsDataURL(file);
   };
 
-  const autorizado = resultado?.estado_acceso === 'autorizado';
+  const estadoAcceso = resultado?.estado_acceso ?? 'revisar';
+  const autorizado = estadoAcceso === 'autorizado';
+  const esRevision = estadoAcceso === 'revisar' || estadoAcceso === 'sin_persona';
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -285,12 +287,16 @@ export function KioscoView() {
             className={`p-6 rounded-xl border-2 shadow-sm transition-colors ${
               autorizado
                 ? 'bg-emerald-50/90 border-emerald-500 text-emerald-950'
+                : esRevision
+                ? 'bg-amber-50/90 border-amber-500 text-amber-950'
                 : 'bg-rose-50/90 border-rose-500 text-rose-950'
             }`}
           >
             <div className="flex items-center gap-3">
               {autorizado ? (
                 <ShieldCheck className="w-10 h-10 text-emerald-600 shrink-0" />
+              ) : esRevision ? (
+                <AlertTriangle className="w-10 h-10 text-amber-600 shrink-0" />
               ) : (
                 <ShieldAlert className="w-10 h-10 text-rose-600 shrink-0" />
               )}
@@ -299,7 +305,11 @@ export function KioscoView() {
                   Veredicto de Torniquete Pre-Turno
                 </div>
                 <h3 className="text-xl font-extrabold tracking-tight">
-                  {autorizado ? 'PASE DE TURNO AUTORIZADO' : 'ACCESO DETENIDO · FALTA EPP'}
+                  {autorizado
+                    ? 'PASE DE TURNO AUTORIZADO'
+                    : esRevision
+                    ? 'VERIFICACIÓN EN CASETA · LECTURA DUDOSA'
+                    : 'ACCESO DETENIDO · FALTA EPP'}
                 </h3>
               </div>
             </div>

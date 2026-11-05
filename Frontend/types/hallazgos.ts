@@ -9,6 +9,7 @@ export type TipoHallazgo =
   | 'sin_guantes'
   | 'sin_chaleco'
   | 'multiples_epp_faltantes'
+  | 'epp_faltante_agotado'
   | 'epp_agotado_en_caseta'
   | 'revisar';
 
