@@ -1,7 +1,9 @@
-# Python 3.12. Probado en Linux con GPU NVIDIA RTX 4050 (6 GB) y en CPU.
+# Python 3.10 - 3.13 (probado en Linux con GPU NVIDIA RTX 4050 y en CPU / macOS / Windows).
+# El lanzador ./iniciar.sh crea .venv e instala este archivo automáticamente.
 #
-#   uv venv .venv --python 3.12
-#   uv pip install --python .venv/bin/python -r requirements.txt
+# Instalación manual opcional:
+#   python3 -m venv .venv
+#   .venv/bin/pip install -r requirements.txt
 
 numpy<2.4
 opencv-contrib-python>=4.10.0
@@ -13,8 +15,9 @@ roboflow>=1.1
 wandb>=0.18
 onnx>=1.16
 onnxslim>=0.1.30
-onnxruntime-gpu>=1.19
-nvidia-curand>=10.3
+onnxruntime-gpu>=1.19; sys_platform == "linux" and platform_machine == "x86_64"
+nvidia-curand>=10.3; sys_platform == "linux" and platform_machine == "x86_64"
+onnxruntime>=1.19; sys_platform != "linux" or platform_machine != "x86_64"
 torchmetrics>=1.4
 scikit-learn>=1.5
 pillow

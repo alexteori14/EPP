@@ -157,7 +157,10 @@ flowchart LR
 ### Árbol Completo del Repositorio
 ```text
 /home/alexteori/Documentos/repositorios/EPP/
-├── iniciar.sh                                     # Script unificado: levanta API (:8000) y Next.js (:3000)
+├── iniciar.sh                                     # Autoinstalador y lanzador de 1 comando (Linux/macOS/WSL/Git Bash)
+├── iniciar.bat                                    # Autoinstalador y lanzador de 1 comando para Windows (CMD/PowerShell)
+├── package.json                                   # Scripts npm en raíz (npm start, npm run verificar, npm test)
+├── .gitattributes                                 # Reglas LF/CRLF para evitar corrupción de scripts en Windows
 ├── documentacion.md                               # Este manual técnico exhaustivo
 ├── memoria.md                                     # Memoria estructurada de bajo consumo de tokens para IAs
 ├── README.md                                      # Guía principal de instalación y uso
@@ -541,8 +544,8 @@ El tablero fue construido con **Next.js 15.1.7**, **React 19**, **TypeScript 5.7
 
 ## 12. Pruebas Automatizadas (`pytest` + `Playwright`) y Guía de Operación
 
-### 12.1 Ejecución de la Suite de Pruebas de Backend (`19 passed`)
-Desde la raíz [`/home/alexteori/Documentos/repositorios/EPP`](file:///home/alexteori/Documentos/repositorios/EPP):
+### 12.1 Ejecución de la Suite de Pruebas de Backend (`22 passed`)
+Desde la raíz [`/home/alexteori/Documentos/repositorios/EPP`](file:///home/alexteori/Documentos/repositorios/EPP) (o desde `motor-procesamiento/`):
 ```bash
 motor-procesamiento/.venv/bin/python -m pytest -v
 ```
@@ -553,7 +556,7 @@ Verifica:
 - Asociación anatómica de 4 zonas (`ok`, `falta`, manos/cabeza cortadas en borde $\rightarrow$ `dudoso`, conflicto positivo/negativo cercano $\rightarrow$ `dudoso`).
 - Votación multi-cuadro y seguimiento por IoU en `RastreadorTurno`.
 - Kiosco en vivo (`sin_persona`, `autorizado`, `bloqueado`, y autorización cuando `requiere_guantes=False` aunque falten guantes).
-- Cálculo de impacto diario (`US$420`, `US$380` por tapones, `US$1,140`, `revisar = US$0.00`), persistencia en disco con `actualizar_corregido`, proyección a 18 plantas y citas con texto en el Asistente RAG.
+- Cálculo de impacto diario (`US$420`, `US$380` por tapones, `US$1,140`, `revisar = US$0.00`), persistencia en disco con `actualizar_corregido`, proyección a 18 plantas, citas con texto en el Asistente RAG y operación completa del Modo Jurado en un clon limpio sin carpeta `video/`.
 
 ### 12.2 Ejecución de la Suite E2E de Navegador (`Playwright`)
 ```bash
@@ -561,12 +564,17 @@ Verifica:
 node Frontend/tests/e2e.mjs
 ```
 
-### 12.3 Arranque en Producción con Un Solo Comando
+### 12.3 Arranque en Producción con Un Solo Comando (Autoinstalación Cero-Configuración)
 ```bash
-./iniciar.sh
+./iniciar.sh          # Linux, macOS, WSL o Git Bash (también: npm start)
+.\iniciar.bat         # Windows CMD / PowerShell
+./iniciar.sh --verificar # Verifica autoinstalación, salud de API (:8000) y build de Frontend
 ```
-- **Tablero Web:** `http://localhost:3000`
-- **API del Motor:** `http://127.0.0.1:8000`
+En la primera ejecución tras clonar o descargar el repositorio:
+1. Crea automáticamente `.env` desde `.env.example` si no existe.
+2. Crea automáticamente `motor-procesamiento/.venv` e instala `requirements.txt` (con soporte GPU CUDA en Linux y fallback automático a CPU en macOS/Windows).
+3. Sincroniza los artefactos base de demostración (`salida/*.json` y `salida_tarjetas/*/*.json`) y respalda lecturas en `Frontend/public/`.
+4. Instala `Frontend/node_modules`, compila `.next` si hace falta y levanta la **API del Motor** en `http://127.0.0.1:8000` y el **Tablero Web** en `http://localhost:3000` (o en el siguiente puerto libre si el `3000` está ocupado).
 
 ---
 

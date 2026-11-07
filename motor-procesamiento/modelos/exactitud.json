@@ -91,10 +91,10 @@
     "pytorch_version": "2.15.0+cu132"
   },
   "benchmark_inferencia": {
-    "pytorch_cuda_ms": 4.29,
-    "pytorch_cuda_fps": 233.2,
-    "onnxruntime_ms": 3.76,
-    "onnxruntime_fps": 266.1,
+    "pytorch_cuda_ms": 4.26,
+    "pytorch_cuda_fps": 234.8,
+    "onnxruntime_ms": 3.81,
+    "onnxruntime_fps": 262.6,
     "onnxruntime_providers_usados": [
       "CUDAExecutionProvider",
       "CPUExecutionProvider"

@@ -1,0 +1,26 @@
+# Normalizar finales de línea en LF para evitar fallos en Windows (CRLF en scripts bash/python)
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.csv text eol=lf
+
+# Scripts nativos de Windows en CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binarios
+*.pt binary
+*.onnx binary
+*.mp4 binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary

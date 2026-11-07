@@ -1,5 +1,7 @@
 # Guion de Demostración Ejecutiva — Vigía EPP (5 Minutos)
 
+> **Preparación antes de presentar (1 comando desde cero):** Ejecuta `./iniciar.sh` (o `.\iniciar.bat` en Windows / `npm start`). El script crea automáticamente `.env` y `.venv`, instala las dependencias de Python y Frontend si faltan, levanta la API en `:8000` y abre la consola SCADA en `http://localhost:3000`.
+
 ## 1. El Problema y la Arquitectura Multi-Plugin (0:00 – 0:45)
 En plantas de manufactura y logística pesada con niveles de ruido superiores a `94 dB(A)`, el reglamento interno y las normas `NOM-017-STPS` y `NOM-011-STPS` exigen que todo operador ingrese a su turno con su equipo de protección:
 - **Obligatorios generales (toda la planta):** **Lentes ANSI Z87.1**, **Tapones Auditivos de Inserción NRR 32 dB** y **Chaleco Reflejante Clase 2**.

@@ -1,0 +1,10 @@
+{
+  "video": {
+    "fps": 24.0,
+    "cuadros": 24,
+    "resolucion": [
+      1280,
+      720
+    ]
+  }
+}

@@ -97,11 +97,15 @@ def _cargar_corrida(raiz: Path, corrida: str) -> tuple[dict, dict | None]:
     if corrida == "demo":
         carpeta = raiz / "salida"
         h_file = carpeta / "hallazgos.json"
-        datos = (
-            json.loads(h_file.read_text(encoding="utf-8"))
-            if h_file.exists()
-            else cruce.desde_carpeta(carpeta, sistema)
-        )
+        h_web = raiz.parent / "Frontend" / "public" / "salida" / "hallazgos.json"
+        if h_file.exists():
+            datos = json.loads(h_file.read_text(encoding="utf-8"))
+        elif (carpeta / "observaciones.json").exists():
+            datos = cruce.desde_carpeta(carpeta, sistema)
+        elif h_web.exists():
+            datos = json.loads(h_web.read_text(encoding="utf-8"))
+        else:
+            datos = cruce.desde_carpeta(carpeta, sistema)
     else:
         carpeta = raiz / "analisis" / corrida / "salida"
         h_file = raiz / "analisis" / corrida / "hallazgos.json"

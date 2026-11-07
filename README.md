@@ -10,15 +10,20 @@
 
 ---
 
-## Arranque rápido (1 comando)
+## Arranque rápido (1 comando — Cero Configuración)
+
+Al clonar o descargar el repositorio por primera vez, ejecuta **un único comando** en la raíz:
 
 ```bash
-./iniciar.sh
+./iniciar.sh          # Linux, macOS, WSL o Git Bash (también puedes usar: npm start)
 ```
+*(En Windows CMD / PowerShell: `.\iniciar.bat`)*
 
-Esto levanta automáticamente:
-- **API del Motor y Cruce Operativo** en `http://127.0.0.1:8000` (`cruce.api`)
-- **Consola SCADA Next.js 15 (Opción 1)** en `http://localhost:3000` (`Frontend/`)
+En la primera ejecución se encarga automáticamente de todo sin pasos manuales:
+1. Crea el archivo `.env` a partir de `.env.example` si no existe (el Asistente IA funciona 100% offline con RAG determinista local incluso sin clave `APIGEMINI`).
+2. Crea el entorno virtual `motor-procesamiento/.venv` e instala las dependencias de Python (`requirements.txt`, con soporte automático GPU CUDA o CPU/macOS/Windows).
+3. Instala las dependencias de `Frontend/node_modules` y compila el tablero si es necesario.
+4. Levanta la **API del Motor y Cruce Operativo** en `http://127.0.0.1:8000` (`cruce.api`) y la **Consola SCADA Next.js 15** en `http://localhost:3000` (o en el siguiente puerto libre si el `3000` está ocupado).
 
 ---
 
@@ -60,12 +65,16 @@ Construida con **`TorchMetrics` (`1.9.0`)**, **`Supervision` (`0.31.5`)**, **`sc
 
 ```text
 EPP/
-├── iniciar.sh                        # Lanzador unificado (:8000 API + :3000 Next.js)
+├── iniciar.sh                        # Autoinstalador y lanzador de 1 comando (Linux/macOS/WSL/Git Bash)
+├── iniciar.bat                       # Autoinstalador y lanzador de 1 comando para Windows (CMD/PowerShell)
+├── package.json                      # Atajos npm en raíz (npm start, npm run verificar, npm test)
+├── .gitattributes                    # Normalización LF/CRLF para evitar fallos al clonar en Windows
 ├── documentacion.md                  # Documentación técnica exhaustiva del proyecto
 ├── memoria.md                        # Memoria técnica compacta para agentes de IA futuros
 ├── PITCH.md                          # Guion ejecutivo de demostración (5 minutos)
 ├── motor-procesamiento/              # Motor de visión YOLO11, plugins, cruce financiero y API HTTP
 │   ├── CONTRATO.md                   # Contrato estricto de JSONs entre motor, cruce y web
+│   ├── requirements.txt              # Dependencias multiplataforma (GPU CUDA Linux / CPU macOS & Windows)
 │   ├── modelos/epp.pt                # Modelo YOLO11 entrenado (9 clases · PyTorch CUDA)
 │   ├── modelos/epp.onnx              # Modelo exportado y optimizado para ONNX Runtime / TensorRT
 │   ├── modelos/epp.json              # Métricas reales de validación en las 9 clases
@@ -74,7 +83,7 @@ EPP/
 │   ├── motor/                        # Selección de cuadros, detector multi-plugin, asociación 4 zonas, rastreo, kiosco
 │   ├── cruce/                        # Reglas de riesgo, impacto en red (18 plantas), RAG y API :8000
 │   ├── simulador/                    # Generador de turno de 12 estaciones y 5 tarjetas de Modo Jurado
-│   └── tests/                        # 21 pruebas unitarias y de integración (pytest)
+│   └── tests/                        # 22 pruebas unitarias y de integración (pytest)
 └── Frontend/                         # Consola SCADA/HMI Next.js 15 + React 19 + Tailwind CSS (Opción 1)
     ├── DISENO.md                     # Sistema de diseño "Centro de Comando Industrial SCADA/HMI"
     ├── app/                          # 8 rutas dinámicas (/resumen, /kiosco, /recorrido, /cuadrilla, ...)
@@ -87,10 +96,13 @@ EPP/
 ## Pruebas automatizadas y Verificación de Exactitud
 
 ```bash
+# 0. Verificar autoinstalación, salud de API (:8000) y compilación de Frontend en 1 comando
+./iniciar.sh --verificar
+
 # 1. Comprobar el porcentaje de exactitud del modelo y motor (TorchMetrics + Supervision + ONNX Runtime)
 cd motor-procesamiento && ./.venv/bin/python -m entrenamiento.verificar_exactitud --no-exportar
 
-# 2. Suite de pruebas del motor, plugins y cruce (21 tests)
+# 2. Suite de pruebas del motor, plugins, clon limpio y cruce (22 tests)
 motor-procesamiento/.venv/bin/python -m pytest -v
 
 # 3. Verificación de tipos y compilación de producción del Frontend

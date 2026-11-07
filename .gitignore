@@ -1,6 +1,7 @@
 # Entorno y claves
 .env
 .superpowers/
+.vscode/
 
 # Python y motor
 __pycache__/
@@ -11,7 +12,10 @@ motor-procesamiento/datasets/
 motor-procesamiento/datos_kaggle/
 motor-procesamiento/runs/
 motor-procesamiento/video/
-motor-procesamiento/salida*/
+motor-procesamiento/salida/*
+!motor-procesamiento/salida/*.json
+motor-procesamiento/salida_tarjetas/*/*
+!motor-procesamiento/salida_tarjetas/*/*.json
 motor-procesamiento/analisis/
 motor-procesamiento/cache/
 motor-procesamiento/yolo*.pt

@@ -1,0 +1,366 @@
+{
+  "video": "recorrido_turno.mp4",
+  "segundos_proceso": 8.4,
+  "posiciones": [
+    {
+      "posicion": "L1-T1",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 9,
+      "recorte_persona": "recortes/L1-T1.jpg",
+      "recorte_zona": "recortes/L1-T1_zona.jpg"
+    },
+    {
+      "posicion": "L1-T2",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 27,
+      "recorte_persona": "recortes/L1-T2.jpg",
+      "recorte_zona": "recortes/L1-T2_zona.jpg"
+    },
+    {
+      "posicion": "L1-T3",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 45,
+      "recorte_persona": "recortes/L1-T3.jpg",
+      "recorte_zona": "recortes/L1-T3_zona.jpg"
+    },
+    {
+      "posicion": "L1-T4",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 63,
+      "recorte_persona": "recortes/L1-T4.jpg",
+      "recorte_zona": "recortes/L1-T4_zona.jpg"
+    },
+    {
+      "posicion": "L2-T1",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 81,
+      "recorte_persona": "recortes/L2-T1.jpg",
+      "recorte_zona": "recortes/L2-T1_zona.jpg"
+    },
+    {
+      "posicion": "L2-T2",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 99,
+      "recorte_persona": "recortes/L2-T2.jpg",
+      "recorte_zona": "recortes/L2-T2_zona.jpg"
+    },
+    {
+      "posicion": "L2-T3",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "dudoso",
+          "confianza": 0.48,
+          "lecturas": 1
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 117,
+      "recorte_persona": "recortes/L2-T3.jpg",
+      "recorte_zona": "recortes/L2-T3_zona.jpg"
+    },
+    {
+      "posicion": "L2-T4",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 135,
+      "recorte_persona": "recortes/L2-T4.jpg",
+      "recorte_zona": "recortes/L2-T4_zona.jpg"
+    },
+    {
+      "posicion": "L3-T1",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 153,
+      "recorte_persona": "recortes/L3-T1.jpg",
+      "recorte_zona": "recortes/L3-T1_zona.jpg"
+    },
+    {
+      "posicion": "L3-T2",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 171,
+      "recorte_persona": "recortes/L3-T2.jpg",
+      "recorte_zona": "recortes/L3-T2_zona.jpg"
+    },
+    {
+      "posicion": "L3-T3",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 189,
+      "recorte_persona": "recortes/L3-T3.jpg",
+      "recorte_zona": "recortes/L3-T3_zona.jpg"
+    },
+    {
+      "posicion": "L3-T4",
+      "persona_detectada": true,
+      "confianza_persona": 0.95,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      },
+      "cuadro": 207,
+      "recorte_persona": "recortes/L3-T4.jpg",
+      "recorte_zona": "recortes/L3-T4_zona.jpg"
+    }
+  ]
+}

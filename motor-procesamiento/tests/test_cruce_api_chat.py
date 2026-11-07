@@ -2,9 +2,11 @@ import json
 from pathlib import Path
 from cruce import hallazgos, red, chat
 
+RAIZ_MOTOR = Path(__file__).resolve().parents[1]
+
 
 def test_clasificar_y_calcular_impacto_diario():
-    sistema = hallazgos.leer_sistema(Path("motor-procesamiento/datos/sistema"))
+    sistema = hallazgos.leer_sistema(RAIZ_MOTOR / "datos/sistema")
     t = sistema.turnos[0]
 
     # 1. Trabajador sin lentes (stock disponible en caseta -> local, US$420)
@@ -81,8 +83,8 @@ def test_clasificar_y_calcular_impacto_diario():
 
 def test_persistencia_marcar_corregido(tmp_path: Path):
     """Review Focus #5: actualizar el estado corregido de un hallazgo persiste en disco y recalcula."""
-    sistema = hallazgos.leer_sistema(Path("motor-procesamiento/datos/sistema"))
-    datos = hallazgos.desde_carpeta(Path("motor-procesamiento/salida"), sistema)
+    sistema = hallazgos.leer_sistema(RAIZ_MOTOR / "datos/sistema")
+    datos = hallazgos.desde_carpeta(RAIZ_MOTOR / "salida", sistema)
     archivo = tmp_path / "hallazgos.json"
     archivo.write_text(json.dumps(datos, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -97,8 +99,8 @@ def test_persistencia_marcar_corregido(tmp_path: Path):
 
 
 def test_red_proyeccion_plantas():
-    sistema = hallazgos.leer_sistema(Path("motor-procesamiento/datos/sistema"))
-    datos = hallazgos.desde_carpeta(Path("motor-procesamiento/salida"), sistema)
+    sistema = hallazgos.leer_sistema(RAIZ_MOTOR / "datos/sistema")
+    datos = hallazgos.desde_carpeta(RAIZ_MOTOR / "salida", sistema)
     datos_red = red.construir(datos)
     assert datos_red["red"]["plantas_total"] == 18
     assert len(datos_red["escenarios"]) == 4
@@ -106,10 +108,27 @@ def test_red_proyeccion_plantas():
 
 
 def test_chat_fragmentos_rag():
-    fragmentos = chat.construir_fragmentos_corrida(Path("motor-procesamiento"))
+    fragmentos = chat.construir_fragmentos_corrida(RAIZ_MOTOR)
     assert len(fragmentos) >= 5
     ids = {f.id for f in fragmentos}
     assert "resumen" in ids
-    resp = chat.preguntar(Path("motor-procesamiento"), "demo", "¿Quién tiene el mayor riesgo?")
+    resp = chat.preguntar(RAIZ_MOTOR, "demo", "¿Quién tiene el mayor riesgo?")
     assert resp["fuentes"]
     assert all("texto" in f and len(f["texto"]) > 0 for f in resp["fuentes"])
+
+
+def test_modo_jurado_funciona_en_clon_limpio_sin_carpeta_video():
+    """Garantiza que al descargar el repo (donde video/ está en .gitignore) las 5 tarjetas funcionen."""
+    from cruce.api import GestorAnalisis, MotorSubproceso
+
+    dir_web = RAIZ_MOTOR.parent / "Frontend" / "public"
+    motor = MotorSubproceso(RAIZ_MOTOR)
+    gestor = GestorAnalisis(RAIZ_MOTOR, motor, dir_web)
+    tarjetas = gestor.tarjetas()
+    assert len(tarjetas) >= 5
+    assert "sin_tapones" in tarjetas
+    status, payload = gestor.iniciar_jurado("sin_tapones")
+    assert int(status) == 202
+    assert payload["completado"] is True
+    assert payload["hallazgo_nuevo"] is not None
+

@@ -1,0 +1,13 @@
+{
+  "name": "vigia-epp",
+  "version": "2.5.0",
+  "private": true,
+  "description": "Vigía EPP — Plataforma Industrial de Visión por Computadora y Auditoría Operativa Pre-Turno (SCADA/HMI)",
+  "scripts": {
+    "start": "bash ./iniciar.sh",
+    "dev": "bash ./iniciar.sh",
+    "build": "bash ./iniciar.sh --build --verificar",
+    "verificar": "bash ./iniciar.sh --verificar",
+    "test": "bash ./iniciar.sh --verificar && motor-procesamiento/.venv/bin/python -m pytest -v"
+  }
+}

@@ -34,7 +34,12 @@ El modelo `modelos/epp.pt` / `modelos/epp.onnx` (YOLO11n · **9 clases**) y el a
 
 ## 4. Comandos principales
 
+> **Nota de arranque rápido:** Al ejecutar `./iniciar.sh` (o `.\iniciar.bat` en Windows / `npm start`) desde la raíz del repositorio, el entorno virtual `.venv` se crea e instala automáticamente a partir de `requirements.txt` (compatible con GPU CUDA en Linux y con CPU en macOS/Windows).
+
 ```bash
+# 0. Crear entorno virtual manualmente (solo si no usaste ../iniciar.sh)
+python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
+
 # 1. Descargar las 6 fuentes de Kaggle y Roboflow Universe y preparar datasets/epp (9 clases)
 ./.venv/bin/python -m entrenamiento.descargar_kaggle
 ./.venv/bin/python -m entrenamiento.preparar_epp
@@ -43,9 +48,9 @@ El modelo `modelos/epp.pt` / `modelos/epp.onnx` (YOLO11n · **9 clases**) y el a
 ./.venv/bin/python -m entrenamiento.entrenar_yolo --epocas 15
 
 # 3. Comprobar el porcentaje de exactitud en cualquier momento (TorchMetrics + Supervision + ONNX/TensorRT)
-./.venv/bin/python -m entrenamiento.verificar_exactitud
+./.venv/bin/python -m entrenamiento.verificar_exactitud --no-exportar
 
-# 4. Ejecutar las pruebas unitarias y de integración (pytest)
+# 4. Ejecutar las 22 pruebas unitarias y de integración (funciona desde la raíz o desde motor-procesamiento/)
 ./.venv/bin/python -m pytest -v
 
 # 5. Regenerar el turno demostrativo, las 5 tarjetas del Modo Jurado y publicar a Frontend/public/

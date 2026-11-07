@@ -116,7 +116,7 @@ Esquema tipado en `Frontend/types/hallazgos.ts`:
 
 - `GET /salud` → `{"ok": true, "servicio": "vigia-epp-motor"}`
 - `POST /kiosco/evaluar` → recibe imagen o JSON `{"preset": "completo|sin_lentes|sin_tapones|sin_guantes|sin_chaleco|incompleto_multiple", "requiere_guantes": true|false}` y devuelve en `<300 ms` el pase de turno (`autorizado | bloqueado | revisar | sin_persona`), el estado de las 4 zonas (`lentes`, `tapones`, `chaleco`, `guantes`), recorte anotado en base64 y acción en caseta.
-- `POST /procesar` `{"tarjeta": "sin_lentes|sin_tapones|sin_guantes|sin_chaleco|multiple_faltante"}` y `GET /tarjetas` → Modo Jurado en vivo.
+- `POST /procesar` `{"tarjeta": "sin_lentes|sin_tapones|sin_guantes|sin_chaleco|multiple_faltante"}` y `GET /tarjetas` → Modo Jurado en vivo (descubre tarjetas desde `video/tarjetas`, `salida_tarjetas` y `Frontend/public/ensayos` para funcionar inmediatamente tras clonar el repositorio).
 - `POST /analisis`, `GET /analisis`, `GET /analisis/<id>`, `GET /analisis/activo`, `GET /analisis/activo/red`, `POST /analisis/<id>/activar`, `DELETE /analisis/<id>`.
-- `PATCH /analisis/<id>/hallazgos/<hallazgo_id>` `{"corregido": true|false}` → Persiste en disco la corrección/autorización del hallazgo.
-- `POST /analisis/<id>/chat` y `GET /chat` → Asistente RAG Híbrido (Gemini + RAG determinista local).
+- `PATCH /analisis/<id>/hallazgos/<hallazgo_id>` `{"corregido": true|false}` → Persiste en disco la corrección/autorización del hallazgo (sincronizando `salida/hallazgos.json` y `Frontend/public/salida/hallazgos.json`).
+- `POST /analisis/<id>/chat` y `GET /chat` → Asistente RAG Híbrido (Gemini + RAG determinista local con respaldo directo a `Frontend/public/salida/hallazgos.json` en modo demo).

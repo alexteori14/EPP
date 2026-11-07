@@ -1,0 +1,321 @@
+{
+  "video": {
+    "ruta": "video/recorrido_turno.mp4",
+    "cuadros": 216,
+    "fps": 24.0,
+    "resolucion": [
+      1280,
+      720
+    ]
+  },
+  "cuadros_elegidos": 60,
+  "dispositivo_yolo": "cuda:0",
+  "tiempos_s": {
+    "cargar_modelo": 0.42,
+    "yolo_epp": 4.15,
+    "asociacion_anatomica": 0.18,
+    "video_anotado": 3.65
+  },
+  "posiciones": {
+    "L1-T1": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      }
+    },
+    "L1-T2": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      }
+    },
+    "L1-T3": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      }
+    },
+    "L1-T4": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      }
+    },
+    "L2-T1": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      }
+    },
+    "L2-T2": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      }
+    },
+    "L2-T3": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "dudoso",
+          "confianza": 0.48,
+          "lecturas": 1
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      }
+    },
+    "L2-T4": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      }
+    },
+    "L3-T1": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      }
+    },
+    "L3-T2": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      }
+    },
+    "L3-T3": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5
+        }
+      }
+    },
+    "L3-T4": {
+      "vistas_evaluadas": 5,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5
+        }
+      }
+    }
+  }
+}

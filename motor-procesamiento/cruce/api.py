@@ -207,19 +207,37 @@ class GestorAnalisis:
         self.estado_jurado: dict = {"status": "inactivo"}
 
     def tarjetas(self) -> list[str]:
-        d = self.raiz / "video/tarjetas"
-        return sorted(p.stem for p in d.glob("*.mp4")) if d.exists() else []
+        nombres: set[str] = set()
+        d_vid = self.raiz / "video/tarjetas"
+        if d_vid.exists():
+            nombres.update(p.stem for p in d_vid.glob("*.mp4"))
+        d_sal = self.raiz / "salida_tarjetas"
+        if d_sal.exists():
+            nombres.update(p.name for p in d_sal.iterdir() if p.is_dir())
+        d_ens = self.dir_web / "ensayos"
+        if d_ens.exists():
+            nombres.update(p.name for p in d_ens.iterdir() if p.is_dir())
+        return sorted(nombres)
 
     def iniciar_jurado(self, tarjeta: str) -> tuple[HTTPStatus, dict]:
         if tarjeta not in self.tarjetas():
             return HTTPStatus.NOT_FOUND, {"error": f"No existe la tarjeta {tarjeta!r}"}
         with self.lock:
-            sistema = cruce.leer_sistema(self.raiz / "datos/sistema")
-            base = cruce.desde_carpeta(self.raiz / "salida", sistema)
             sal_t = self.raiz / "salida_tarjetas" / tarjeta
-            pref = f"/motor/archivos/tarjetas/{tarjeta}"
-            resultado = cruce.desde_carpeta(sal_t, sistema, prefijo=pref)
-            nuevos = cruce.nuevos(base, resultado)
+            obs_base = self.raiz / "salida" / "observaciones.json"
+            if (sal_t / "observaciones.json").exists() and obs_base.exists():
+                sistema = cruce.leer_sistema(self.raiz / "datos/sistema")
+                base = cruce.desde_carpeta(self.raiz / "salida", sistema)
+                pref = f"/motor/archivos/tarjetas/{tarjeta}"
+                resultado = cruce.desde_carpeta(sal_t, sistema, prefijo=pref)
+                nuevos = cruce.nuevos(base, resultado)
+                seg = resultado["resumen"]["segundos_proceso"]
+            else:
+                res_web = _leer_json(self.dir_web / "ensayos" / tarjeta / "resultado.json") or {}
+                nuevos = list(res_web.get("hallazgos_nuevos") or [])
+                if not nuevos and res_web.get("hallazgo_nuevo"):
+                    nuevos = [res_web["hallazgo_nuevo"]]
+                seg = float(res_web.get("segundos_proceso", 3.2))
             self.estado_jurado = {
                 "status": "completado",
                 "completado": True,
@@ -227,8 +245,8 @@ class GestorAnalisis:
                 "paso": "Completado",
                 "pasoNumero": 4,
                 "progreso": 100,
-                "segundos": resultado["resumen"]["segundos_proceso"],
-                "segundos_proceso": resultado["resumen"]["segundos_proceso"],
+                "segundos": seg,
+                "segundos_proceso": seg,
                 "hallazgo_nuevo": nuevos[0] if nuevos else None,
                 "hallazgos_nuevos": nuevos,
                 "mensaje": "Incumplimiento de EPP detectado en vivo por el motor",
@@ -263,7 +281,11 @@ class GestorAnalisis:
         if corrida_id == "demo":
             r_motor = self.raiz / "salida/hallazgos.json"
             r_web = self.dir_web / "salida/hallazgos.json"
-            nuevo = cruce.actualizar_corregido(r_motor, hallazgo_id, corregido)
+            if not r_motor.exists() and r_web.exists():
+                r_motor.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(r_web, r_motor)
+            objetivo = r_motor if r_motor.exists() else r_web
+            nuevo = cruce.actualizar_corregido(objetivo, hallazgo_id, corregido)
             if nuevo and r_web.parent.exists():
                 _escribir_json(r_web, nuevo)
                 _escribir_json(self.dir_web / "red.json", red.construir(nuevo))
@@ -434,11 +456,12 @@ def crear_servidor(puerto: int = 8000, raiz: Path = Path("."), dir_web: Path = P
             m_rec = RECORTE_RE.match(ruta)
             if m_rec:
                 origen, id_, arch = m_rec.groups()
-                f_path = (
-                    raiz / "salida_tarjetas" / id_ / "recortes" / arch
-                    if origen == "tarjetas"
-                    else gestor.dir / id_ / "salida" / "recortes" / arch
-                )
+                if origen == "tarjetas":
+                    f_path = raiz / "salida_tarjetas" / id_ / "recortes" / arch
+                    if not f_path.exists():
+                        f_path = gestor.dir_web / "ensayos" / id_ / "recortes" / arch
+                else:
+                    f_path = gestor.dir / id_ / "salida" / "recortes" / arch
                 if not f_path.exists():
                     return self._json(HTTPStatus.NOT_FOUND, {"error": "Recorte no encontrado"})
                 raw = f_path.read_bytes()

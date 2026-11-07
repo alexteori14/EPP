@@ -1,0 +1,822 @@
+{
+  "resumen": {
+    "total_problemas": 7,
+    "dinero_en_riesgo_diario": 3620.0,
+    "dinero_recuperado_diario": 0,
+    "frase": "7 trabajadores sin EPP completo · US$3,620.00 al día en riesgo",
+    "trabajadores_incompletos": 7,
+    "epp_agotados": 0,
+    "lecturas_dudosas": 1,
+    "cumplimiento_turno_pct": 33.3,
+    "planta_id": "MTY-N01",
+    "planta_nombre": "Planta Monterrey Norte · Aceros & Logística InduSafe",
+    "turno_nombre": "Turno Matutino 06:00",
+    "prendas_evaluadas": [
+      "lentes",
+      "tapones",
+      "chaleco",
+      "guantes"
+    ],
+    "fecha_escaneo": "2026-11-07T06:52:07+00:00",
+    "disclaimer": "Filtro pre-turno · Datos reales de Kaggle + planta demostrativa InduSafe",
+    "moneda": "US$",
+    "video": "recorrido_turno.mp4",
+    "video_url": "/salida/recorrido_anotado.mp4",
+    "segundos_proceso": 8.4,
+    "fps": 24.0,
+    "supuestos_calculo": "Falta Lentes ANSI Z87.1: US$420/día (exposición ocular y multa NOM-017-STPS). Falta Tapones Auditivos NRR 32 dB: US$380/día (riesgo acústico >85 dB y multa NOM-011-STPS). Faltan Guantes Anticorte A4 (solo en puestos que lo exigen): US$340/día (riesgo de lesión manual). Falta Chaleco Clase 2: US$290/día (baja visibilidad en pasillos de montacargas). Guantes en puestos de supervisión/inspección/montacargas: OPCIONALES (US$0.00, no detiene acceso). Múltiples EPP faltantes: suma del riesgo diario de cada prenda obligatoria omitida. Lectura dudosa (zona oculta o confianza < 60 %): US$0.00 (no se estima dinero sin certeza)."
+  },
+  "posiciones": [
+    {
+      "id": "pos-l1-t1",
+      "codigo": "L1-T1",
+      "linea": 1,
+      "posicion": 1,
+      "estado": "ok",
+      "id_empleado": "EMP-101",
+      "trabajador": "Carlos Mendoza",
+      "puesto": "Operador de Corte CNC",
+      "requiere_guantes": true,
+      "prendas_completas": 4,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": null,
+      "evidencia": "/salida/recortes/L1-T1.jpg",
+      "evidencia_zona": "/salida/recortes/L1-T1_zona.jpg"
+    },
+    {
+      "id": "pos-l1-t2",
+      "codigo": "L1-T2",
+      "linea": 1,
+      "posicion": 2,
+      "estado": "error",
+      "id_empleado": "EMP-102",
+      "trabajador": "Marco Antonio Ríos",
+      "puesto": "Soldador de Estructura",
+      "requiere_guantes": true,
+      "prendas_completas": 1,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l1-t2",
+      "evidencia": "/salida/recortes/L1-T2.jpg",
+      "evidencia_zona": "/salida/recortes/L1-T2_zona.jpg",
+      "tipo": "multiples_epp_faltantes",
+      "impacto_diario": 1140.0,
+      "accion": "Detener en filtro y entregar Lentes de seguridad, Tapones auditivos y Guantes anticorte desde caseta (Lentes de seguridad: 18 en caseta, Tapones auditivos: 40 en caseta, Guantes anticorte: 24 en caseta) antes de autorizar el pase."
+    },
+    {
+      "id": "pos-l1-t3",
+      "codigo": "L1-T3",
+      "linea": 1,
+      "posicion": 3,
+      "estado": "ok",
+      "id_empleado": "EMP-103",
+      "trabajador": "Luis Fernando Vega",
+      "puesto": "Técnico de Troquelado",
+      "requiere_guantes": true,
+      "prendas_completas": 4,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": null,
+      "evidencia": "/salida/recortes/L1-T3.jpg",
+      "evidencia_zona": "/salida/recortes/L1-T3_zona.jpg"
+    },
+    {
+      "id": "pos-l1-t4",
+      "codigo": "L1-T4",
+      "linea": 1,
+      "posicion": 4,
+      "estado": "error",
+      "id_empleado": "EMP-104",
+      "trabajador": "Jorge Alberto Soto",
+      "puesto": "Operador de Prensa",
+      "requiere_guantes": true,
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l1-t4",
+      "evidencia": "/salida/recortes/L1-T4.jpg",
+      "evidencia_zona": "/salida/recortes/L1-T4_zona.jpg",
+      "tipo": "sin_lentes",
+      "impacto_diario": 420.0,
+      "accion": "Entregar Lentes Policarbonato Anti-Impacto ANSI Z87.1 en caseta (18 piezas disponibles) y re-escanear en kiosco."
+    },
+    {
+      "id": "pos-l2-t1",
+      "codigo": "L2-T1",
+      "linea": 2,
+      "posicion": 1,
+      "estado": "error",
+      "id_empleado": "EMP-201",
+      "trabajador": "Ricardo Morales",
+      "puesto": "Operador de Montacargas",
+      "requiere_guantes": false,
+      "prendas_completas": 2,
+      "prendas_requeridas": 3,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": false
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l2-t1",
+      "evidencia": "/salida/recortes/L2-T1.jpg",
+      "evidencia_zona": "/salida/recortes/L2-T1_zona.jpg",
+      "tipo": "sin_chaleco",
+      "impacto_diario": 290.0,
+      "accion": "Entregar Chaleco Reflejante Clase 2 Alta Visibilidad en caseta (12 piezas disponibles) y re-escanear en kiosco."
+    },
+    {
+      "id": "pos-l2-t2",
+      "codigo": "L2-T2",
+      "linea": 2,
+      "posicion": 2,
+      "estado": "error",
+      "id_empleado": "EMP-202",
+      "trabajador": "Roberto Domínguez",
+      "puesto": "Auxiliar de Maniobras",
+      "requiere_guantes": true,
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l2-t2",
+      "evidencia": "/salida/recortes/L2-T2.jpg",
+      "evidencia_zona": "/salida/recortes/L2-T2_zona.jpg",
+      "tipo": "sin_guantes",
+      "impacto_diario": 340.0,
+      "accion": "Entregar Guantes Nitrilo Anticorte Nivel A4 en caseta (24 piezas disponibles) y re-escanear en kiosco."
+    },
+    {
+      "id": "pos-l2-t3",
+      "codigo": "L2-T3",
+      "linea": 2,
+      "posicion": 3,
+      "estado": "revisar",
+      "id_empleado": "EMP-203",
+      "trabajador": "Daniel Espinoza",
+      "puesto": "Supervisor de Patio",
+      "requiere_guantes": false,
+      "prendas_completas": 2,
+      "prendas_requeridas": 3,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "dudoso",
+          "confianza": 0.48,
+          "lecturas": 1,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": false
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l2-t3",
+      "evidencia": "/salida/recortes/L2-T3.jpg",
+      "evidencia_zona": "/salida/recortes/L2-T3_zona.jpg",
+      "tipo": "revisar",
+      "impacto_diario": 0.0,
+      "accion": "Verificar visualmente tapones auditivos de Daniel Espinoza en caseta sin detener la fila."
+    },
+    {
+      "id": "pos-l2-t4",
+      "codigo": "L2-T4",
+      "linea": 2,
+      "posicion": 4,
+      "estado": "error",
+      "id_empleado": "EMP-204",
+      "trabajador": "Héctor Navarro",
+      "puesto": "Almacenista de Acero",
+      "requiere_guantes": false,
+      "prendas_completas": 1,
+      "prendas_requeridas": 3,
+      "prendas": {
+        "lentes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": false
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l2-t4",
+      "evidencia": "/salida/recortes/L2-T4.jpg",
+      "evidencia_zona": "/salida/recortes/L2-T4_zona.jpg",
+      "tipo": "multiples_epp_faltantes",
+      "impacto_diario": 710.0,
+      "accion": "Detener en filtro y entregar Lentes de seguridad y Chaleco reflejante desde caseta (Lentes de seguridad: 18 en caseta, Chaleco reflejante: 12 en caseta) antes de autorizar el pase."
+    },
+    {
+      "id": "pos-l3-t1",
+      "codigo": "L3-T1",
+      "linea": 3,
+      "posicion": 1,
+      "estado": "ok",
+      "id_empleado": "EMP-301",
+      "trabajador": "Alejandro Cabrera",
+      "puesto": "Inspector de Calidad",
+      "requiere_guantes": false,
+      "prendas_completas": 3,
+      "prendas_requeridas": 3,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": false
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": null,
+      "evidencia": "/salida/recortes/L3-T1.jpg",
+      "evidencia_zona": "/salida/recortes/L3-T1_zona.jpg"
+    },
+    {
+      "id": "pos-l3-t2",
+      "codigo": "L3-T2",
+      "linea": 3,
+      "posicion": 2,
+      "estado": "error",
+      "id_empleado": "EMP-302",
+      "trabajador": "Sergio Valenzuela",
+      "puesto": "Operador de Esmerilado",
+      "requiere_guantes": true,
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l3-t2",
+      "evidencia": "/salida/recortes/L3-T2.jpg",
+      "evidencia_zona": "/salida/recortes/L3-T2_zona.jpg",
+      "tipo": "sin_tapones",
+      "impacto_diario": 380.0,
+      "accion": "Entregar Tapones Auditivos de Inserción NRR 32 dB NOM-011 en caseta (40 piezas disponibles) y re-escanear en kiosco."
+    },
+    {
+      "id": "pos-l3-t3",
+      "codigo": "L3-T3",
+      "linea": 3,
+      "posicion": 3,
+      "estado": "error",
+      "id_empleado": "EMP-303",
+      "trabajador": "Miguel Ángel Luna",
+      "puesto": "Técnico de Mantenimiento",
+      "requiere_guantes": true,
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "falta",
+          "confianza": 0.89,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": "hallazgo-l3-t3",
+      "evidencia": "/salida/recortes/L3-T3.jpg",
+      "evidencia_zona": "/salida/recortes/L3-T3_zona.jpg",
+      "tipo": "sin_guantes",
+      "impacto_diario": 340.0,
+      "accion": "Entregar Guantes Nitrilo Anticorte Nivel A4 en caseta (24 piezas disponibles) y re-escanear en kiosco."
+    },
+    {
+      "id": "pos-l3-t4",
+      "codigo": "L3-T4",
+      "linea": 3,
+      "posicion": 4,
+      "estado": "ok",
+      "id_empleado": "EMP-304",
+      "trabajador": "Eduardo Castañeda",
+      "puesto": "Armador de Subensambles",
+      "requiere_guantes": true,
+      "prendas_completas": 4,
+      "prendas_requeridas": 4,
+      "prendas": {
+        "lentes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 18,
+          "requerida": true
+        },
+        "tapones": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 40,
+          "requerida": true
+        },
+        "chaleco": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 12,
+          "requerida": true
+        },
+        "guantes": {
+          "estado": "ok",
+          "confianza": 0.92,
+          "lecturas": 5,
+          "stock_caseta": 24,
+          "requerida": true
+        }
+      },
+      "inventario_caseta": 12,
+      "hallazgo_id": null,
+      "evidencia": "/salida/recortes/L3-T4.jpg",
+      "evidencia_zona": "/salida/recortes/L3-T4_zona.jpg"
+    }
+  ],
+  "hallazgos": [
+    {
+      "id": "hallazgo-l1-t2",
+      "tipo": "multiples_epp_faltantes",
+      "codigo": "L1-T2",
+      "trabajador": "Marco Antonio Ríos",
+      "id_empleado": "EMP-102",
+      "puesto": "Soldador de Estructura",
+      "requiere_guantes": true,
+      "linea": 1,
+      "posicion": 2,
+      "prendas_faltantes": [
+        "lentes",
+        "tapones",
+        "guantes"
+      ],
+      "prendas_completas": 1,
+      "prendas_requeridas": 4,
+      "impacto_diario": 1140.0,
+      "cuadro": 27,
+      "segundo": 1.12,
+      "descripcion": "Marco Antonio Ríos (Soldador de Estructura) intentó ingresar al turno sin Lentes de seguridad, Tapones auditivos y Guantes anticorte.",
+      "accion_sugerida": "Detener en filtro y entregar Lentes de seguridad, Tapones auditivos y Guantes anticorte desde caseta (Lentes de seguridad: 18 en caseta, Tapones auditivos: 40 en caseta, Guantes anticorte: 24 en caseta) antes de autorizar el pase.",
+      "evidencia_crop": "/salida/recortes/L1-T2_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L1-T2.jpg",
+      "corregido": false,
+      "confianza": 0.89
+    },
+    {
+      "id": "hallazgo-l2-t4",
+      "tipo": "multiples_epp_faltantes",
+      "codigo": "L2-T4",
+      "trabajador": "Héctor Navarro",
+      "id_empleado": "EMP-204",
+      "puesto": "Almacenista de Acero",
+      "requiere_guantes": false,
+      "linea": 2,
+      "posicion": 4,
+      "prendas_faltantes": [
+        "lentes",
+        "chaleco"
+      ],
+      "prendas_completas": 1,
+      "prendas_requeridas": 3,
+      "impacto_diario": 710.0,
+      "cuadro": 135,
+      "segundo": 5.62,
+      "descripcion": "Héctor Navarro (Almacenista de Acero) intentó ingresar al turno sin Lentes de seguridad y Chaleco reflejante.",
+      "accion_sugerida": "Detener en filtro y entregar Lentes de seguridad y Chaleco reflejante desde caseta (Lentes de seguridad: 18 en caseta, Chaleco reflejante: 12 en caseta) antes de autorizar el pase.",
+      "evidencia_crop": "/salida/recortes/L2-T4_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L2-T4.jpg",
+      "corregido": false,
+      "confianza": 0.89
+    },
+    {
+      "id": "hallazgo-l1-t4",
+      "tipo": "sin_lentes",
+      "codigo": "L1-T4",
+      "trabajador": "Jorge Alberto Soto",
+      "id_empleado": "EMP-104",
+      "puesto": "Operador de Prensa",
+      "requiere_guantes": true,
+      "linea": 1,
+      "posicion": 4,
+      "prendas_faltantes": [
+        "lentes"
+      ],
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "impacto_diario": 420.0,
+      "cuadro": 63,
+      "segundo": 2.62,
+      "descripcion": "Jorge Alberto Soto (Operador de Prensa) se presentó en la fila sin lentes de seguridad.",
+      "accion_sugerida": "Entregar Lentes Policarbonato Anti-Impacto ANSI Z87.1 en caseta (18 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/salida/recortes/L1-T4_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L1-T4.jpg",
+      "corregido": false,
+      "confianza": 0.89
+    },
+    {
+      "id": "hallazgo-l3-t2",
+      "tipo": "sin_tapones",
+      "codigo": "L3-T2",
+      "trabajador": "Sergio Valenzuela",
+      "id_empleado": "EMP-302",
+      "puesto": "Operador de Esmerilado",
+      "requiere_guantes": true,
+      "linea": 3,
+      "posicion": 2,
+      "prendas_faltantes": [
+        "tapones"
+      ],
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "impacto_diario": 380.0,
+      "cuadro": 171,
+      "segundo": 7.12,
+      "descripcion": "Sergio Valenzuela (Operador de Esmerilado) se presentó en la fila sin tapones auditivos.",
+      "accion_sugerida": "Entregar Tapones Auditivos de Inserción NRR 32 dB NOM-011 en caseta (40 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/salida/recortes/L3-T2_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L3-T2.jpg",
+      "corregido": false,
+      "confianza": 0.89
+    },
+    {
+      "id": "hallazgo-l2-t2",
+      "tipo": "sin_guantes",
+      "codigo": "L2-T2",
+      "trabajador": "Roberto Domínguez",
+      "id_empleado": "EMP-202",
+      "puesto": "Auxiliar de Maniobras",
+      "requiere_guantes": true,
+      "linea": 2,
+      "posicion": 2,
+      "prendas_faltantes": [
+        "guantes"
+      ],
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "impacto_diario": 340.0,
+      "cuadro": 99,
+      "segundo": 4.12,
+      "descripcion": "Roberto Domínguez (Auxiliar de Maniobras) se presentó en la fila sin guantes anticorte.",
+      "accion_sugerida": "Entregar Guantes Nitrilo Anticorte Nivel A4 en caseta (24 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/salida/recortes/L2-T2_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L2-T2.jpg",
+      "corregido": false,
+      "confianza": 0.89
+    },
+    {
+      "id": "hallazgo-l3-t3",
+      "tipo": "sin_guantes",
+      "codigo": "L3-T3",
+      "trabajador": "Miguel Ángel Luna",
+      "id_empleado": "EMP-303",
+      "puesto": "Técnico de Mantenimiento",
+      "requiere_guantes": true,
+      "linea": 3,
+      "posicion": 3,
+      "prendas_faltantes": [
+        "guantes"
+      ],
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "impacto_diario": 340.0,
+      "cuadro": 189,
+      "segundo": 7.88,
+      "descripcion": "Miguel Ángel Luna (Técnico de Mantenimiento) se presentó en la fila sin guantes anticorte.",
+      "accion_sugerida": "Entregar Guantes Nitrilo Anticorte Nivel A4 en caseta (24 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/salida/recortes/L3-T3_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L3-T3.jpg",
+      "corregido": false,
+      "confianza": 0.89
+    },
+    {
+      "id": "hallazgo-l2-t1",
+      "tipo": "sin_chaleco",
+      "codigo": "L2-T1",
+      "trabajador": "Ricardo Morales",
+      "id_empleado": "EMP-201",
+      "puesto": "Operador de Montacargas",
+      "requiere_guantes": false,
+      "linea": 2,
+      "posicion": 1,
+      "prendas_faltantes": [
+        "chaleco"
+      ],
+      "prendas_completas": 2,
+      "prendas_requeridas": 3,
+      "impacto_diario": 290.0,
+      "cuadro": 81,
+      "segundo": 3.38,
+      "descripcion": "Ricardo Morales (Operador de Montacargas) se presentó en la fila sin chaleco reflejante.",
+      "accion_sugerida": "Entregar Chaleco Reflejante Clase 2 Alta Visibilidad en caseta (12 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/salida/recortes/L2-T1_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L2-T1.jpg",
+      "corregido": false,
+      "confianza": 0.89
+    },
+    {
+      "id": "hallazgo-l2-t3",
+      "tipo": "revisar",
+      "codigo": "L2-T3",
+      "trabajador": "Daniel Espinoza",
+      "id_empleado": "EMP-203",
+      "puesto": "Supervisor de Patio",
+      "requiere_guantes": false,
+      "linea": 2,
+      "posicion": 3,
+      "prendas_faltantes": [],
+      "prendas_completas": 2,
+      "prendas_requeridas": 3,
+      "impacto_diario": 0.0,
+      "cuadro": 117,
+      "segundo": 4.88,
+      "descripcion": "La zona de tapones auditivos se vio parcialmente oculta o con baja nitidez (confianza 48 %).",
+      "accion_sugerida": "Verificar visualmente tapones auditivos de Daniel Espinoza en caseta sin detener la fila.",
+      "evidencia_crop": "/salida/recortes/L2-T3_zona.jpg",
+      "evidencia_persona": "/salida/recortes/L2-T3.jpg",
+      "corregido": false,
+      "confianza": 0.48
+    }
+  ]
+}

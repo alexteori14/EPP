@@ -101,13 +101,18 @@
 
 ---
 
-## 4. Recetario de Comandos para Futuras Modificaciones
+## 4. Recetario de Comandos para Futuras Modificaciones y Arranque Cero-Fricción
+
+> **Garantía de Clon Limpio (1 Comando):** El repositorio cuenta con autoinstalación completa en [`iniciar.sh`](file:///home/alexteori/Documentos/repositorios/EPP/iniciar.sh), [`iniciar.bat`](file:///home/alexteori/Documentos/repositorios/EPP/iniciar.bat) y [`package.json`](file:///home/alexteori/Documentos/repositorios/EPP/package.json), normalización de finales de línea en [`.gitattributes`](file:///home/alexteori/Documentos/repositorios/EPP/.gitattributes), dependencias multiplataforma en [`motor-procesamiento/requirements.txt`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/requirements.txt) y respaldos automáticos hacia `Frontend/public/salida` y `Frontend/public/ensayos` en [`cruce/api.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/cruce/api.py), [`cruce/chat.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/cruce/chat.py) y [`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py) cuando se descarga el proyecto desde cero.
 
 ```bash
+# 0. Verificar autoinstalación (.env + .venv + node_modules), API (:8000) y build en 1 comando
+./iniciar.sh --verificar
+
 # 1. Comprobar el porcentaje de exactitud del modelo y motor (TorchMetrics + Supervision + ONNX Runtime)
 cd motor-procesamiento && ./.venv/bin/python -m entrenamiento.verificar_exactitud --no-exportar
 
-# 2. Correr los 21 tests unitarios e integrales de Python
+# 2. Correr los 22 tests unitarios e integrales de Python (funciona desde raíz o motor-procesamiento/)
 motor-procesamiento/.venv/bin/python -m pytest -v
 
 # 3. Verificar tipos y compilar el Frontend Next.js
@@ -119,6 +124,6 @@ fuser -k 8000/tcp 3018/tcp 2>/dev/null || true
 (cd Frontend && npx next start -p 3018) &
 sleep 4 && E2E_URL="http://localhost:3018" node Frontend/tests/e2e.mjs
 
-# 5. Iniciar todo el sistema en vivo (:8000 API + :3000 Consola SCADA Web)
-./iniciar.sh
+# 5. Iniciar todo el sistema en vivo con 1 comando (:8000 API + :3000 Consola SCADA Web)
+./iniciar.sh          # Linux/macOS/WSL/Git Bash (o .\iniciar.bat en Windows / npm start)
 ```
