@@ -3,42 +3,43 @@
 **Nombre del Sistema:** Vigía EPP — Plataforma de Inspección Pre-Turno en Tiempo Real y Auditoría Financiera de Equipo de Protección Personal (EPP)  
 **Ubicación del Repositorio:** [`/home/alexteori/Documentos/repositorios/EPP`](file:///home/alexteori/Documentos/repositorios/EPP)  
 **Repositorio Base Analizado y Perfeccionado:** [`/home/alexteori/Documentos/repositorios/ubik`](file:///home/alexteori/Documentos/repositorios/ubik)  
-**Arquitectura Seleccionada:** **Opción A** (Kiosco en vivo `< 300 ms` + Auditoría de video de turno completo + Modo Jurado + Asistente IA) con **Enfoque 1** (Detector unificado `YOLO11n` de 7 clases + Asociación Geométrica Anatómica de 3 Zonas + Rastreo y Votación Multi-Cuadro).
+**Arquitectura Seleccionada:** **Opción A** (Kiosco en vivo `< 300 ms` + Auditoría de video de turno completo + Modo Jurado + Asistente IA) con **Enfoque 1** (Detector unificado `YOLO11n` de 9 clases + Asociación Geométrica Anatómica de 4 Zonas + Guantes Opcionales según Puesto + Rastreo y Votación Multi-Cuadro) e **Interfaz Industrial Propia Opción 1** (*Centro de Comando Industrial SCADA/HMI y Caseta de Torniquete*).
 
 ---
 
 ## Índice General
-1. [Propósito del Proyecto y Regla Estricta de Dominio (3 Prendas)](#1-propósito-del-proyecto-y-regla-estricta-de-dominio-3-prendas)
+1. [Propósito del Proyecto y Reglas Estrictas de Dominio (4 Zonas + Guantes Opcionales por Puesto)](#1-propósito-del-proyecto-y-reglas-estrictas-de-dominio-4-zonas--guantes-opcionales-por-puesto)
 2. [Auditoría de `ubik` y Cómo `Vigía EPP` lo Perfecciona](#2-auditoría-de-ubik-y-cómo-vigía-epp-lo-perfecciona)
 3. [Herramientas, Skills, Plugins y Metodología Utilizados](#3-herramientas-skills-plugins-y-metodología-utilizados)
 4. [Arquitectura General de 3 Capas y Árbol Completo de Archivos](#4-arquitectura-general-de-3-capas-y-árbol-completo-de-archivos)
-5. [Datasets de Kaggle (MCP), Deduplicación Anti-Leakage y Entrenamiento YOLO11](#5-datasets-de-kaggle-mcp-deduplicación-anti-leakage-y-entrenamiento-yolo11)
+5. [Datasets de Kaggle (MCP), Auditoría de Tapones Auditivos, Deduplicación Anti-Leakage y Entrenamiento YOLO11](#5-datasets-de-kaggle-mcp-auditoría-de-tapones-auditivos-deduplicación-anti-leakage-y-entrenamiento-yolo11)
 6. [Ingeniería del Motor de Visión (`motor-procesamiento/motor/`)](#6-ingeniería-del-motor-de-visión-motor-procesamientomotor)
 7. [Simulador de Turno, Modo Jurado y Evaluación de Precisión](#7-simulador-de-turno-modo-jurado-y-evaluación-de-precisión)
 8. [Motor de Cruce Operativo, Riesgo Financiero, Red de 18 Plantas y Asistente RAG (`cruce/`)](#8-motor-de-cruce-operativo-riesgo-financiero-red-de-18-plantas-y-asistente-rag-cruce)
 9. [Especificación Completa de la API HTTP Local (`cruce/api.py` en `:8000`)](#9-especificación-completa-de-la-api-http-local-cruceapipy-en-8000)
-10. [Arquitectura del Tablero Frontend (`Frontend/`) y las 8 Pantallas](#10-arquitectura-del-tablero-frontend-frontend-y-las-8-pantallas)
+10. [Arquitectura del Tablero Frontend SCADA/HMI (`Frontend/`) y las 8 Pantallas](#10-arquitectura-del-tablero-frontend-scadahmi-frontend-y-las-8-pantallas)
 11. [Contratos JSON Exactos entre Capas](#11-contratos-json-exactos-entre-capas)
 12. [Pruebas Automatizadas (`pytest` + `Playwright`) y Guía de Operación](#12-pruebas-automatizadas-pytest--playwright-y-guía-de-operación)
+13. [Evolución v2.4: Rediseño Industrial Opción 1, Tapones Auditivos (`NOM-011-STPS`) y Guantes Opcionales por Puesto](#13-evolución-v24-rediseño-industrial-opción-1-tapones-auditivos-nom-011-stps-y-guantes-opcionales-por-puesto)
 
 ---
 
-## 1. Propósito del Proyecto y Regla Estricta de Dominio (3 Prendas)
+## 1. Propósito del Proyecto y Reglas Estrictas de Dominio (4 Zonas + Guantes Opcionales por Puesto)
 
 ### 1.1 El Problema Operativo Real
 En plantas industriales de manufactura metalmecánica, ensamble y logística pesada, cada trabajador debe presentarse al inicio de su turno portando su **Equipo de Protección Personal (EPP) completo**. En la práctica, numerosos operadores omiten alguna prenda porque les resulta incómoda, calurosa o porque la olvidaron en su casillero. Cuando la supervisión en el cambio de turno es manual, estas omisiones pasan desapercibidas y provocan:
-- **Incapacidades laborales por lesiones oculares o cortes manuales.**
+- **Incapacidades laborales por lesiones oculares, daño auditivo inducido por ruido (`>85 dB(A)`) o cortes manuales.**
 - **Riesgo de atropellamiento en pasillos de montacargas por falta de alta visibilidad.**
-- **Multas e inspecciones sancionadoras bajo normas oficiales (`NOM-017-STPS`, `NOM-006-STPS`, `OSHA 1910.133 / 1910.138`).**
+- **Multas e inspecciones sancionadoras bajo normas oficiales (`NOM-017-STPS`, `NOM-011-STPS`, `NOM-006-STPS`, `OSHA 1910.133 / 1910.95 / 1910.138`).**
 - **Paros de estación cuando la caseta de seguridad no tiene stock de reposición inmediata.**
 
-### 1.2 Restricción de Dominio de la Planta: Exclusión Total de Casco y Mascarilla
+### 1.2 Restricción de Dominio de la Planta: Exclusión Total de Casco y Mascarilla + 4 Equipos Evaluados
 Por requerimiento específico de la planta donde se instala **Vigía EPP**:
-> **En esta instalación NO se solicita casco (`casco`) ni mascarilla (`mascarilla`).**
+> **En esta instalación NO se solicita casco (`casco`) ni mascarilla (`mascarilla`). Se evalúan 4 componentes de EPP: 3 obligatorios generales (Lentes, Tapones Auditivos y Chaleco) y 1 condicional según el puesto de trabajo (Guantes).**
 
 Esta regla de negocio gobierna todo el código desde la raíz:
 1. El filtro de armonización de datasets ([`entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py)) descarta explícitamente cualquier etiqueta `helmet`, `no_helmet`, `Hardhat`, `NO-Hardhat`, `Mask`, `NO-Mask`.
-2. El contrato central ([`motor/contrato.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/contrato.py)) define exactamente `PRENDAS = ("lentes", "chaleco", "guantes")` y las **7 clases canónicas** del modelo `modelos/epp.pt`:
+2. El contrato central ([`motor/contrato.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/contrato.py)) define `PRENDAS = ("lentes", "tapones", "chaleco", "guantes")`, `PRENDAS_GENERALES = ("lentes", "tapones", "chaleco")`, `PUESTOS_GUANTES_OPCIONALES` y las **9 clases canónicas** del detector:
    - `0: persona`
    - `1: chaleco`
    - `2: sin_chaleco`
@@ -46,13 +47,16 @@ Esta regla de negocio gobierna todo el código desde la raíz:
    - `4: sin_lentes`
    - `5: guantes`
    - `6: sin_guantes`
-3. Las **3 prendas obligatorias** evaluadas en cada trabajador son:
+   - `7: tapones`
+   - `8: sin_tapones`
+3. Los **4 componentes de EPP** evaluados en cada trabajador son:
 
-| Clave Interna | Nombre Comercial en Planta | Norma Aplicable | Zona Anatómica Relativa (`y_rel` en `persona`) | Margen Horizontal (`MARGEN_X_ZONA`) | Riesgo Diario por Omisión |
-|---|---|---|---|---|---|
-| `lentes` | Lentes Policarbonato Anti-Impacto ANSI Z87.1 | NOM-017-STPS / OSHA 1910.133 | `ZONA_LENTES = (0.00, 0.32)` | `0.05` (`5 %` del ancho) | **US$420.00/día** |
-| `chaleco` | Chaleco Reflejante Clase 2 Alta Visibilidad | NOM-006-STPS / ANSI 107 | `ZONA_CHALECO = (0.16, 0.72)` | `0.08` (`8 %` del ancho) | **US$290.00/día** |
-| `guantes` | Guantes Nitrilo Anticorte Nivel A4 | NOM-017-STPS / OSHA 1910.138 | `ZONA_GUANTES = (0.28, 0.96)` | `0.18` (`18 %` del ancho) | **US$340.00/día** |
+| Clave Interna | Nombre Comercial en Planta | Condición de Uso | Norma Aplicable | Zona Anatómica Relativa (`y_rel` en `persona`) | Margen Horizontal (`MARGEN_X_ZONA`) | Riesgo Diario por Omisión |
+|---|---|---|---|---|---|---|
+| `lentes` | Lentes Policarbonato Anti-Impacto ANSI Z87.1 | **Obligatorio General** | NOM-017-STPS / OSHA 1910.133 | `ZONA_LENTES = (0.00, 0.32)` | `0.05` (`5 %` del ancho) | **US$420.00/día** |
+| `tapones` | Tapones Auditivos de Inserción NRR 32 dB | **Obligatorio General** | NOM-011-STPS / OSHA 1910.95 | `ZONA_TAPONES = (0.04, 0.28)` | `0.08` (`8 %` del ancho) | **US$380.00/día** |
+| `chaleco` | Chaleco Reflejante Clase 2 Alta Visibilidad | **Obligatorio General** | NOM-006-STPS / ANSI 107 | `ZONA_CHALECO = (0.16, 0.72)` | `0.08` (`8 %` del ancho) | **US$290.00/día** |
+| `guantes` | Guantes Nitrilo Anticorte Nivel A4 | **Obligatorio en Puestos Operativos / Opcional en Supervisión, Inspección y Montacargas** | NOM-017-STPS / OSHA 1910.138 | `ZONA_GUANTES = (0.28, 0.96)` | `0.18` (`18 %` del ancho) | **US$340.00/día** *(US$0.00 si su puesto no los exige)* |
 
 ---
 
@@ -105,9 +109,10 @@ Cada herramienta solicitada para la construcción del proyecto fue instalada, co
 ```mermaid
 flowchart LR
   subgraph KAGGLE["1. Entrenamiento (Kaggle MCP -> YOLO11)"]
-    K1["ndomalau/ppe-dataset"] --> PREP["entrenamiento/preparar_epp.py\n(7 clases · Sin casco ni mascarilla\nDeduplicación .rf + SHA1)"]
+    K1["ndomalau/ppe-dataset"] --> PREP["entrenamiento/preparar_epp.py\n(9 clases · Sin casco ni mascarilla\nDeduplicación .rf + SHA1)"]
     K2["shlokraval/ppe-dataset-yolov8"] --> PREP
     K3["slimese/personal-protective-equipment"] --> PREP
+    K4["4º Dataset Kaggle (Tapones Auditivos)"] -.-> PREP
     PREP --> TRAIN["entrenamiento/entrenar_yolo.py\n(RTX 4050 GPU)"]
     TRAIN --> MODELO["modelos/epp.pt\n(mAP50: 0.672 · 3.3 ms)"]
   end
@@ -116,21 +121,21 @@ flowchart LR
     VID["Video de Turno / Cámara Kiosco"] --> CUADROS["motor/cuadros.py\n(Nitidez Laplaciana en hilo)"]
     CUADROS --> DET["motor/detector.py\n(DetectorEPP)"]
     MODELO --> DET
-    DET --> ASOC["motor/asociar.py\n(3 Zonas Anatómicas:\nOjos, Torso, Manos)"]
+    DET --> ASOC["motor/asociar.py\n(4 Zonas Anatómicas:\nOjos, Oídos, Torso, Manos)"]
     ASOC --> RAST["motor/rastreo.py\n(IoU + Votación Multi-Cuadro)"]
     RAST --> OBS["salida/observaciones.json\n+ recorrido_anotado.mp4\n+ recortes/*.jpg"]
   end
 
   subgraph CRUCE["3. Cruce y API Local (motor-procesamiento/cruce/)"]
-    CSV["datos/sistema/\nturnos.csv\ninventario_epp.csv\nreglas_riesgo.csv"] --> HALL["cruce/hallazgos.py\n(Clasificación + US$/día +\nPersistencia PATCH)"]
+    CSV["datos/sistema/\nturnos.csv (guantes por puesto)\ninventario_epp.csv\nreglas_riesgo.csv"] --> HALL["cruce/hallazgos.py\n(Clasificación + US$/día +\nPersistencia PATCH)"]
     OBS --> HALL
     HALL --> RED["cruce/red.py\n(Proyección 18 plantas)"]
     HALL --> CHAT["cruce/chat.py\n(RAG Híbrido Gemini + Local)"]
     HALL --> API["cruce/api.py (:8000)"]
   end
 
-  subgraph WEB["4. Tablero Next.js 15 (Frontend/ :3000)"]
-    API <-->|"Proxy /motor/:path*"| NEXT["8 Pantallas Interactivas:\n/resumen · /kiosco · /recorrido\n/cuadrilla · /hallazgos · /red\n/analizar · /asistente"]
+  subgraph WEB["4. Consola SCADA Next.js 15 (Frontend/ :3000)"]
+    API <-->|"Proxy /motor/:path*"| NEXT["8 Pantallas SCADA/HMI (Opción 1):\n/resumen · /kiosco · /recorrido\n/cuadrilla · /hallazgos · /red\n/analizar · /asistente"]
   end
 ```
 
@@ -152,104 +157,114 @@ flowchart LR
 │   ├── README.md                                  # Manual de comandos del motor en Python
 │   ├── requirements.txt                           # Dependencias fijadas (ultralytics, torch, opencv, pyyaml)
 │   ├── datos/sistema/
-│   │   ├── turnos.csv                             # 12 estaciones (3 líneas × 4 puestos) del Turno Matutino
-│   │   ├── inventario_epp.csv                     # Stock en caseta, costo unitario, riesgo diario y paro
-│   │   └── reglas_riesgo.csv                      # Normativa NOM-017-STPS / OSHA por tipo de hallazgo
+│   │   ├── turnos.csv                             # 12 estaciones (3 líneas × 4 puestos) y prendas_requeridas por puesto
+│   │   ├── inventario_epp.csv                     # Stock en caseta, costo unitario, riesgo diario y paro (4 EPP)
+│   │   └── reglas_riesgo.csv                      # Normativa NOM-017 / NOM-011 / NOM-006 / OSHA por hallazgo
 │   ├── entrenamiento/
 │   │   ├── comun.py                               # Utilidades de rutas y copia de pesos entrenados
-│   │   ├── descargar_kaggle.py                    # Descarga de los 3 datasets de Kaggle
-│   │   ├── preparar_epp.py                        # Armonización a 7 clases y deduplicación .rf + SHA1
+│   │   ├── descargar_kaggle.py                    # Descarga de los datasets de Kaggle
+│   │   ├── preparar_epp.py                        # Armonización a 9 clases y deduplicación .rf + SHA1
 │   │   └── entrenar_yolo.py                       # Entrenamiento YOLO11n en GPU y exportación de métricas
 │   ├── modelos/
-│   │   ├── epp.pt                                 # Pesos YOLO11 entrenados para las 7 clases de Vigía EPP
+│   │   ├── epp.pt                                 # Pesos YOLO11 entrenados para Vigía EPP
 │   │   └── epp.json                               # Métricas reales de validación (mAP50: 0.672)
 │   ├── motor/
-│   │   ├── contrato.py                            # Constantes anatómicas, clases y lector de turnos.csv
+│   │   ├── contrato.py                            # 9 clases, 4 zonas anatómicas, guantes opcionales por puesto y turnos.csv
 │   │   ├── cuadros.py                             # Selector de cuadros nítidos por Laplaciano en hilo
 │   │   ├── detector.py                            # Envoltura DetectorEPP sobre Ultralytics YOLO
-│   │   ├── asociar.py                             # Asociación geométrica Persona <-> {Lentes, Chaleco, Guantes}
+│   │   ├── asociar.py                             # Asociación geométrica Persona <-> {Lentes, Tapones, Chaleco, Guantes}
 │   │   ├── rastreo.py                             # RastreadorTurno por IoU y votación multi-cuadro
 │   │   ├── anotar.py                              # Dibujo de cajas anatómicas, recortes y recodificación H.264
 │   │   ├── kiosco.py                              # Evaluador instantáneo (<300 ms) para torniquete en vivo
 │   │   └── pipeline.py                            # Pipeline completo de video -> observaciones.json
 │   ├── simulador/
-│   │   ├── datos_prueba.py                        # Verdad de terreno de las 12 estaciones del turno
+│   │   ├── datos_prueba.py                        # Verdad de terreno de las 12 estaciones y 5 tarjetas de Modo Jurado
 │   │   ├── render_turno.py                        # Renderizador determinista de recorrido_turno.mp4 con fotos Kaggle
-│   │   └── tarjetas.py                            # Generador de las 4 tarjetas de video del Modo Jurado
+│   │   └── tarjetas.py                            # Generador de las 5 tarjetas de video del Modo Jurado
 │   ├── herramientas/
 │   │   └── evaluar_motor.py                       # Evaluador de precisión contra escena/escena.json (100% precisión)
 │   ├── cruce/
-│   │   ├── hallazgos.py                           # Clasificador, cálculo US$/día y actualizar_corregido()
+│   │   ├── hallazgos.py                           # Clasificador, cálculo US$/día por puesto y actualizar_corregido()
 │   │   ├── red.py                                 # Proyección de riesgo sistémico vs local en 18 plantas
 │   │   ├── publicar.py                            # Publicador de artefactos hacia Frontend/public/
 │   │   ├── chat.py                                # Asistente RAG híbrido (Gemini + RAG determinista local)
 │   │   └── api.py                                 # Servidor HTTP multihilo en el puerto 8000
-│   └── tests/                                     # 18 pruebas automatizadas con pytest
+│   └── tests/                                     # 19 pruebas automatizadas con pytest
 │       ├── test_contrato.py
 │       ├── test_preparar_epp.py
 │       ├── test_asociar_rastreo.py
 │       ├── test_kiosco_pipeline.py
 │       └── test_cruce_api_chat.py
 └── Frontend/
-    ├── DISENO.md                                  # Sistema de diseño "Industrial Safety Slate"
+    ├── DISENO.md                                  # Sistema de diseño SCADA/HMI Opción 1
     ├── package.json                               # Next.js 15.1.7, React 19, Tailwind 3.4, Framer Motion, Playwright
     ├── next.config.ts                             # Proxy /motor/:path* -> http://localhost:8000/:path*
-    ├── tailwind.config.ts                         # Paleta extendida (slate-850/950, brand teal, Inter, Fira Code)
+    ├── tailwind.config.ts                         # Paleta oscura acero carbón, ámbar seguridad, esmeralda, rosa y cian
     ├── types/
-    │   ├── hallazgos.ts                           # Tipos de posiciones, hallazgos, resumen y Modo Jurado
-    │   ├── kiosco.ts                              # Tipos de RespuestaKiosco y PresetKiosco
+    │   ├── hallazgos.ts                           # Tipos de 4 zonas, hallazgos, resumen y Modo Jurado
+    │   ├── kiosco.ts                              # Tipos de RespuestaKiosco y 6 PresetKiosco
     │   ├── red.ts                                 # Tipos de escenarios y proyección en 18 plantas
     │   └── analisis.ts                            # Tipos de subida de video y chat RAG con fuentes
     ├── lib/
     │   ├── api/session.ts                         # Configuración de API_MOTOR_URL
     │   ├── api/analisis.ts                        # Cliente HTTP del navegador (Kiosco, PATCH, Jurado, Video, Chat)
     │   ├── data/loader.ts                         # Cargador SSR dinámico con fallback a public/salida/
-    │   └── formatters/contract.ts                 # Diccionarios en español, familias de riesgo y moneda es-MX
+    │   └── formatters/contract.ts                 # Diccionarios en español, 4 familias de riesgo y moneda es-MX
     ├── components/
     │   ├── iconos.ts                              # Mapa centralizado de iconos Lucide por pantalla
-    │   ├── graficas/Barras.tsx                    # Componentes Barra, Proporcion, BarraApilada, PuntosPrendas
-    │   ├── layout/{Sidebar,Header,TituloPagina}.tsx
-    │   ├── resumen/ResumenView.tsx                # Pantalla 1: Resumen + Modo Jurado en Vivo
-    │   ├── kiosco/KioscoView.tsx                  # Pantalla 2: Kiosco en Vivo (<300 ms)
+    │   ├── graficas/Barras.tsx                    # Componentes Barra, Proporcion, BarraApilada, PuntosPrendas (4 zonas)
+    │   ├── layout/{Header,TituloPagina}.tsx       # Top Command HUD industrial con telemetría acústica (sin Sidebar)
+    │   ├── resumen/ResumenView.tsx                # Pantalla 1: Monitor de Caseta + Modo Jurado (5 tarjetas)
+    │   ├── kiosco/KioscoView.tsx                  # Pantalla 2: Torniquete en Vivo (<300 ms) + Toggle Guantes por Puesto
     │   ├── recorrido/RecorridoView.tsx            # Pantalla 3: Video anotado + línea de tiempo interactiva
-    │   ├── cuadrilla/CuadrillaView.tsx            # Pantalla 4: Matriz 3x4 + Gemelo Anatómico SVG de 3 Zonas
-    │   ├── hallazgos/HallazgosView.tsx            # Pantalla 5: Hallazgos + botón persistente PATCH
+    │   ├── cuadrilla/CuadrillaView.tsx            # Pantalla 4: Matriz 3x4 + Gemelo Anatómico SVG de 4 Zonas
+    │   ├── hallazgos/HallazgosView.tsx            # Pantalla 5: Bitácora de Retenciones + botón persistente PATCH
     │   ├── red/RedView.tsx                        # Pantalla 6: Simulador de impacto en red (18 plantas)
     │   ├── analizar/AnalizarView.tsx              # Pantalla 7: Subida de nuevos videos de turno
-    │   └── asistente/AsistenteView.tsx            # Pantalla 8: Asistente conversacional RAG con citas
+    │   └── asistente/AsistenteView.tsx            # Pantalla 8: Inspector IA conversacional RAG con citas
     ├── app/                                       # Rutas App Router (/, /resumen, /kiosco, /recorrido, etc.)
     └── tests/e2e.mjs                              # Prueba E2E automatizada con Playwright para las 8 pantallas
 ```
 
 ---
 
-## 5. Datasets de Kaggle (MCP), Deduplicación Anti-Leakage y Entrenamiento YOLO11
+## 5. Datasets de Kaggle (MCP), Auditoría de Tapones Auditivos, Deduplicación Anti-Leakage y Entrenamiento YOLO11
 
-### 5.1 Los 3 Datasets de Kaggle Integrados
-El módulo [`motor-procesamiento/entrenamiento/descargar_kaggle.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/descargar_kaggle.py) descarga y organiza muestras balanceadas de los 3 datasets solicitados a través del endpoint de Kaggle:
-1. **`ndomalau/personal-protective-equipment-ppe-dataset`** (`goggles`, `no_goggles`, `gloves`, `no_gloves`, `vest`, `no_vest`, además de clases descartadas como `helmet`/`no_helmet`).
-2. **`shlokraval/ppe-dataset-yolov8`** (`Person`, `Safety Vest`, `NO-Safety Vest`, `Gloves`, `Goggles`, además de `Hardhat`, `Mask`, `Safety Cone` que se descartan).
-3. **`slimese/personal-protective-equipment`** (`Person`, `Safety Vest`, `NO-Safety Vest`, `Goggles`, `NO-Goggles`, `Gloves`, `NO-Gloves`, además de `Hardhat`/`Mask` que se descartan).
+### 5.1 Auditoría Exhaustiva de los 3 Datasets Iniciales de Kaggle
+El módulo [`motor-procesamiento/entrenamiento/descargar_kaggle.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/descargar_kaggle.py) descarga y organiza muestras de los 3 datasets iniciales de Kaggle, los cuales fueron auditados tanto en disco (`motor-procesamiento/datos_kaggle/`) como en sus metadatos oficiales de Kaggle:
+1. **`ndomalau/personal-protective-equipment-ppe-dataset`**: Contiene únicamente 5 clases (`helmet`, `no_helmet`, `no_vest`, `person`, `vest`).
+2. **`shlokraval/ppe-dataset-yolov8`**: Exportación de *Roboflow Construction Site Safety* con 14 clases (`Fall-Detected`, `Gloves`, `Goggles`, `Hardhat`, `Ladder`, `Mask`, `NO-Gloves`, `NO-Goggles`, `NO-Hardhat`, `NO-Mask`, `NO-Safety Vest`, `Person`, `Safety Cone`, `Safety Vest`).
+3. **`slimese/personal-protective-equipment`**: Mismas 14 clases de *Construction Site Safety*.
+
+> **Conclusión verificada al 100 %:** Ninguno de los 3 datasets iniciales posee fotografías ni etiquetas de tapones auditivos (`earplugs` / `hearing protection`). Por ello, el pipeline [`entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py) quedó preparado con las clases `7: tapones` y `8: sin_tapones` para integrar de inmediato el 4º dataset de Kaggle con protección auditiva.
 
 ### 5.2 Mapeo Exacto de Etiquetas (`MAPEO_NOMBRES` en `preparar_epp.py`)
-En [`motor-procesamiento/entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py#L31-L60), la función `mapear_etiqueta_linea()` traduce cada renglón YOLO `<cls_id> <cx> <cy> <w> <h>` al esquema unificado de 7 clases:
+En [`motor-procesamiento/entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py#L22-L60), la función `mapear_etiqueta_linea()` traduce cada renglón YOLO `<cls_id> <cx> <cy> <w> <h>` al esquema canónico de **9 clases**:
 
 ```python
 MAPEO_NOMBRES: dict[str, int] = {
     # 0: persona
-    "person": 0, "Person": 0,
+    "person": 0, "Person": 0, "worker": 0, "Worker": 0,
     # 1: chaleco
     "vest": 1, "Safety Vest": 1, "safety_vest": 1, "safety-vest": 1,
     # 2: sin_chaleco
-    "no_vest": 2, "NO-Safety Vest": 2, "no-safety-vest": 2,
+    "no_vest": 2, "NO-Safety Vest": 2, "no-safety-vest": 2, "no_safety_vest": 2,
     # 3: lentes
-    "goggles": 3, "Goggles": 3, "glasses": 3, "safety_glasses": 3,
+    "goggles": 3, "Goggles": 3, "glasses": 3, "safety_glasses": 3, "Safety Glasses": 3,
     # 4: sin_lentes
-    "no_goggles": 4, "NO-Goggles": 4, "no-goggles": 4,
+    "no_goggles": 4, "NO-Goggles": 4, "no-goggles": 4, "no_glasses": 4,
     # 5: guantes
-    "gloves": 5, "Gloves": 5,
+    "gloves": 5, "Gloves": 5, "glove": 5,
     # 6: sin_guantes
     "no_gloves": 6, "NO-Gloves": 6, "no-gloves": 6,
+    # 7: tapones auditivos / protectores auditivos de inserción
+    "earplugs": 7, "Earplugs": 7, "earplug": 7, "ear_protection": 7,
+    "Ear Protection": 7, "ear-protection": 7, "earmuffs": 7, "Earmuffs": 7,
+    "hearing_protection": 7, "tapones": 7,
+    # 8: sin_tapones
+    "no_earplugs": 8, "NO-Earplugs": 8, "no-earplugs": 8, "no_ear_protection": 8,
+    "NO-Ear Protection": 8, "no-ear-protection": 8, "no_earmuffs": 8,
+    "NO-Earmuffs": 8, "without_earplugs": 8, "sin_tapones": 8,
 }
 ```
 Cualquier línea cuya clase de origen no esté en `MAPEO_NOMBRES` devuelve `None` y se elimina del archivo `.txt`, garantizando que el modelo nunca entrene con cascos ni mascarillas.
@@ -284,8 +299,8 @@ El script [`motor-procesamiento/entrenamiento/entrenar_yolo.py`](file:///home/al
 
 ## 6. Ingeniería del Motor de Visión (`motor-procesamiento/motor/`)
 
-### 6.1 `motor/contrato.py` — Constantes y Lectura de Turnos
-Define las tuplas inmutables `CLASES` (7 clases), `PRENDAS = ("lentes", "chaleco", "guantes")`, los diccionarios `CLASE_POSITIVA`, `CLASE_NEGATIVA`, `ZONAS_ANATOMICAS`, `MARGEN_X_ZONA`, `NOMBRES_PRENDA`, el dataclass `TrabajadorTurno` y la función `leer_turnos(ruta)` que parsea `datos/sistema/turnos.csv` ordenando por la columna `orden`.
+### 6.1 `motor/contrato.py` — Constantes, 4 Zonas Anatómicas y Guantes Opcionales por Puesto
+Define las tuplas inmutables `CLASES` (9 clases), `PRENDAS = ("lentes", "tapones", "chaleco", "guantes")`, `PRENDAS_GENERALES = ("lentes", "tapones", "chaleco")`, `PUESTOS_GUANTES_OPCIONALES`, los diccionarios `CLASE_POSITIVA`, `CLASE_NEGATIVA`, `ZONAS_ANATOMICAS`, `MARGEN_X_ZONA`, `NOMBRES_PRENDA`, la función `prendas_requeridas_por_puesto(puesto)`, el dataclass `TrabajadorTurno` (con `requiere_guantes` y `prendas_opcionales`) y `leer_turnos(ruta)` que parsea `datos/sistema/turnos.csv` ordenando por la columna `orden`.
 
 ### 6.2 `motor/cuadros.py` — Selección de Cuadros Nítidos por Ventana
 - **`nitidez_laplaciano(bgr)`:** Convierte el cuadro a escala de grises, lo reescala a `480 px` de ancho manteniendo proporción (`cv2.INTER_AREA`) y calcula `float(cv2.Laplacian(gris, cv2.CV_64F).var())`.
@@ -296,11 +311,11 @@ Define las tuplas inmutables `CLASES` (7 clases), `PRENDAS = ("lentes", "chaleco
 - Carga `modelos/epp.pt` con `ultralytics.YOLO` seleccionando automáticamente `"cuda:0"` si `torch.cuda.is_available()` es verdadero, o `"cpu"` en caso contrario.
 - Su método `detectar(imagenes: list[np.ndarray]) -> list[list[Deteccion]]` devuelve listas de objetos inmutables `Deteccion(clase, confianza, caja=(x1, y1, x2, y2))`.
 
-### 6.4 `motor/asociar.py` — Asociación Geométrica Anatómica de 3 Zonas
-Este módulo resuelve el problema central de visión: **dado un cuadro con múltiples personas y múltiples detecciones sueltas de lentes, chalecos y guantes, ¿qué prenda pertenece a qué trabajador y cuál es el estado de sus 3 zonas obligatorias?**
+### 6.4 `motor/asociar.py` — Asociación Geométrica Anatómica de 4 Zonas
+Este módulo resuelve el problema central de visión: **dado un cuadro con múltiples personas y múltiples detecciones sueltas de lentes, tapones auditivos, chalecos y guantes, ¿qué prenda pertenece a qué trabajador y cuál es el estado de sus 4 zonas anatómicas?**
 
 1. **Ventana Anatómica por Prenda (`_fraccion_en_zona`):**
-   Para una persona con caja $(px_1, py_1, px_2, py_2)$, ancho $pw = px_2 - px_1$ y alto $ph = py_2 - py_1$, la ventana espacial esperada de la prenda $p \in \{\text{lentes}, \text{chaleco}, \text{guantes}\}$ con banda vertical $(y_{\text{ini}}, y_{\text{fin}}) = \text{ZONAS\_ANATOMICAS}[p]$ y margen horizontal $m_x = \text{MARGEN\_X\_ZONA}[p]$ es:
+   Para una persona con caja $(px_1, py_1, px_2, py_2)$, ancho $pw = px_2 - px_1$ y alto $ph = py_2 - py_1$, la ventana espacial esperada de la prenda $p \in \{\text{lentes}, \text{tapones}, \text{chaleco}, \text{guantes}\}$ con banda vertical $(y_{\text{ini}}, y_{\text{fin}}) = \text{ZONAS\_ANATOMICAS}[p]$ y margen horizontal $m_x = \text{MARGEN\_X\_ZONA}[p]$ es:
    $$V_p = \left(px_1 - pw \cdot m_x,\; py_1 + ph \cdot y_{\text{ini}},\; px_2 + pw \cdot m_x,\; py_1 + ph \cdot y_{\text{fin}}\right)$$
    El solape anatómico de una detección de prenda con caja $C$ se define como la fracción de su propia área contenida en la ventana anatómica:
    $$\text{solape}(C, V_p) = \frac{\text{Área}(C \cap V_p)}{\text{Área}(C)}$$
@@ -308,20 +323,21 @@ Este módulo resuelve el problema central de visión: **dado un cuadro con múlt
    $$\text{puntaje} = \text{confianza} \times \left(0.5 + 0.5 \cdot \min(1.0, \text{solape})\right)$$
 
 2. **Reglas de Decisión y Honestidad por Zona (`asociar_cuadro`):**
-   - **Conflicto Positivo vs. Negativo (`UMBRAL_CONFLICTO_DUDA = 0.15`):** Si en la misma zona aparecen tanto la clase positiva (ej. `guantes`) como la negativa (`sin_guantes`) y $|conf_{\text{pos}} - conf_{\text{neg}}| < 0.15$, la zona se declara `"dudoso"`.
+   - **Conflicto Positivo vs. Negativo (`UMBRAL_CONFLICTO_DUDA = 0.15`):** Si en la misma zona aparecen tanto la clase positiva (ej. `tapones`) como la negativa (`sin_tapones`) y $|conf_{\text{pos}} - conf_{\text{neg}}| < 0.15$, la zona se declara `"dudoso"`.
    - **Umbral de Confianza Mínima (`CONFIANZA_MINIMA_PRENDA = 0.55`):** Si la detección ganadora tiene confianza $< 0.55$, se degrada a `"dudoso"` en lugar de afirmar `"ok"` o `"falta"`.
-   - **Detección de Recorte en Borde (`_zona_cortada_en_borde`):** Si no hubo detección en la zona (por ejemplo, manos fuera de toma cuando $py_2 \ge 0.98 \cdot H$, o cabeza cortada cuando $py_1 \le 0.02 \cdot H$), se asigna `"dudoso"` con confianza `0.0`.
+   - **Detección de Recorte en Borde (`_zona_cortada_en_borde`):** Si no hubo detección en la zona (por ejemplo, manos fuera de toma cuando $py_2 \ge 0.98 \cdot H$, o cabeza/oídos cortados cuando $py_1 \le 0.02 \cdot H$), se asigna `"dudoso"` con confianza `0.0`.
 
 ### 6.5 `motor/rastreo.py` — Seguimiento por IoU y Votación Multi-Cuadro
 - **`RastreadorTurno(iou_minimo=0.25, max_brecha_cuadros=36)`:** Agrupa las apariciones de cada trabajador en objetos `PistaTrabajador` a través del tiempo usando Intersección sobre Unión ($\text{IoU} \ge 0.25$).
-- **`votar_trabajador(vistas)`:** Para cada prenda obligatoria (`lentes`, `chaleco`, `guantes`), acumula el peso de cada estado observado en los cuadros de la pista:
+- **`votar_trabajador(vistas)`:** Para cada prenda (`lentes`, `tapones`, `chaleco`, `guantes`), acumula el peso de cada estado observado en los cuadros de la pista:
   - Cada lectura `"ok"` o `"falta"` aporta $\text{peso} = \max(0.2, \text{confianza})$.
   - Cada lectura `"dudoso"` aporta un peso menor ($0.15$) para que las vistas nítidas dominen sobre un cuadro borroso aislado.
   - Si $|\text{peso}_{\text{ok}} - \text{peso}_{\text{falta}}| < 0.15$ o la confianza media ganadora es $< 0.55$, el resultado consolidado se mantiene como `"dudoso"`.
 
-### 6.6 `motor/kiosco.py` — Evaluación Instantánea (`< 300 ms`)
-La función `evaluar_imagen(imagen_bgr, detector)` ejecuta `DetectorEPP` + `asociar_cuadro` sobre un solo cuadro, selecciona a la persona de mayor área frente a la cámara, dibuja las cajas anatómicas con `anotar.dibujar_persona()`, codifica el resultado en JPEG Base64 y devuelve en **`~3.3 ms`**:
-- `estado_acceso`: `"autorizado"` (3/3 `"ok"`), `"bloqueado"` (al menos 1 `"falta"`), `"revisar"` (sin `"falta"` pero con `"dudoso"`), o `"sin_persona"`.
+### 6.6 `motor/kiosco.py` — Evaluación Instantánea (`< 300 ms`) con Regla de Guantes por Puesto
+La función `evaluar_imagen(imagen_bgr, detector, modelo="modelos/epp.pt", prendas_requeridas=None, requiere_guantes=True)` ejecuta `DetectorEPP` + `asociar_cuadro` sobre un solo cuadro, selecciona a la persona de mayor área frente a la cámara, dibuja las cajas anatómicas con `anotar.dibujar_persona()`, codifica el resultado en JPEG Base64 y devuelve en **`~3.3 ms`**:
+- `estado_acceso`: `"autorizado"` (todas las `prendas_requeridas` en `"ok"`), `"bloqueado"` (al menos 1 prenda requerida en `"falta"`), `"revisar"` (sin `"falta"` pero con `"dudoso"` en alguna prenda requerida), o `"sin_persona"`.
+- Cuando `requiere_guantes = False`, evalúa únicamente `("lentes", "tapones", "chaleco")` como obligatorios y marca `zonas["guantes"]["requerida"] = False`.
 
 ---
 
@@ -331,7 +347,7 @@ Para garantizar reproducibilidad determinista al 100 % sin depender de cámaras 
 1. **[`simulador/datos_prueba.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/simulador/datos_prueba.py) y [`simulador/render_turno.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/simulador/render_turno.py):**
    - Toman fotografías reales de trabajadores del dataset de Kaggle (`datasets/epp/`) y construyen el video de recorrido de formación pre-turno `video/recorrido_turno.mp4` (`1280×720`, `24 fps`, `216 cuadros`, `9.0 s`) recorriendo las 12 estaciones (`L1-T1` a `L3-T4`), junto con la verdad absoluta en `escena/escena.json`.
 2. **[`simulador/tarjetas.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/simulador/tarjetas.py):**
-   - Genera 4 videos cortos en `video/tarjetas/{sin_lentes,sin_guantes,sin_chaleco,multiple_faltante}.mp4` donde una estación que estaba `"ok"` en el turno base pasa a tener un incumplimiento específico, y los procesa en `salida_tarjetas/`.
+   - Genera **5 escenarios del Modo Jurado** (`sin_lentes`, `sin_tapones`, `sin_guantes`, `sin_chaleco`, `multiple_faltante`) donde una estación que estaba `"ok"` en el turno base pasa a tener un incumplimiento específico, y los publica en `salida_tarjetas/` y `Frontend/public/ensayos/`.
 3. **[`herramientas/evaluar_motor.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/herramientas/evaluar_motor.py):**
    - Compara `salida/observaciones.json` contra `escena/escena.json`. Resultado verificado: **`12/12` estaciones exactas (`100.0 %` de precisión), `0` falsos positivos**.
 
@@ -345,55 +361,56 @@ Para garantizar reproducibilidad determinista al 100 % sin depender de cámaras 
 | `prenda` | `nombre_comercial` | `existencia_caseta` | `stock_minimo` | `costo_unitario_usd` | `riesgo_diario_usd` | `riesgo_paro_usd` |
 |---|---|---|---|---|---|---|
 | `lentes` | Lentes Policarbonato Anti-Impacto ANSI Z87.1 | `18` | `5` | `US$14.50` | **`US$420.00`** | `US$950.00` |
+| `tapones` | Tapones Auditivos de Inserción NRR 32 dB NOM-011 | `40` | `10` | `US$6.50` | **`US$380.00`** | `US$890.00` |
 | `chaleco` | Chaleco Reflejante Clase 2 Alta Visibilidad | `12` | `5` | `US$18.00` | **`US$290.00`** | `US$820.00` |
 | `guantes` | Guantes Nitrilo Anticorte Nivel A4 | `24` | `8` | `US$16.00` | **`US$340.00`** | `US$880.00` |
 
 ### 8.2 Clasificación e Impacto Diario (`cruce/hallazgos.py`)
-Para cada trabajador $t$ de `turnos.csv`:
+Para cada trabajador $t$ de `turnos.csv`, se evalúan **exclusivamente sus `t.prendas_requeridas`** (`4` prendas en puestos operativos, `3` prendas en puestos de supervisión/inspección/montacargas donde `t.requiere_guantes == False`):
 - Si todas sus prendas requeridas están en `"ok"` $\rightarrow$ `tipo = None`, `estado = "ok"`, `impacto_diario = 0.0`.
-- Si tiene prendas en `"falta"`:
+- Si tiene prendas requeridas en `"falta"`:
   - Si alguna prenda faltante tiene `existencia_caseta <= 0` $\rightarrow$ `tipo = "epp_faltante_agotado"` (suma `riesgo_paro_usd`).
-  - Si le faltan $\ge 2$ prendas $\rightarrow$ `tipo = "multiples_epp_faltantes"` (suma el `riesgo_diario_usd` de cada prenda faltante).
-  - Si le falta 1 sola prenda $p$ $\rightarrow$ `tipo = f"sin_{p}"` (`sin_lentes`, `sin_chaleco` o `sin_guantes`).
-- Si no tiene prendas en `"falta"` pero sí en `"dudoso"` $\rightarrow$ `tipo = "revisar"`, `estado = "revisar"`, `impacto_diario = 0.0`.
+  - Si le faltan $\ge 2$ prendas obligatorias $\rightarrow$ `tipo = "multiples_epp_faltantes"` (suma el `riesgo_diario_usd` de cada prenda obligatoria faltante).
+  - Si le falta 1 sola prenda obligatoria $p$ $\rightarrow$ `tipo = f"sin_{p}"` (`sin_lentes`, `sin_tapones`, `sin_chaleco` o `sin_guantes`).
+- Si no tiene prendas obligatorias en `"falta"` pero sí en `"dudoso"` $\rightarrow$ `tipo = "revisar"`, `estado = "revisar"`, `impacto_diario = 0.0`.
 
 ### 8.3 Tabla de las 12 Estaciones en la Corrida Demostrativa (`salida/hallazgos.json`)
 
-| Código | Empleado | Trabajador | Puesto | Lentes | Chaleco | Guantes | Tipo de Hallazgo | Impacto Diario |
-|---|---|---|---|---|---|---|---|---|
-| `L1-T1` | `EMP-101` | Carlos Mendoza | Operador de Corte CNC | `ok` | `ok` | `ok` | *(Completo 3/3)* | `US$0.00` |
-| `L1-T2` | `EMP-102` | Marco Antonio Ríos | Soldador de Estructura | **`falta`** | `ok` | **`falta`** | `multiples_epp_faltantes` | **`US$760.00`** |
-| `L1-T3` | `EMP-103` | Luis Fernando Vega | Técnico de Troquelado | `ok` | `ok` | `ok` | *(Completo 3/3)* | `US$0.00` |
-| `L1-T4` | `EMP-104` | Jorge Alberto Soto | Operador de Prensa | **`falta`** | `ok` | `ok` | `sin_lentes` | **`US$420.00`** |
-| `L2-T1` | `EMP-201` | Ricardo Morales | Operador de Montacargas | `ok` | **`falta`** | `ok` | `sin_chaleco` | **`US$290.00`** |
-| `L2-T2` | `EMP-202` | Roberto Domínguez | Auxiliar de Maniobras | `ok` | `ok` | **`falta`** | `sin_guantes` | **`US$340.00`** |
-| `L2-T3` | `EMP-203` | Daniel Espinoza | Supervisor de Patio | `ok` | `ok` | **`dudoso` (48%)** | `revisar` | **`US$0.00`** |
-| `L2-T4` | `EMP-204` | Héctor Navarro | Almacenista de Acero | **`falta`** | **`falta`** | `ok` | `multiples_epp_faltantes` | **`US$710.00`** |
-| `L3-T1` | `EMP-301` | Alejandro Cabrera | Inspector de Calidad | `ok` | `ok` | `ok` | *(Completo 3/3)* | `US$0.00` |
-| `L3-T2` | `EMP-302` | Sergio Valenzuela | Operador de Esmerilado | **`falta`** | `ok` | `ok` | `sin_lentes` | **`US$420.00`** |
-| `L3-T3` | `EMP-303` | Miguel Ángel Luna | Técnico de Mantenimiento | `ok` | `ok` | **`falta`** | `sin_guantes` | **`US$340.00`** |
-| `L3-T4` | `EMP-304` | Eduardo Castañeda | Armador de Subensambles | `ok` | `ok` | `ok` | *(Completo 3/3)* | `US$0.00` |
+| Código | Empleado | Trabajador | Puesto | Guantes en Puesto | Lentes | Tapones | Chaleco | Guantes | Tipo de Hallazgo | Impacto Diario |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `L1-T1` | `EMP-101` | Carlos Mendoza | Operador de Corte CNC | Obligatorio | `ok` | `ok` | `ok` | `ok` | *(Completo 4/4)* | `US$0.00` |
+| `L1-T2` | `EMP-102` | Marco Antonio Ríos | Soldador de Estructura | Obligatorio | **`falta`** | **`falta`** | `ok` | **`falta`** | `multiples_epp_faltantes` | **`US$1,140.00`** |
+| `L1-T3` | `EMP-103` | Luis Fernando Vega | Técnico de Troquelado | Obligatorio | `ok` | `ok` | `ok` | `ok` | *(Completo 4/4)* | `US$0.00` |
+| `L1-T4` | `EMP-104` | Jorge Alberto Soto | Operador de Prensa | Obligatorio | **`falta`** | `ok` | `ok` | `ok` | `sin_lentes` | **`US$420.00`** |
+| `L2-T1` | `EMP-201` | Ricardo Morales | Operador de Montacargas | **Opcional** | `ok` | `ok` | **`falta`** | `falta (opc)` | `sin_chaleco` | **`US$290.00`** |
+| `L2-T2` | `EMP-202` | Roberto Domínguez | Auxiliar de Maniobras | Obligatorio | `ok` | `ok` | `ok` | **`falta`** | `sin_guantes` | **`US$340.00`** |
+| `L2-T3` | `EMP-203` | Daniel Espinoza | Supervisor de Patio | **Opcional** | `ok` | **`dudoso` (48%)** | `ok` | `ok` | `revisar` | **`US$0.00`** |
+| `L2-T4` | `EMP-204` | Héctor Navarro | Almacenista de Acero | **Opcional** | **`falta`** | `ok` | **`falta`** | `ok` | `multiples_epp_faltantes` | **`US$710.00`** |
+| `L3-T1` | `EMP-301` | Alejandro Cabrera | Inspector de Calidad | **Opcional** | `ok` | `ok` | `ok` | `falta (opc)` | *(Completo 3/3 obl.)* | **`US$0.00`** |
+| `L3-T2` | `EMP-302` | Sergio Valenzuela | Operador de Esmerilado | Obligatorio | `ok` | **`falta`** | `ok` | `ok` | `sin_tapones` | **`US$380.00`** |
+| `L3-T3` | `EMP-303` | Miguel Ángel Luna | Técnico de Mantenimiento | Obligatorio | `ok` | `ok` | `ok` | **`falta`** | `sin_guantes` | **`US$340.00`** |
+| `L3-T4` | `EMP-304` | Eduardo Castañeda | Armador de Subensambles | Obligatorio | `ok` | `ok` | `ok` | `ok` | *(Completo 4/4)* | `US$0.00` |
 
 - **Total de trabajadores incompletos (`error`):** `7`
-- **Lecturas dudosas (`revisar`):** `1` (`L2-T3`)
-- **Dinero en riesgo diario activo:** **`US$3,280.00/día`** (`760 + 710 + 420 + 420 + 340 + 340 + 290`)
+- **Lecturas dudosas (`revisar`):** `1` (`L2-T3`, zona de tapones auditivos al `48 %`)
+- **Dinero en riesgo diario activo:** **`US$3,620.00/día`** (`1,140 + 710 + 420 + 380 + 340 + 340 + 290`)
 
 ### 8.4 Proyección de Impacto en Red (`cruce/red.py`)
-Separa el riesgo diario de la planta (`US$3,280.00/día`) en:
-- **Riesgo Sistémico (`US$1,470.00/día`, 2 casos: `L1-T2` y `L2-T4`):** Trabajadores con múltiples prendas faltantes o EPP agotado en caseta que evidencian relajación del protocolo de acceso y pueden repetirse en las **otras 17 plantas** de la red (18 plantas en total).
-- **Riesgo Local (`US$1,810.00/día`, 5 casos):** Olvidos individuales de una sola prenda que se corrigen en la caseta local y no se extrapolan.
+Separa el riesgo diario de la planta (`US$3,620.00/día`) en:
+- **Riesgo Sistémico (`US$1,850.00/día`, 2 casos: `L1-T2` con `US$1,140` y `L2-T4` con `US$710`):** Trabajadores con múltiples prendas obligatorias faltantes o EPP agotado en caseta que evidencian relajación del protocolo de acceso y pueden repetirse en las **otras 17 plantas** de la red (18 plantas en total).
+- **Riesgo Local (`US$1,770.00/día`, 5 casos):** Olvidos individuales de una sola prenda que se corrigen en la caseta local y no se extrapolan.
 - Calcula 4 escenarios de proyección en las 17 plantas adicionales (`30 días/mes`):
-  - **Bajo (`10 %` = 2 plantas):** `US$2,940.00/día` · `US$88,200.00/mes`
-  - **Central (`25 %` = 4 plantas):** `US$5,880.00/día` · `US$176,400.00/mes`
-  - **Alto (`50 %` = 8 plantas):** `US$11,760.00/día` · `US$352,800.00/mes`
-  - **Peor caso (`100 %` = 17 plantas):** `US$24,990.00/día` · `US$749,700.00/mes`
+  - **Bajo (`10 %` = 2 plantas):** `US$3,700.00/día` · `US$111,000.00/mes`
+  - **Central (`25 %` = 4 plantas):** `US$7,400.00/día` · `US$222,000.00/mes`
+  - **Alto (`50 %` = 8 plantas):** `US$14,800.00/día` · `US$444,000.00/mes`
+  - **Peor caso (`100 %` = 17 plantas):** `US$31,450.00/día` · `US$943,500.00/mes`
 
 ### 8.5 Asistente Conversacional RAG Híbrido (`cruce/chat.py`)
 1. **Indexación de la corrida (`construir_fragmentos_corrida`):** Construye fragmentos estructurados `Fragmento(id, titulo, texto)` para el resumen del turno (`[resumen]`), los supuestos de cálculo (`[supuestos]`), el diagnóstico técnico del motor (`[motor]`), cada uno de los hallazgos (`[hallazgo-l1-t2]`, etc.) y el mapa de las 3 líneas (`[linea-1]`, `[linea-2]`, `[linea-3]`).
 2. **Recuperación (`buscar_relevantes`):** Tokeniza la pregunta del usuario eliminando palabras vacías en español (`STOPWORDS`) y ordena los fragmentos por coincidencia léxica y códigos de estación.
 3. **Generación Híbrida (`preguntar`):**
    - Si `APIGEMINI` o `GEMINI_API_KEY` está definida en `.env`, invoca la API REST de Gemini (`gemini-2.5-flash` / `gemini-2.5-flash-lite`) inyectando únicamente los fragmentos verificados.
-   - Si no hay llave o falla la conexión, `_responder_rag_local()` sintetiza una respuesta determinista en español citando exactamente los trabajadores, estaciones, montos y stock en caseta, devolviendo `fuentes = [{"id": f.id, "titulo": f.titulo, "tipo": "fragmento", "texto": f.texto[:240]}]`.
+   - Si no hay llave o falla la conexión, `_responder_rag_local()` sintetiza una respuesta determinista en español citando exactamente los trabajadores, estaciones, tapones auditivos, puestos con guantes opcionales, montos y stock en caseta, devolviendo `fuentes = [{"id": f.id, "titulo": f.titulo, "tipo": "fragmento", "texto": f.texto[:240]}]`.
 
 ---
 
@@ -404,9 +421,9 @@ El servidor HTTP (`ThreadingHTTPServer` en `127.0.0.1:8000`) expone los siguient
 | Método | Ruta | Descripción y Payload |
 |---|---|---|
 | `GET` | `/salud` | Healthcheck del motor (`{"ok": true, "servicio": "vigia-epp-motor"}`). |
-| `POST` | `/kiosco/evaluar` | Evalúa en `< 300 ms` un preset JSON (`{"preset": "completo" \| "sin_lentes" \| "sin_guantes" \| "sin_chaleco" \| "incompleto_multiple"}`), una imagen en Base64 (`{"imagen_b64": "data:image/jpeg;base64,..."}`) o bytes binarios JPEG/PNG. Devuelve `RespuestaKiosco`. |
-| `GET` | `/tarjetas` | Lista las 4 tarjetas disponibles del Modo Jurado (`["multiple_faltante", "sin_chaleco", "sin_guantes", "sin_lentes"]`). |
-| `POST` | `/procesar` | Ejecuta/consulta una tarjeta del Modo Jurado (`{"tarjeta": "sin_lentes"}`) y devuelve el `hallazgo_nuevo` comparado contra la corrida base. |
+| `POST` | `/kiosco/evaluar` | Evalúa en `< 300 ms` un preset JSON (`{"preset": "completo" \| "sin_lentes" \| "sin_tapones" \| "sin_guantes" \| "sin_chaleco" \| "incompleto_multiple", "requiere_guantes": true \| false}`), una imagen en Base64 o bytes binarios JPEG/PNG. Devuelve `RespuestaKiosco`. |
+| `GET` | `/tarjetas` | Lista las 5 tarjetas disponibles del Modo Jurado (`["multiple_faltante", "sin_chaleco", "sin_guantes", "sin_lentes", "sin_tapones"]`). |
+| `POST` | `/procesar` | Ejecuta/consulta una tarjeta del Modo Jurado (`{"tarjeta": "sin_tapones"}`) y devuelve el `hallazgo_nuevo` comparado contra la corrida base. |
 | `GET` | `/estado` | Devuelve el último resultado o avance del Modo Jurado. |
 | `GET` | `/analisis` | Lista todos los videos subidos por el usuario (`analisis/*/meta.json`) e indica cuál está activo (`activo: id \| null`). |
 | `POST` | `/analisis?nombre=archivo.mp4` | Recibe el binario de un video nuevo, lanza `python -m motor.pipeline` en un hilo de fondo y devuelve `202 Accepted` con `meta.json`. |
@@ -422,31 +439,32 @@ El servidor HTTP (`ThreadingHTTPServer` en `127.0.0.1:8000`) expone los siguient
 
 ---
 
-## 10. Arquitectura del Tablero Frontend (`Frontend/`) y las 8 Pantallas
+## 10. Arquitectura del Tablero Frontend SCADA/HMI (`Frontend/`) y las 8 Pantallas
 
-El tablero fue construido con **Next.js 15.1.7**, **React 19**, **TypeScript 5.7** y **Tailwind CSS 3.4** bajo el sistema de diseño **Industrial Safety Slate** ([`Frontend/DISENO.md`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/DISENO.md)):
+El tablero fue construido con **Next.js 15.1.7**, **React 19**, **TypeScript 5.7** y **Tailwind CSS 3.4** bajo el sistema de diseño **Opción 1: Centro de Comando Industrial y Caseta de Torniquete (*Tactical Dark & High-Vis Safety*)**:
 
 1. **`/resumen` ([`ResumenView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/resumen/ResumenView.tsx)):**
-   - Muestra el titular obligatorio: **`"7 trabajadores sin EPP completo · US$3,280.00 al día en riesgo"`**.
-   - Presenta 4 KPIs (cumplimiento `33.3 %`, `7` trabajadores incompletos, `1` lectura dudosa con `US$0.00`, stock disponible en caseta).
-   - Incluye la gráfica de barras por familia de omisión, el Top 3 de prioridad inmediata, el mapa rápido 3×4 de la cuadrilla y la consola oscura **Modo Jurado en Vivo** con los 4 botones de prueba.
+   - Muestra el titular operativo: **`"7 trabajadores sin EPP completo · US$3,620.00 al día en riesgo"`**.
+   - Presenta 4 KPIs (cumplimiento `33.3 %`, `7` trabajadores retenidos en torniquete, `1` lectura dudosa con `US$0.00`, stock disponible en caseta con `40` tapones NRR 32 dB).
+   - Incluye la gráfica de barras por las **4 familias de EPP** (Lentes, Tapones Auditivos, Guantes y Chaleco), el Top 3 de prioridad inmediata, el mapa rápido 3×4 de la cuadrilla con indicadores de 4 zonas (`PuntosPrendas`) y la consola **Modo Jurado en Vivo** con **5 botones de prueba** (`sin_lentes`, `sin_tapones`, `sin_guantes`, `sin_chaleco`, `multiple_faltante`).
 2. **`/kiosco` ([`KioscoView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/kiosco/KioscoView.tsx)):**
-   - Permite alternar entre cámara web en vivo (`navigator.mediaDevices.getUserMedia`), subida de archivo de imagen o los 5 botones del **Simulador de Torniquete** (`completo`, `sin_lentes`, `sin_guantes`, `sin_chaleco`, `incompleto_multiple`).
-   - Muestra el veredicto en colores semánticos (`PASE DE TURNO AUTORIZADO` en esmeralda, `ACCESO DETENIDO · FALTA EPP` en rojo, `VERIFICACIÓN EN CASETA · LECTURA DUDOSA` en ámbar) y las 3 tarjetas de zona anatómica con su porcentaje de confianza.
+   - Incluye el selector de puesto en vivo (**Puesto Operativo — Guantes Obligatorios** vs. **Supervisor / Montacargas / Inspector — Guantes Opcionales**).
+   - Permite alternar entre cámara web en vivo (`navigator.mediaDevices.getUserMedia`), subida de archivo de imagen o los **6 botones del Simulador de Torniquete** (`completo`, `sin_lentes`, `sin_tapones`, `sin_guantes`, `sin_chaleco`, `incompleto_multiple`).
+   - Muestra el veredicto en colores semánticos (`TORNIQUETE LIBERADO · PASE AUTORIZADO` en esmeralda, `TORNIQUETE BLOQUEADO · FALTA EPP` en rojo, `VERIFICACIÓN EN VENTANILLA · LECTURA DUDOSA` en ámbar) y las **4 tarjetas de zona anatómica** (`lentes`, `tapones`, `chaleco`, `guantes`).
 3. **`/recorrido` ([`RecorridoView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/recorrido/RecorridoView.tsx)):**
    - Reproductor de video H.264 (`/salida/recorrido_anotado.mp4`) sincronizado con botones de salto temporal (`videoRef.current.currentTime = h.segundo`) para inspeccionar el momento exacto en que cada trabajador pasa frente a la cámara.
 4. **`/cuadrilla` ([`CuadrillaView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/cuadrilla/CuadrillaView.tsx)):**
-   - A la izquierda: las 3 líneas de formación (`Línea 1..3`) con filtros rápidos (`Todos`, `Incompletos`, `Dudosas`, `Completos`).
-   - A la derecha: el panel interactivo con el componente **`SiluetaAnatomica3Zonas`** (un SVG vectorial que colorea dinámicamente los **Lentes en la cabeza**, el **Chaleco con cintas reflejantes en el torso** y los **Guantes en ambas manos** según su estado `"ok" | "falta" | "dudoso"`), acompañado del recorte fotográfico real y las existencias en caseta.
+   - A la izquierda: las 3 líneas de formación (`Línea 1..3`) con filtros rápidos (`Todos`, `Retenidos`, `Dudosas`, `Autorizados`) y badge `GUANTES OPC` cuando el puesto no exige guantes.
+   - A la derecha: el panel interactivo con el componente **`SiluetaAnatomica4Zonas`** (un SVG vectorial que colorea dinámicamente los **Lentes en los ojos**, los **Tapones Auditivos con ondas acústicas en ambos oídos**, el **Chaleco con cintas reflejantes en el torso** y los **Guantes en ambas manos**, pintando en cian `#06B6D4` los guantes opcionales), acompañado del recorte fotográfico real y las existencias en caseta.
 5. **`/hallazgos` ([`HallazgosView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/hallazgos/HallazgosView.tsx)):**
-   - Tarjetas de hallazgos ordenadas de mayor a menor impacto diario (`US$760/día` a `US$0/día`), con filtros por estado (`Todos`, `Pendientes`, `Autorizados`) y por prenda (`Sin Lentes`, `Sin Chaleco`, `Sin Guantes`).
-   - Botón **"Autorizar tras entrega"** / **"Revertir a pendiente"** conectado a `PATCH /motor/analisis/<id>/hallazgos/<h_id>`, actualizando en vivo los contadores de **Riesgo Activo** y **Mitigado en Caseta**.
+   - Tarjetas de hallazgos ordenadas de mayor a menor impacto diario (`US$1,140/día` a `US$0/día`), con filtros por estado (`Todos`, `Retenidos`, `Liberados`) y por prenda (`Todos (4 EPP)`, `Sin Lentes`, `Sin Tapones Auditivos`, `Sin Chaleco`, `Sin Guantes (Puesto Op)`).
+   - Botón **"Autorizar tras entrega"** / **"Revertir a retenido"** conectado a `PATCH /motor/analisis/<id>/hallazgos/<h_id>`, actualizando en vivo los contadores de **Riesgo Activo en Fila** y **Mitigado en Caseta**.
 6. **`/red` ([`RedView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/red/RedView.tsx)):**
-   - Desglosa el riesgo medido hoy (`US$3,280/día`) en **Riesgo Sistémico Escalable (`US$1,470/día`)** y **Omisiones Locales (`US$1,810/día`)**, permitiendo simular el impacto diario y mensual en las 18 plantas.
+   - Desglosa el riesgo medido hoy (`US$3,620/día`) en **Riesgo Sistémico Escalable (`US$1,850/día`)** y **Omisiones Locales (`US$1,770/día`)**, permitiendo simular el impacto diario y mensual en las 18 plantas.
 7. **`/analizar` ([`AnalizarView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/analizar/AnalizarView.tsx)):**
    - Subida de videos por `XMLHttpRequest` con barra de progreso de carga, monitoreo de etapas del motor cada `1.2 s` y selector para activar cualquier corrida subida o regresar al recorrido demostrativo.
 8. **`/asistente` ([`AsistenteView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/asistente/AsistenteView.tsx)):**
-   - Interfaz conversacional con 4 preguntas frecuentes preconfiguradas, indicador del motor RAG activo y despliegue de tarjetas de **Fuentes verificables de la corrida** con título y extracto textual.
+   - Interfaz conversacional con 4 preguntas frecuentes preconfiguradas (incluyendo tapones auditivos `NOM-011-STPS` y puestos con guantes opcionales), indicador del motor RAG activo y despliegue de tarjetas de **Fuentes verificables de la corrida** con título y extracto textual.
 
 ---
 
@@ -464,6 +482,7 @@ El tablero fue construido con **Next.js 15.1.7**, **React 19**, **TypeScript 5.7
       "confianza_persona": 0.96,
       "prendas": {
         "lentes": { "estado": "falta", "confianza": 0.89, "lecturas": 5 },
+        "tapones": { "estado": "falta", "confianza": 0.89, "lecturas": 5 },
         "chaleco": { "estado": "ok", "confianza": 0.92, "lecturas": 5 },
         "guantes": { "estado": "falta", "confianza": 0.89, "lecturas": 5 }
       },
@@ -480,17 +499,19 @@ El tablero fue construido con **Next.js 15.1.7**, **React 19**, **TypeScript 5.7
 {
   "personas_detectadas": 1,
   "estado_acceso": "autorizado",
-  "mensaje": "Pase de turno autorizado: EPP obligatorio completo (Lentes, Chaleco y Guantes).",
+  "mensaje": "Pase de turno autorizado: EPP obligatorio completo (Lentes, Tapones auditivos y Chaleco · Guantes opcionales en su puesto).",
+  "requiere_guantes": false,
   "prendas_completas": 3,
   "prendas_requeridas": 3,
   "faltantes": [],
   "dudosas": [],
   "zonas": {
-    "lentes": { "nombre": "Lentes de seguridad", "estado": "ok", "confianza": 0.92 },
-    "chaleco": { "nombre": "Chaleco reflejante", "estado": "ok", "confianza": 0.92 },
-    "guantes": { "nombre": "Guantes anticorte", "estado": "ok", "confianza": 0.92 }
+    "lentes": { "nombre": "Lentes de seguridad", "estado": "ok", "confianza": 0.92, "requerida": true },
+    "tapones": { "nombre": "Tapones auditivos", "estado": "ok", "confianza": 0.92, "requerida": true },
+    "chaleco": { "nombre": "Chaleco reflejante", "estado": "ok", "confianza": 0.92, "requerida": true },
+    "guantes": { "nombre": "Guantes anticorte", "estado": "falta", "confianza": 0.89, "requerida": false }
   },
-  "accion_caseta": "Ingreso autorizado a piso de planta.",
+  "accion_caseta": "Torniquete liberado: ingreso autorizado a piso de planta.",
   "ms_proceso": 3.3,
   "imagen_anotada_b64": "data:image/jpeg;base64,..."
 }
@@ -500,22 +521,23 @@ El tablero fue construido con **Next.js 15.1.7**, **React 19**, **TypeScript 5.7
 
 ## 12. Pruebas Automatizadas (`pytest` + `Playwright`) y Guía de Operación
 
-### 12.1 Ejecución de la Suite de Pruebas de Backend (`18 passed`)
+### 12.1 Ejecución de la Suite de Pruebas de Backend (`19 passed`)
 Desde la raíz [`/home/alexteori/Documentos/repositorios/EPP`](file:///home/alexteori/Documentos/repositorios/EPP):
 ```bash
 motor-procesamiento/.venv/bin/python -m pytest -v
 ```
 Verifica:
-- Exclusión estricta de `casco` y `mascarilla` en `contrato.py` y `preparar_epp.py`.
+- Exclusión estricta de `casco` y `mascarilla` y presencia de las 9 clases y 4 zonas (`lentes`, `tapones`, `chaleco`, `guantes`) en `contrato.py` y `preparar_epp.py`.
+- Regla `prendas_requeridas_por_puesto` para puestos con guantes obligatorios vs. opcionales (`PUESTOS_GUANTES_OPCIONALES`).
 - Deduplicación de claves `.rf.<hash>` entre versiones de Roboflow.
-- Asociación anatómica de 3 zonas (`ok`, `falta`, manos cortadas en borde $\rightarrow$ `dudoso`, conflicto positivo/negativo cercano $\rightarrow$ `dudoso`).
+- Asociación anatómica de 4 zonas (`ok`, `falta`, manos/cabeza cortadas en borde $\rightarrow$ `dudoso`, conflicto positivo/negativo cercano $\rightarrow$ `dudoso`).
 - Votación multi-cuadro y seguimiento por IoU en `RastreadorTurno`.
-- Kiosco en vivo (`sin_persona`, `autorizado`, `bloqueado`).
-- Cálculo de impacto diario (`US$420`, `US$760`, `revisar = US$0.00`), persistencia en disco con `actualizar_corregido`, proyección a 18 plantas y citas con texto en el Asistente RAG.
+- Kiosco en vivo (`sin_persona`, `autorizado`, `bloqueado`, y autorización cuando `requiere_guantes=False` aunque falten guantes).
+- Cálculo de impacto diario (`US$420`, `US$380` por tapones, `US$1,140`, `revisar = US$0.00`), persistencia en disco con `actualizar_corregido`, proyección a 18 plantas y citas con texto en el Asistente RAG.
 
 ### 12.2 Ejecución de la Suite E2E de Navegador (`Playwright`)
 ```bash
-# Arranca API (:8000), servidor de producción Next.js (:3015) y corre Playwright sobre las 8 pantallas
+# Arranca API (:8000), servidor de producción Next.js (:3018) y corre Playwright sobre las 8 pantallas
 node Frontend/tests/e2e.mjs
 ```
 
