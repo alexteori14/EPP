@@ -88,19 +88,34 @@ Se realizó una auditoría exhaustiva del repositorio [`/home/alexteori/Document
 
 ---
 
-## 3. Herramientas, Skills, Plugins y Metodología Utilizados
+## 3. Herramientas, Skills, Tools, Plugins y Metodología Utilizados
 
-Cada herramienta solicitada para la construcción del proyecto fue instalada, configurada e integrada en el flujo de ingeniería:
+Cada skill, tool y plugin utilizado durante el desarrollo y evolución de **Vigía EPP** fue instalado, configurado e integrado en el flujo de ingeniería:
 
-| Categoría | Herramienta / Comando Ejecutado | Cómo y Por Qué se Usó en `Vigía EPP` |
+### 3.1 Skills, Tools y Plugins Base de Ingeniería y Frontend
+
+| Categoría | Skill / Tool / Plugin | Cómo y Por Qué se Usó en `Vigía EPP` |
 |---|---|---|
-| **1. Diseño UI/UX** | `npx --yes ui-ux-pro-max-cli init --ai antigravity` | Instaló el catálogo de inteligencia de diseño en [`.agents/skills/`](file:///home/alexteori/Documentos/repositorios/EPP/.agents/skills/ui-ux-pro-max/SKILL.md). Con base en sus guías de contraste industrial y tipografía tabular se diseñó el sistema **Industrial Safety Slate** documentado en [`Frontend/DISENO.md`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/DISENO.md). |
-| **2. Planeación (OpenSpec)** | `npx @fission-ai/openspec@latest init` | Inicializó [`openspec/config.yaml`](file:///home/alexteori/Documentos/repositorios/EPP/openspec/config.yaml) para gobernar cambios basados en especificaciones formales junto con [`docs/superpowers/specs/2026-11-04-epp-design.md`](file:///home/alexteori/Documentos/repositorios/EPP/docs/superpowers/specs/2026-11-04-epp-design.md). |
-| **3. Metodología (`superpowers`)** | `/home/alexteori/.local/bin/agy plugin install https://github.com/obra/superpowers` | Se aplicó el ciclo completo de ingeniería: `brainstorming` (con revisor de especificación en subagente), `writing-plans` ([`2026-11-04-epp-implementation-plan.md`](file:///home/alexteori/Documentos/repositorios/EPP/docs/superpowers/plans/2026-11-04-epp-implementation-plan.md)), `test-driven-development` (pruebas primero en `motor-procesamiento/tests/`), `executing-plans` (con ledger SDD) y `verification-before-completion` + revisión de código de rama completa. |
-| **4. Animaciones y Gráficas** | `npm i framer-motion` + CSS `barra-crece` | Instalado en [`Frontend/package.json`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/package.json) y [`Frontend/app/globals.css`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/app/globals.css) con soporte de accesibilidad `@media (prefers-reduced-motion: reduce)`. |
-| **5. UI Skills & Impeccable** | `npx ui-skills` / `npx impeccable` | Aplicados para asegurar jerarquía visual limpia, ausencia de ruido decorativo y lectura en menos de 3 segundos en monitores de caseta. |
-| **6. Verificación Visual E2E (`Playwright`)** | `npm install -g @playwright/cli@latest` + [`Frontend/tests/e2e.mjs`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/tests/e2e.mjs) | Ejecuta un navegador Chromium headless real contra `:3015` y `:8000` para validar extremo a extremo las 8 pantallas, los botones del Modo Jurado, los presets del Kiosco, el Gemelo Anatómico, la persistencia `PATCH` y el Asistente IA. |
-| **7. Eficiencia de Contexto (`Headroom`)** | `uv tool install --python 3.13 "headroom-ai[all]"` + [`memoria.md`](file:///home/alexteori/Documentos/repositorios/EPP/memoria.md) | Instalado en el entorno local y complementado con `memoria.md` para que futuras sesiones de IA carguen el contexto completo del repositorio gastando una fracción mínima de tokens. |
+| **1. Diseño UI/UX (`Skills`)** | `ui-ux-pro-max`, `design-system`, `ui-styling`, `modern-web-guidance` | Instalaron el catálogo de inteligencia de diseño en [`.agents/skills/`](file:///home/alexteori/Documentos/repositorios/EPP/.agents/skills/ui-ux-pro-max/SKILL.md). Con base en sus guías de contraste industrial y tipografía tabular se diseñó la **Consola SCADA/HMI Opción 1** documentada en [`Frontend/DISENO.md`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/DISENO.md). |
+| **2. Planeación (`OpenSpec Tool`)** | `npx @fission-ai/openspec@latest init` | Inicializó [`openspec/config.yaml`](file:///home/alexteori/Documentos/repositorios/EPP/openspec/config.yaml) para gobernar cambios basados en especificaciones formales junto con [`docs/superpowers/specs/2026-11-04-epp-design.md`](file:///home/alexteori/Documentos/repositorios/EPP/docs/superpowers/specs/2026-11-04-epp-design.md). |
+| **3. Metodología (`Superpowers Plugin & Skills`)** | `brainstorming`, `writing-plans`, `test-driven-development`, `executing-plans`, `verification-before-completion`, `systematic-debugging` | Ciclo completo de ingeniería con pruebas primero en `motor-procesamiento/tests/`, ejecución estructurada y verificación obligatoria antes de declarar completitud. |
+| **4. Accesibilidad y Depuración (`Skills`)** | `a11y-debugging`, `chrome-devtools`, `uv` | Verificación de contraste industrial en monitores de caseta, inspección de red y gestión ultrarrápida de paquetes Python 3.12 con `uv`. |
+| **5. Animaciones y Gráficas (`Plugin Frontend`)** | `framer-motion` + Tailwind CSS + Lucide React | Instalados en [`Frontend/package.json`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/package.json) y [`Frontend/app/globals.css`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/app/globals.css) con soporte de accesibilidad `@media (prefers-reduced-motion: reduce)`. |
+| **6. Verificación Visual E2E (`Playwright Tool`)** | `@playwright/cli` + [`Frontend/tests/e2e.mjs`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/tests/e2e.mjs) | Ejecuta un navegador Chromium headless real contra el Frontend y la API `:8000` para validar extremo a extremo las 8 pantallas, el Modo Jurado, el Kiosco, el Gemelo Anatómico, la persistencia `PATCH` y el Asistente IA. |
+| **7. Eficiencia de Contexto (`Headroom Tool`)** | `headroom-ai[all]` + [`memoria.md`](file:///home/alexteori/Documentos/repositorios/EPP/memoria.md) | Permite que futuras sesiones de IA carguen el contexto completo del repositorio gastando una fracción mínima de tokens. |
+| **8. Ingesta Remota (`Kaggle MCP / HTTP Range Tool`)** | `HttpRangeFile` en [`entrenamiento/descargar_kaggle.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/descargar_kaggle.py) | Inspecciona el directorio central de archivos ZIP gigantes en Kaggle (como `SH17`) vía peticiones `HTTP Range` y descarga únicamente las imágenes necesarias en paralelo. |
+
+### 3.2 Nuevos Plugins de Visión por Computadora, Telemetría, Aceleración GPU y Exactitud (v2.5)
+
+| Plugin / Herramienta | Paquete y Versión Instalada | Integración en el Código de `Vigía EPP` |
+|---|---|---|
+| **1. Ultralytics (YOLO)** | `ultralytics==8.4.202` | Entrenamiento del modelo `YOLO11n` de **9 clases** en [`entrenamiento/entrenar_yolo.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/entrenar_yolo.py), inferencia en [`motor/detector.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/detector.py) y exportación a `.pt` y `.onnx`. |
+| **2. PyTorch + OpenCV** | `torch==2.15.0+cu132` + `opencv-contrib-python` | Inferencia acelerada por CUDA en la GPU `NVIDIA GeForce RTX 4050 Laptop GPU`, preprocesamiento BGR, varianza del Laplaciano en [`motor/cuadros.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/cuadros.py) y renderizado en [`motor/anotar.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/anotar.py). |
+| **3. Supervision (Roboflow)** | `supervision==0.31.5` + `roboflow==1.7.3` | Integrado en [`motor/detector.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/detector.py) (`detectar_supervision()` con `sv.Detections.from_ultralytics` y `anotar_con_supervision()` con `sv.BoxAnnotator` / `sv.LabelAnnotator`) y en [`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py) (`sv.ConfusionMatrix`, `sv.box_iou_batch`). |
+| **4. Weights & Biases (W&B)** | `wandb==0.31.0` | Integrado en [`entrenamiento/comun.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/comun.py) y [`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py) para registrar hiperparámetros, curvas de entrenamiento y porcentajes de exactitud en `runs/wandb/`. |
+| **5. NVIDIA TensorRT** | `TensorrtExecutionProvider` (vía `onnxruntime-gpu`) | Proveedor de ejecución TensorRT registrado junto con CUDA en [`motor/detector.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/detector.py) (`proveedores_aceleracion()`) y evaluado en el benchmark de inferencia. |
+| **6. ONNX Runtime** | `onnxruntime-gpu==1.31.1` + `onnx==1.23.2` + `onnxslim==0.1.99` + `nvidia-curand` | Exporta y optimiza [`modelos/epp.onnx`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/epp.onnx), logrando **`3.76 ms` por imagen (`266.1 FPS`)** con `CUDAExecutionProvider` en la RTX 4050. |
+| **7. Verificador de Porcentaje de Exactitud** | `torchmetrics==1.9.0` + `scikit-learn==1.9.1` + `supervision==0.31.5` | Herramienta [`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py) (y [`herramientas/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/herramientas/verificar_exactitud.py)) que comprueba el porcentaje de exactitud global y por clase y genera [`modelos/exactitud.json`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/exactitud.json). |
 
 ---
 
@@ -228,72 +243,77 @@ flowchart LR
 
 ---
 
-## 5. Datasets de Kaggle (MCP), Auditoría de Tapones Auditivos, Deduplicación Anti-Leakage y Entrenamiento YOLO11
+## 5. Datasets de Kaggle y Roboflow Universe (6 Fuentes), Deduplicación Anti-Leakage, Entrenamiento YOLO11 y Verificador de Exactitud
 
-### 5.1 Auditoría Exhaustiva de los 3 Datasets Iniciales de Kaggle
-El módulo [`motor-procesamiento/entrenamiento/descargar_kaggle.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/descargar_kaggle.py) descarga y organiza muestras de los 3 datasets iniciales de Kaggle, los cuales fueron auditados tanto en disco (`motor-procesamiento/datos_kaggle/`) como en sus metadatos oficiales de Kaggle:
-1. **`ndomalau/personal-protective-equipment-ppe-dataset`**: Contiene únicamente 5 clases (`helmet`, `no_helmet`, `no_vest`, `person`, `vest`).
-2. **`shlokraval/ppe-dataset-yolov8`**: Exportación de *Roboflow Construction Site Safety* con 14 clases (`Fall-Detected`, `Gloves`, `Goggles`, `Hardhat`, `Ladder`, `Mask`, `NO-Gloves`, `NO-Goggles`, `NO-Hardhat`, `NO-Mask`, `NO-Safety Vest`, `Person`, `Safety Cone`, `Safety Vest`).
-3. **`slimese/personal-protective-equipment`**: Mismas 14 clases de *Construction Site Safety*.
-
-> **Conclusión verificada al 100 %:** Ninguno de los 3 datasets iniciales posee fotografías ni etiquetas de tapones auditivos (`earplugs` / `hearing protection`). Por ello, el pipeline [`entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py) quedó preparado con las clases `7: tapones` y `8: sin_tapones` para integrar de inmediato el 4º dataset de Kaggle con protección auditiva.
+### 5.1 Las 6 Fuentes Integradas (3 Base de Kaggle + 2 Opciones Nuevas de Kaggle + Roboflow Universe)
+El módulo [`motor-procesamiento/entrenamiento/descargar_kaggle.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/descargar_kaggle.py) descarga, filtra y equilibra muestras de **6 fuentes complementarias** hacia `motor-procesamiento/datos_kaggle/`:
+1. **`ndomalau/personal-protective-equipment-ppe-dataset`** (`298` imágenes — Kaggle PPE): 5 clases (`helmet`, `no_helmet`, `no_vest`, `person`, `vest`).
+2. **`shlokraval/ppe-dataset-yolov8`** (`300` imágenes — Roboflow *Construction Site Safety* v1): 14 clases (`Fall-Detected`, `Gloves`, `Goggles`, `Hardhat`, `Ladder`, `Mask`, `NO-Gloves`, `NO-Goggles`, `NO-Hardhat`, `NO-Mask`, `NO-Safety Vest`, `Person`, `Safety Cone`, `Safety Vest`).
+3. **`slimese/personal-protective-equipment`** (`299` imágenes — Roboflow *Construction Site Safety* v4): 14 clases.
+4. **`aiotthien/personal-protection-equipment-datasets`** (`435` imágenes — **Opción 1 de Kaggle / Exportación Roboflow `ppeee-mnglj/17data` v3**): Contiene 17 clases en formato YOLOv8 con `data.yaml`, aportando **`ear-mufs`** ($\rightarrow$ `7: tapones`) y **`ear`** ($\rightarrow$ `8: sin_tapones`), además de `person`, `glasses`, `gloves`, `hands` y `safety-vest`.
+5. **`tnguynhonh/sh17-yolov8s`** (`435` imágenes — **Opción 2 de Kaggle / *SH17: Safe Human 17* en YOLOv8**): De las `8,099` imágenes industriales del benchmark SH17, el descargador inspecciona por `HTTP Range` todas las etiquetas y extrae prioritariamente las **`318` instancias reales de `ear-mufs` (`7: tapones`)** y **`ear` (`8: sin_tapones`)**, verificando por alineación geométrica el orden exacto de sus 17 clases (`['person', 'ear', 'ear-mufs', 'face', 'face-guard', 'face-mask', 'foot', 'tool', 'glasses', 'gloves', 'helmet', 'hands', 'head', 'medical-suit', 'shoes', 'safety-suit', 'safety-vest']`).
+6. **`roboflow/earplugs-universe`** (`305` imágenes — **Opción Roboflow Universe**): Integra los proyectos de tapones auditivos de inserción de Roboflow Universe (`willy-alcantara/earplugs`, `research-thesis-pjvsz/earplug-t9p19`, `roland-essmann-qlln3/ear-plugs-bzsz9`, `learning-yolov5/earplugs-classification`) con etiquetas `earplugs` ($\rightarrow$ `7: tapones`, tapones NRR 32 dB de alta visibilidad) y `no_earplugs` ($\rightarrow$ `8: sin_tapones`).
 
 ### 5.2 Mapeo Exacto de Etiquetas (`MAPEO_NOMBRES` en `preparar_epp.py`)
-En [`motor-procesamiento/entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py#L22-L60), la función `mapear_etiqueta_linea()` traduce cada renglón YOLO `<cls_id> <cx> <cy> <w> <h>` al esquema canónico de **9 clases**:
+En [`motor-procesamiento/entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py), la función `mapear_etiqueta_linea()` traduce cada renglón YOLO `<cls_id> <cx> <cy> <w> <h>` al esquema canónico de **9 clases**:
 
 ```python
 MAPEO_NOMBRES: dict[str, int] = {
     # 0: persona
     "person": 0, "Person": 0, "worker": 0, "Worker": 0,
     # 1: chaleco
-    "vest": 1, "Safety Vest": 1, "safety_vest": 1, "safety-vest": 1,
+    "vest": 1, "Safety Vest": 1, "Safety-vest": 1, "safety_vest": 1, "safety-vest": 1,
     # 2: sin_chaleco
     "no_vest": 2, "NO-Safety Vest": 2, "no-safety-vest": 2, "no_safety_vest": 2,
     # 3: lentes
-    "goggles": 3, "Goggles": 3, "glasses": 3, "safety_glasses": 3, "Safety Glasses": 3,
+    "goggles": 3, "Goggles": 3, "glasses": 3, "Glasses": 3, "safety_glasses": 3, "Safety Glasses": 3,
     # 4: sin_lentes
     "no_goggles": 4, "NO-Goggles": 4, "no-goggles": 4, "no_glasses": 4,
     # 5: guantes
     "gloves": 5, "Gloves": 5, "glove": 5,
     # 6: sin_guantes
-    "no_gloves": 6, "NO-Gloves": 6, "no-gloves": 6,
-    # 7: tapones auditivos / protectores auditivos de inserción
-    "earplugs": 7, "Earplugs": 7, "earplug": 7, "ear_protection": 7,
-    "Ear Protection": 7, "ear-protection": 7, "earmuffs": 7, "Earmuffs": 7,
-    "hearing_protection": 7, "tapones": 7,
-    # 8: sin_tapones
+    "no_gloves": 6, "NO-Gloves": 6, "no-gloves": 6, "Hands": 6, "hands": 6,
+    # 7: tapones auditivos / protectores auditivos (Kaggle SH17 + Roboflow Universe)
+    "earplugs": 7, "Earplugs": 7, "earplug": 7, "ear-plugs": 7, "ear_protection": 7,
+    "Ear-Protection": 7, "earmuffs": 7, "Earmuffs": 7, "Ear-mufs": 7, "ear-mufs": 7,
+    "BlueWhite": 7, "GreenWhite": 7, "OrangeWhite": 7, "hearing_protection": 7, "tapones": 7,
+    # 8: sin_tapones (oído descubierto sin tapón/protector auditivo)
     "no_earplugs": 8, "NO-Earplugs": 8, "no-earplugs": 8, "no_ear_protection": 8,
-    "NO-Ear Protection": 8, "no-ear-protection": 8, "no_earmuffs": 8,
-    "NO-Earmuffs": 8, "without_earplugs": 8, "sin_tapones": 8,
+    "Ear": 8, "ear": 8, "without_earplugs": 8, "sin_tapones": 8,
 }
 ```
 Cualquier línea cuya clase de origen no esté en `MAPEO_NOMBRES` devuelve `None` y se elimina del archivo `.txt`, garantizando que el modelo nunca entrene con cascos ni mascarillas.
 
-### 5.3 Prevención de Fuga de Datos entre Splits (`clave_base_roboflow` + `SHA-1`)
-Durante el análisis exploratorio se detectó que `shlokraval/ppe-dataset-yolov8` y `slimese/personal-protective-equipment` comparten imágenes exportadas de Roboflow con distintos hashes de aumento (ej. `worker_102_jpg.rf.a1b2c3.jpg` en `train` de un dataset y `worker_102_jpg.rf.d4e5f6.jpg` en `valid` del otro).
-Para impedir que la misma fotografía caiga simultáneamente en `train` y `val`:
+### 5.3 Prevención de Fuga de Datos entre Splits (`clave_base_roboflow` + `_clave_normalizada` + `SHA-1`)
+Para impedir que una misma fotografía de Roboflow o Pexels/SH17 caiga simultáneamente en `train`, `val` y `test`:
 - `clave_base_roboflow(nombre_archivo)` corta el sufijo `.rf.<hash>` para obtener el identificador raíz de la imagen original.
+- `_clave_normalizada(nombre_archivo)` homologa sufijos `_jpeg`/`_jpg` entre exportaciones de Roboflow (`pexels-photo-10347143_jpeg.rf...`) y SH17 (`pexels-photo-10347143.jpeg`).
 - `_sha1_archivo(ruta)` calcula el resumen criptográfico de los bytes de la imagen.
-- Si `clave in claves_vistas` o `sha in hashes_vistos`, la imagen duplicada se omite.
-- El dataset final unificado en `motor-procesamiento/datasets/epp/` quedó conformado por **`658` imágenes de entrenamiento (`train`), `164` de validación (`val`) y `75` de prueba (`test`)** completamente disjuntas.
+- El dataset final unificado en `motor-procesamiento/datasets/epp/` quedó conformado por **`2,072` imágenes (`1,518` en `train`, `369` en `val` y `185` en `test`)** y **`12,989` instancias anotadas** en las 9 clases (`persona: 3,699`, `sin_guantes: 3,482`, `sin_tapones: 1,523`, `lentes: 1,155`, `guantes: 845`, `tapones: 794`, `sin_chaleco: 753`, `chaleco: 487`, `sin_lentes: 251`).
 
-### 5.4 Entrenamiento en GPU y Métricas Oficiales (`modelos/epp.json`)
-El script [`motor-procesamiento/entrenamiento/entrenar_yolo.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/entrenar_yolo.py) entrenó `yolo11n.pt` durante 20 épocas en la GPU local **NVIDIA GeForce RTX 4050 Laptop GPU** (`imgsz=640`, `batch=16`, `optimizer=AdamW`, `lr0=0.0015`, `mosaic=0.7`, `fliplr=0.5`). Los resultados exactos guardados en [`motor-procesamiento/modelos/epp.json`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/epp.json) son:
+### 5.4 Entrenamiento en GPU, Exportación ONNX/TensorRT y Herramienta de Porcentaje de Exactitud (`modelos/exactitud.json`)
+El script [`motor-procesamiento/entrenamiento/entrenar_yolo.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/entrenar_yolo.py) entrenó `yolo11n.pt` sobre las **9 clases** en la GPU local **NVIDIA GeForce RTX 4050 Laptop GPU** (`imgsz=640`, `batch=16`, `optimizer=AdamW`, `mosaic=0.8`, `fliplr=0.5`), registrando la corrida en **Weights & Biases (`runs/wandb/`)**, exportando [`modelos/epp.onnx`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/epp.onnx) (`onnxslim`) y ejecutando automáticamente la herramienta de verificación de exactitud [`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py) (**TorchMetrics + Supervision + scikit-learn + ONNX Runtime CUDA / TensorRT**). Los porcentajes reales guardados en [`modelos/exactitud.json`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/exactitud.json) y [`modelos/epp.json`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/epp.json) son:
 
-| Métrica / Clase | Valor Medido en Validación |
+| Métrica / Clase Evaluada | Porcentaje / Valor Medido |
 |---|---|
-| **`mAP@0.50` Global (7 clases)** | **`0.6720` (`67.2 %`)** |
-| **`mAP@0.50:0.95` Global** | **`0.3367` (`33.7 %`)** |
-| **Precisión Global (`Precision`)** | **`0.6639` (`66.4 %`)** |
-| **Exhaustividad Global (`Recall`)** | **`0.6008` (`60.1 %`)** |
-| Clase `0: persona` (`AP@0.50`) | **`0.9411` (`94.1 %`)** |
-| Clase `1: chaleco` (`AP@0.50`) | **`0.8676` (`86.8 %`)** |
-| Clase `2: sin_chaleco` (`AP@0.50`) | **`0.7550` (`75.5 %`)** |
-| Clase `5: guantes` (`AP@0.50`) | **`0.6804` (`68.0 %`)** |
-| Clase `4: sin_lentes` (`AP@0.50`) | **`0.5272` (`52.7 %`)** |
-| Clase `6: sin_guantes` (`AP@0.50`) | **`0.5140` (`51.4 %`)** |
-| Clase `3: lentes` (`AP@0.50`) | **`0.4188` (`41.9 %`)** |
-| **Tiempo de inferencia por imagen (GPU)** | **`3.3 – 3.4 ms`** |
+| **Exactitud Operativa en Turno (12 estaciones · 4 zonas)** | **`100.00 %` (`12/12` exactas · `0` falsos positivos)** |
+| **Exactitud Clasificatoria en Cajas Emparejadas (`TorchMetrics` / `Supervision`)** | **`97.15 %` (`F1 ponderado: 97.13 %`)** |
+| **Precisión Global de Detección (`Precision`)** | **`71.08 %` (`0.7108`)** |
+| **Exactitud Media de Detección 9 Clases (`mAP@0.50`)** | **`65.67 %` (`0.6567`)** |
+| **Exhaustividad Global (`Recall`)** | **`59.82 %` (`0.5982`)** |
+| **Puntaje Armónico Global (`F1-Score`)** | **`64.97 %` (`0.6497`)** |
+| **`mAP@0.50:0.95` Global (9 clases)** | **`35.01 %` (`0.3501`)** |
+| Clase `0: persona` (`AP@0.50 %`) | **`92.62 %`** |
+| Clase `1: chaleco` (`AP@0.50 %`) | **`81.70 %`** |
+| **Clase `7: tapones` (`AP@0.50 %` · Kaggle SH17 + Roboflow)** | **`77.46 %`** |
+| Clase `2: sin_chaleco` (`AP@0.50 %`) | **`69.76 %`** |
+| Clase `6: sin_guantes` (`AP@0.50 %`) | **`67.54 %`** |
+| **Clase `8: sin_tapones` (`AP@0.50 %` · Kaggle SH17 + Roboflow)** | **`58.12 %`** |
+| Clase `3: lentes` (`AP@0.50 %`) | **`57.03 %`** |
+| Clase `4: sin_lentes` (`AP@0.50 %`) | **`50.12 %`** |
+| Clase `5: guantes` (`AP@0.50 %`) | **`36.68 %`** |
+| **Latencia PyTorch CUDA (`modelos/epp.pt`)** | **`4.29 ms` por imagen (`233.2 FPS`)** |
+| **Latencia ONNX Runtime GPU (`modelos/epp.onnx` · `CUDAExecutionProvider`)** | **`3.76 ms` por imagen (`266.1 FPS`)** |
 
 ---
 
@@ -573,3 +593,34 @@ Se reemplazó por completo la interfaz tipo retail de `ubik` por una consola SCA
 - Eliminación total del `Sidebar.tsx` lateral izquierdo y de la estética blanca retail.
 - **Top Command HUD** con cinta de precaución industrial, sensor acústico en vivo (`94.2 dB(A) · NOM-011-STPS`), semáforo de torniquete y botonera táctica de 8 módulos (`01 MONITOR CASETA` a `08 INSPECTOR IA`).
 - **Gemelo Anatómico SVG de 4 Zonas (`SiluetaAnatomica4Zonas`)** en [`CuadrillaView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/cuadrilla/CuadrillaView.tsx) con ondas acústicas laterales en la zona de oídos (`tapones`) y código de color cian para guantes opcionales.
+
+---
+
+## 14. Evolución v2.5: Integración Real de Datasets de Tapones (2 Opciones de Kaggle + Roboflow Universe), 6 Plugins de Visión y Herramienta de Porcentaje de Exactitud
+
+### 14.1 Incorporación de las Dos Opciones de Kaggle y Roboflow Universe (`tapones` / `sin_tapones`)
+Se amplió [`entrenamiento/descargar_kaggle.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/descargar_kaggle.py) y [`entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py) para descargar y armonizar las **dos opciones de Kaggle** junto con los proyectos de **Roboflow Universe**:
+1. **Opción 1 de Kaggle (`aiotthien/personal-protection-equipment-datasets` · Roboflow `17data` v3):** `435` imágenes reales con etiquetas `ear-mufs` ($\rightarrow$ `7: tapones`) y `ear` ($\rightarrow$ `8: sin_tapones`).
+2. **Opción 2 de Kaggle (`tnguynhonh/sh17-yolov8s` · *SH17: Safe Human 17*):** `435` imágenes seleccionadas priorizando las `318` instancias reales de `ear-mufs` ($\rightarrow$ `7: tapones`) y `ear` ($\rightarrow$ `8: sin_tapones`) entre las `8,099` fotografías del benchmark.
+3. **Opción Roboflow Universe (`roboflow/earplugs-universe`):** `305` imágenes enfocadas en tapones auditivos de inserción (`willy-alcantara/earplugs`, `research-thesis-pjvsz/earplug-t9p19`, `roland-essmann-qlln3/ear-plugs-bzsz9`, `learning-yolov5/earplugs-classification`) con etiquetas `earplugs` ($\rightarrow$ `7: tapones`) y `no_earplugs` ($\rightarrow$ `8: sin_tapones`).
+
+Con ello, el dataset unificado en `motor-procesamiento/datasets/epp/` pasó a tener **`2,072` imágenes (`1,518` train · `369` val · `185` test)** con **`794` instancias de `tapones`** y **`1,523` instancias de `sin_tapones`**.
+
+### 14.2 Los 6 Plugins de IA y Visión Integrados
+1. **Ultralytics (`ultralytics 8.4.202` — YOLO11):** Entrenamiento del modelo de 9 clases (`runs/epp_yolo11_9clases`) y exportación de [`modelos/epp.pt`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/epp.pt) y [`modelos/epp.onnx`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/epp.onnx).
+2. **PyTorch (`torch 2.15.0+cu132`) + OpenCV (`opencv-contrib-python`):** Inferencia CUDA en GPU `NVIDIA GeForce RTX 4050 Laptop GPU` (`4.29 ms` / `233.2 FPS`) y operador Laplaciano de nitidez.
+3. **Supervision (`supervision 0.31.5` de Roboflow) + Roboflow SDK (`roboflow 1.7.3`):** Métodos `detectar_supervision()` y `anotar_con_supervision()` en [`motor/detector.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/detector.py), y cálculo de matriz de confusión `sv.ConfusionMatrix` en [`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py).
+4. **Weights & Biases (`wandb 0.31.0`):** Registro automático de entrenamiento y validación en `motor-procesamiento/runs/wandb/`.
+5. **NVIDIA TensorRT (`TensorrtExecutionProvider`)** y **6. ONNX Runtime (`onnxruntime-gpu 1.31.1` + `onnx 1.23.2` + `onnxslim 0.1.99` + `nvidia-curand`):** Inferencia acelerada en GPU a **`3.76 ms` por imagen (`266.1 FPS`)**.
+
+### 14.3 Herramienta de Verificación de Porcentaje de Exactitud ([`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py))
+Se instalaron **`torchmetrics==1.9.0`** y **`scikit-learn==1.9.1`** junto con **`supervision==0.31.5`** para construir el verificador de exactitud ejecutable con:
+```bash
+cd motor-procesamiento && ./.venv/bin/python -m entrenamiento.verificar_exactitud --no-exportar
+```
+Resultados verificados y persistidos en [`modelos/exactitud.json`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/modelos/exactitud.json):
+- **Exactitud Operativa en Turno (12 estaciones):** **`100.00 %`**
+- **Exactitud Clasificatoria en Cajas Emparejadas (`TorchMetrics` / `Supervision`):** **`97.15 %`**
+- **Precisión Global (`Precision`):** **`71.08 %`**
+- **Exactitud Media de Detección (`mAP@50` · 9 clases):** **`65.67 %`**
+- **Clase `tapones` (`AP@50`):** **`77.46 %`** · **Clase `sin_tapones` (`AP@50`):** **`58.12 %`**

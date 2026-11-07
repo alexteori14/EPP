@@ -2,14 +2,21 @@
 #
 #   uv venv .venv --python 3.12
 #   uv pip install --python .venv/bin/python -r requirements.txt
-#   uv pip uninstall --python .venv/bin/python opencv-python opencv-contrib-python
-#   uv pip install --python .venv/bin/python opencv-contrib-python==4.10.0.84
 
 numpy<2.4
-opencv-contrib-python==4.10.0.84
+opencv-contrib-python>=4.10.0
 ultralytics>=8.3
 torch
 torchvision
+supervision>=0.25
+roboflow>=1.1
+wandb>=0.18
+onnx>=1.16
+onnxslim>=0.1.30
+onnxruntime-gpu>=1.19
+nvidia-curand>=10.3
+torchmetrics>=1.4
+scikit-learn>=1.5
 pillow
 pyyaml
 pytest

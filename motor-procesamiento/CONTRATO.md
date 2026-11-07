@@ -1,6 +1,6 @@
-# Contrato de Datos · Vigía EPP (v2.4 · 4 Zonas Anatómicas + Guantes Condicionales por Puesto)
+# Contrato de Datos · Vigía EPP (v2.5 · 4 Zonas Anatómicas + Guantes Condicionales + 6 Fuentes Kaggle/Roboflow + Multi-Plugin ONNX/TensorRT)
 
-Este documento define las interfaces exactas entre el **motor de visión (`motor/`)**, el **módulo de cruce y API (`cruce/`)** y la **consola SCADA web (`Frontend/`)**.
+Este documento define las interfaces exactas entre el **motor de visión (`motor/`)**, el **módulo de entrenamiento y verificación de exactitud (`entrenamiento/`)**, el **módulo de cruce y API (`cruce/`)** y la **consola SCADA web (`Frontend/`)**.
 
 ## 1. Regla de Oro y Equipos Evaluados
 
@@ -10,19 +10,34 @@ En esta instalación industrial **no se solicita casco ni mascarilla**. El filtr
 3. **`chaleco`** — Chaleco reflejante de alta visibilidad Clase 2 (Zona anatómica 3: Torso, franja vertical `y ∈ [0.16, 0.72]`) · **Obligatorio General**.
 4. **`guantes`** — Guantes industriales anticorte Nivel A4 (Zona anatómica 4: Manos/Antebrazos, franja vertical `y ∈ [0.28, 0.96]`) · **Condicional según puesto** (obligatorio en puestos operativos/maquinaria; opcional en puestos dentro de `PUESTOS_GUANTES_OPCIONALES`).
 
-### Clases del Detector YOLO11 (`modelos/epp.pt` · 9 Clases Canónicas)
+### Clases del Detector YOLO11 (`modelos/epp.pt` y `modelos/epp.onnx` · 9 Clases Canónicas)
 
-| ID | Clase | Rol |
-|---|---|---|
-| `0` | `persona` | Trabajador en el filtro de entrada a turno |
-| `1` | `chaleco` | Presencia confirmada de chaleco de alta visibilidad |
-| `2` | `sin_chaleco` | Ausencia confirmada de chaleco en el torso |
-| `3` | `lentes` | Presencia confirmada de lentes/gafas de seguridad |
-| `4` | `sin_lentes` | Ausencia confirmada de lentes en el rostro |
-| `5` | `guantes` | Presencia confirmada de guantes en manos |
-| `6` | `sin_guantes` | Ausencia confirmada de guantes en manos |
-| `7` | `tapones` | Presencia confirmada de tapones auditivos de inserción |
-| `8` | `sin_tapones` | Ausencia confirmada de tapones auditivos en oídos |
+| ID | Clase | Rol | Instancias en Dataset Unificado (`datasets/epp/`) |
+|---|---|---|---|
+| `0` | `persona` | Trabajador en el filtro de entrada a turno | `3,699` |
+| `1` | `chaleco` | Presencia confirmada de chaleco de alta visibilidad | `487` |
+| `2` | `sin_chaleco` | Ausencia confirmada de chaleco en el torso | `753` |
+| `3` | `lentes` | Presencia confirmada de lentes/gafas de seguridad | `1,155` |
+| `4` | `sin_lentes` | Ausencia confirmada de lentes en el rostro | `251` |
+| `5` | `guantes` | Presencia confirmada de guantes en manos | `845` |
+| `6` | `sin_guantes` | Ausencia confirmada de guantes en manos | `3,482` |
+| `7` | `tapones` | Presencia confirmada de tapones/protectores auditivos | `794` |
+| `8` | `sin_tapones` | Ausencia confirmada de tapones auditivos en oídos | `1,523` |
+
+### Fuentes de Datos Integradas (Kaggle + Roboflow Universe · `2,072` imágenes)
+1. `ndomalau/personal-protective-equipment-ppe-dataset` (Kaggle PPE)
+2. `shlokraval/ppe-dataset-yolov8` (Roboflow Construction Site Safety v1)
+3. `slimese/personal-protective-equipment` (Roboflow Construction Site Safety v4)
+4. `aiotthien/personal-protection-equipment-datasets` (Roboflow `ppeee-mnglj/17data` v3 — aporta `ear-mufs` $\rightarrow$ `7: tapones` y `ear` $\rightarrow$ `8: sin_tapones`)
+5. `tnguynhonh/sh17-yolov8s` (Kaggle *SH17: Safe Human 17* YOLOv8 — aporta `318` instancias de `ear-mufs` $\rightarrow$ `7: tapones` y `7,730` de `ear` $\rightarrow$ `8: sin_tapones`)
+6. `roboflow/earplugs-universe` (Proyectos Roboflow Universe: `willy-alcantara/earplugs`, `research-thesis-pjvsz/earplug-t9p19`, `roland-essmann-qlln3/ear-plugs-bzsz9`, `learning-yolov5/earplugs-classification` — aporta `earplugs` $\rightarrow$ `7: tapones` y `no_earplugs` $\rightarrow$ `8: sin_tapones`)
+
+### Plugins de Visión, Telemetría y Verificación de Exactitud
+- **Ultralytics (`ultralytics` YOLO11)** + **PyTorch (`torch` CUDA) + OpenCV (`cv2`)**
+- **Supervision (`supervision` de Roboflow)** + **Roboflow (`roboflow`)**
+- **Weights & Biases (`wandb`)** para trazabilidad de corridas en `runs/wandb/`
+- **ONNX Runtime (`onnxruntime-gpu`)** + **NVIDIA TensorRT (`TensorrtExecutionProvider`)** sobre `modelos/epp.onnx`
+- **Herramienta de Verificación de Porcentaje de Exactitud (`entrenamiento/verificar_exactitud.py`)** con **TorchMetrics (`torchmetrics`)** + **scikit-learn (`sklearn`)** + **Supervision (`sv.ConfusionMatrix`)** que genera `modelos/exactitud.json` y `modelos/epp.json`.
 
 ---
 

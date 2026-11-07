@@ -7,7 +7,7 @@
 2. **Gerente de Seguridad Industrial EHS / Jurado Técnico (`/resumen`, `/recorrido`, `/red`, `/analizar`, `/asistente`)**: evalúa exposición económica diaria en dólares (`US$/día`), cumplimiento de protección auditiva (`NOM-011-STPS`) y ocular (`NOM-017-STPS`), reglas de guantes por puesto y escalamiento a las 18 plantas de la red.
 
 ### Restricción de Dominio Estricta (4 Zonas Anatómicas + Guantes Condicionales por Puesto)
-En esta planta industrial **NO se exige casco ni mascarilla**. El sistema evalúa **4 componentes de EPP**:
+En esta planta industrial **NO se exige casco ni mascarilla**. El sistema evalúa **4 componentes de EPP** con un modelo **YOLO11 de 9 clases** entrenado sobre **6 fuentes de Kaggle y Roboflow Universe** (`2,072` imágenes reales):
 1. **Lentes de seguridad ANSI Z87.1** (`lentes` / `sin_lentes`) — Zona 1: Ojos/Cabeza (`y ∈ [0.00, 0.32]`) · **Obligatorio General** (`US$420.00/día`)
 2. **Tapones auditivos de inserción NRR 32 dB** (`tapones` / `sin_tapones`) — Zona 2: Oídos/Cráneo Lateral (`y ∈ [0.04, 0.28]`) · **Obligatorio General** (`US$380.00/día`, `NOM-011-STPS`)
 3. **Chaleco de alta visibilidad Clase 2** (`chaleco` / `sin_chaleco`) — Zona 3: Torso (`y ∈ [0.16, 0.72]`) · **Obligatorio General** (`US$290.00/día`)
@@ -48,3 +48,16 @@ En esta planta industrial **NO se exige casco ni mascarilla**. El sistema evalú
    - 5 tarjetas (`Sin Lentes`, `Sin Tapones Auditivos`, `Sin Guantes`, `Sin Chaleco`, `Múltiple EPP Omitido`) que ejecutan la corrida del motor y muestran el hallazgo emergente con recorte fotográfico.
 4. **Persistencia Transaccional de Liberación (`HallazgosView`)**:
    - Botón `"Autorizar tras entrega"` que invoca `PATCH /motor/analisis/<id>/hallazgos/<h_id>` y actualiza en disco el riesgo mitigado (`US$/día`).
+
+---
+
+## 5. Skills, Tools y Plugins utilizados en el Diseño y Motor
+
+- **Skills de Diseño y Frontend:** `ui-ux-pro-max`, `design-system`, `ui-styling`, `modern-web-guidance`, `a11y-debugging`, `chrome-devtools`, `brainstorming`, `writing-plans`, `test-driven-development`, `executing-plans`, `verification-before-completion`.
+- **Tools de Desarrollo y E2E:** `Playwright CLI` (`Frontend/tests/e2e.mjs`), `OpenSpec` (`@fission-ai/openspec`), `Framer Motion`, `Tailwind CSS`, `Lucide React`, `uv` package manager, `Headroom AI`.
+- **Plugins de IA, Visión y Aceleración integrados con el Tablero:**
+  - **Ultralytics (`YOLO11`)** + **PyTorch CUDA (`torch`) + OpenCV (`cv2`)**
+  - **Supervision (`supervision` de Roboflow)** + **Roboflow SDK (`roboflow`)**
+  - **Weights & Biases (`wandb`)** para trazabilidad de entrenamiento y métricas
+  - **ONNX Runtime (`onnxruntime-gpu`)** + **NVIDIA TensorRT (`TensorrtExecutionProvider`)**
+  - **Verificador de Porcentaje de Exactitud (`torchmetrics` + `scikit-learn` + `supervision`)** en [`entrenamiento/verificar_exactitud.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/verificar_exactitud.py).

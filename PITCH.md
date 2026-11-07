@@ -1,11 +1,11 @@
 # Guion de Demostración Ejecutiva — Vigía EPP (5 Minutos)
 
-## 1. El Problema (0:00 – 0:45)
+## 1. El Problema y la Arquitectura Multi-Plugin (0:00 – 0:45)
 En plantas de manufactura y logística pesada con niveles de ruido superiores a `94 dB(A)`, el reglamento interno y las normas `NOM-017-STPS` y `NOM-011-STPS` exigen que todo operador ingrese a su turno con su equipo de protección:
 - **Obligatorios generales (toda la planta):** **Lentes ANSI Z87.1**, **Tapones Auditivos de Inserción NRR 32 dB** y **Chaleco Reflejante Clase 2**.
 - **Condicional por puesto:** **Guantes Anticorte Nivel A4** (obligatorios en puestos operativos/maquinaria; **opcionales** en puestos de supervisión, inspección, almacén y montacargas). *(En esta planta no se requiere casco ni mascarilla)*.
 
-Sin embargo, a las 06:00 AM durante el cambio de turno, algunos trabajadores entran sin lentes, sin tapones auditivos o sin guantes porque les incomodan. Una sola omisión representa entre **US$290 y US$1,140 al día** en riesgo de accidentes, hipoacusia laboral, paros de línea y sanciones de inspección.
+Para detectarlos con precisión industrial, **Vigía EPP** entrena un modelo **YOLO11 de 9 clases** sobre **6 datasets combinados de Kaggle y Roboflow Universe (`2,072` imágenes reales)** incluyendo `aiotthien/personal-protection-equipment-datasets`, `tnguynhonh/sh17-yolov8s` (*SH17*) y `roboflow/earplugs-universe` (*Willy Alcantara / Roland Essmann / Research Thesis*), potenciado por los plugins **Ultralytics (YOLO11)**, **PyTorch + OpenCV**, **Supervision (Roboflow)**, **Weights & Biases (W&B)**, **NVIDIA TensorRT** y **ONNX Runtime**, auditado mediante la herramienta de porcentaje de exactitud (`entrenamiento/verificar_exactitud.py` con **TorchMetrics + Supervision + scikit-learn**).
 
 ---
 
@@ -18,7 +18,7 @@ Sin embargo, a las 06:00 AM durante el cambio de turno, algunos trabajadores ent
 ---
 
 ## 3. Torniquete en Tiempo Real y Guantes Opcionales por Puesto (`/kiosco` · 1:45 – 2:45)
-1. Entrar a **`/kiosco`**: aquí opera el filtro individual en la puerta de acceso a planta.
+1. Entrar a **`/kiosco`**: aquí opera el filtro individual en la puerta de acceso a planta acelerado con GPU (`PyTorch CUDA / ONNX Runtime / TensorRT`).
 2. Hacer clic en los presets **"EPP Completo (4/4)"**, **"Sin Tapones (NOM-011)"** y **"Sin Guantes"**.
 3. Con el preset **"Sin Guantes"** activo, alternar el selector superior de **"Puesto Operativo (Guantes Obligatorios)"** a **"Supervisor / Montacargas / Inspector (Guantes Opcionales)"**: mostrar cómo el veredicto cambia instantáneamente de `"TORNIQUETE BLOQUEADO · FALTA EPP"` a `"TORNIQUETE LIBERADO · PASE AUTORIZADO"` marcando los guantes en color cian (`OPCIONAL EN SU PUESTO`).
 

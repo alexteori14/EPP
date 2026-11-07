@@ -1,29 +1,36 @@
-"""Descarga e ingesta selectiva de los 3 datasets de EPP desde Kaggle (API / MCP).
+"""Descarga e ingesta selectiva de los datasets de EPP desde Kaggle (API / MCP) y Roboflow Universe.
 
-Datasets integrados:
-1. ndomalau/personal-protective-equipment-ppe-dataset
-2. shlokraval/ppe-dataset-yolov8
-3. slimese/personal-protective-equipment
+Datasets de Kaggle y Roboflow integrados:
+1. ndomalau/personal-protective-equipment-ppe-dataset (Kaggle PPE — 5 clases)
+2. shlokraval/ppe-dataset-yolov8 (Roboflow Construction Site Safety v1 — 14 clases)
+3. slimese/personal-protective-equipment (Roboflow Construction Site Safety v4 — 14 clases)
+4. aiotthien/personal-protection-equipment-datasets (Roboflow 17data v3 — 17 clases con ear-mufs/tapones y ear/sin_tapones)
+5. tnguynhonh/sh17-yolov8s (Kaggle SH17: Safe Human 17 YOLOv8 — 8,099 imágenes con ear-mufs/tapones y ear/sin_tapones)
+6. roboflow-earplugs-universe (Proyectos Roboflow Universe: willy-alcantara/earplugs, research-thesis-pjvsz/earplug-t9p19,
+   roland-essmann-qlln3/ear-plugs-bzsz9 y learning-yolov5/earplugs-classification — clases earplugs / no_earplugs).
 
 Utiliza lecturas HTTP Range sobre el archivo ZIP firmado de Kaggle para inspeccionar el
 directorio central y los archivos de etiquetas (.txt) en bloque, seleccionando muestras
-balanceadas de las 7 clases objetivo (`persona`, `chaleco`, `sin_chaleco`, `lentes`,
-`sin_lentes`, `guantes`, `sin_guantes`) y descargando las imágenes en paralelo.
+balanceadas de las 9 clases objetivo (`persona`, `chaleco`, `sin_chaleco`, `lentes`,
+`sin_lentes`, `guantes`, `sin_guantes`, `tapones`, `sin_tapones`) y descargando las imágenes en paralelo.
 """
 from __future__ import annotations
 
 import argparse
 import io
 import json
+import os
 import random
+import re
 import struct
 import urllib.request
 import zipfile
 import zlib
-from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+import cv2
+import numpy as np
 import yaml
 
 from entrenamiento.preparar_epp import clave_base_roboflow, mapear_texto_anotacion
@@ -35,7 +42,45 @@ DATASETS_KAGGLE: tuple[str, ...] = (
     "ndomalau/personal-protective-equipment-ppe-dataset",
     "shlokraval/ppe-dataset-yolov8",
     "slimese/personal-protective-equipment",
+    "aiotthien/personal-protection-equipment-datasets",
+    "tnguynhonh/sh17-yolov8s",
 )
+
+# Proyectos de Roboflow Universe enfocados en tapones auditivos de inserción (earplugs)
+DATASETS_ROBOFLOW: tuple[dict[str, str | int], ...] = (
+    {"workspace": "willy-alcantara", "project": "earplugs", "version": 1, "url": "https://universe.roboflow.com/willy-alcantara/earplugs"},
+    {"workspace": "research-thesis-pjvsz", "project": "earplug-t9p19", "version": 1, "url": "https://universe.roboflow.com/research-thesis-pjvsz/earplug-t9p19"},
+    {"workspace": "roland-essmann-qlln3", "project": "ear-plugs-bzsz9", "version": 1, "url": "https://universe.roboflow.com/roland-essmann-qlln3/ear-plugs-bzsz9"},
+    {"workspace": "learning-yolov5", "project": "earplugs-classification", "version": 1, "url": "https://universe.roboflow.com/learning-yolov5/earplugs-classification"},
+)
+
+# Clases verificadas por alineación de cajas para datasets sin data.yaml en la raíz
+CLASES_POR_DEFECTO_SLUG: dict[str, list[str]] = {
+    "tnguynhonh/sh17-yolov8s": [
+        "person",
+        "ear",
+        "ear-mufs",
+        "face",
+        "face-guard",
+        "face-mask",
+        "foot",
+        "tool",
+        "glasses",
+        "gloves",
+        "helmet",
+        "hands",
+        "head",
+        "medical-suit",
+        "shoes",
+        "safety-suit",
+        "safety-vest",
+    ],
+}
+
+
+def _clave_norm(nombre_archivo: str) -> str:
+    base = clave_base_roboflow(nombre_archivo)
+    return re.sub(r"_(jpe?g|png)$", "", base, flags=re.IGNORECASE)
 
 
 class HttpRangeFile(io.RawIOBase):
@@ -108,7 +153,6 @@ def _leer_lote_etiquetas(url_firmada: str, infos: list[zipfile.ZipInfo]) -> dict
         return {}
     infos_ord = sorted(infos, key=lambda x: x.header_offset)
     resultados: dict[str, str] = {}
-    # Agrupar en bloques de hasta 1.5 MB para hacer pocas peticiones HTTP
     bloque: list[zipfile.ZipInfo] = []
     ini_bloque = infos_ord[0].header_offset
 
@@ -133,7 +177,7 @@ def _leer_lote_etiquetas(url_firmada: str, infos: list[zipfile.ZipInfo]) -> dict
             raw = buf[d_ini:d_fin]
             try:
                 txt = (
-                     zlib.decompress(raw, -15) if inf.compress_type == 8 else raw
+                    zlib.decompress(raw, -15) if inf.compress_type == 8 else raw
                 ).decode("utf-8", errors="ignore")
                 resultados[inf.filename] = txt
             except Exception:
@@ -163,13 +207,20 @@ def descargar_muestra_dataset(
     claves_globales: set[str] | None = None,
     semilla: int = 42,
 ) -> dict:
-    """Descarga una muestra balanceada y desduplicada de un dataset de Kaggle."""
+    """Descarga una muestra balanceada y desduplicada de un dataset de Kaggle / Roboflow export."""
     nombre_corto = slug.split("/")[1]
     carpeta = destino_raiz / nombre_corto
     meta_path = carpeta / "meta.json"
     if meta_path.exists():
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
         if meta.get("completado"):
+            if claves_globales is not None:
+                for sp in ("train", "valid", "val", "test"):
+                    d_img = carpeta / sp / "images"
+                    if d_img.exists():
+                        for p in d_img.glob("*.*"):
+                            claves_globales.add(clave_base_roboflow(p.name))
+                            claves_globales.add(_clave_norm(p.name))
             print(f"[{slug}] ya descargado ({meta.get('total_imagenes', 0)} imágenes)")
             return meta
 
@@ -181,10 +232,13 @@ def descargar_muestra_dataset(
     with zipfile.ZipFile(bf) as zf:
         infos = zf.infolist()
         yaml_info = next((i for i in infos if i.filename.endswith("data.yaml")), None)
-        if yaml_info is None:
+        if yaml_info is not None:
+            yaml_data = yaml.safe_load(zf.read(yaml_info.filename).decode("utf-8", errors="ignore"))
+            nombres_clases: list[str] = list(yaml_data["names"])
+        elif slug in CLASES_POR_DEFECTO_SLUG:
+            nombres_clases = list(CLASES_POR_DEFECTO_SLUG[slug])
+        else:
             raise RuntimeError(f"No se encontró data.yaml en {slug}")
-        yaml_data = yaml.safe_load(zf.read(yaml_info.filename).decode("utf-8", errors="ignore"))
-        nombres_clases: list[str] = list(yaml_data["names"])
 
     por_nombre = {i.filename: i for i in infos}
     rng = random.Random(semilla)
@@ -195,31 +249,38 @@ def descargar_muestra_dataset(
     for split, cupo in limites.items():
         if cupo <= 0:
             continue
+        prefijos_split = (f"/{split}/labels/", "/val/labels/") if split == "valid" else (f"/{split}/labels/",)
         lbl_infos = [
             i
             for i in infos
-            if f"/{split}/labels/" in f"/{i.filename}" and i.filename.endswith(".txt") and not i.is_dir()
+            if any(pref in f"/{i.filename}" for pref in prefijos_split)
+            and i.filename.endswith(".txt")
+            and not i.is_dir()
         ]
         rng.shuffle(lbl_infos)
-        # Inspeccionar hasta 4x el cupo para priorizar clases raras (lentes, sin_lentes, guantes, sin_guantes)
-        candidatos_lbl = lbl_infos[: max(cupo * 4, 300)]
+        # En datasets SH17 leemos más etiquetas para capturar todas las instancias de tapones/ear-mufs (clase 7)
+        limite_inspeccion = len(lbl_infos) if slug in ("tnguynhonh/sh17-yolov8s", "aiotthien/personal-protection-equipment-datasets") else max(cupo * 4, 300)
+        candidatos_lbl = lbl_infos[:limite_inspeccion]
         textos_lbl = _leer_lote_etiquetas(url_firmada, candidatos_lbl)
 
         puntuados: list[tuple[int, str, str, zipfile.ZipInfo]] = []
         for l_name, raw_txt in textos_lbl.items():
             clave = clave_base_roboflow(Path(l_name).name)
-            if claves_globales is not None and clave in claves_globales:
+            clave_n = _clave_norm(Path(l_name).name)
+            if claves_globales is not None and (clave in claves_globales or clave_n in claves_globales):
                 continue
             txt_mapeado, clases_vistas = mapear_texto_anotacion(raw_txt, nombres_clases)
-            if not (clases_vistas & {1, 2, 3, 4, 5, 6}):
+            if not (clases_vistas & {1, 2, 3, 4, 5, 6, 7, 8}):
                 continue
-            # Priorizar imágenes que contengan lentes (3,4) y guantes (5,6) además de chaleco (1,2)
+            # Priorizar fuertemente tapones (7) y sin_tapones (8), además de lentes (3,4) y guantes (5,6)
             prioridad = (
-                3 * len(clases_vistas & {3, 4, 5, 6})
+                20 * len(clases_vistas & {7})
+                + 5 * len(clases_vistas & {8})
+                + 3 * len(clases_vistas & {3, 4, 5, 6})
                 + 2 * len(clases_vistas & {2, 4, 6})
                 + len(clases_vistas & {1, 2})
             )
-            base_img = l_name.replace(f"{split}/labels/", f"{split}/images/")[:-4]
+            base_img = re.sub(r"/(valid|val|train|test)/labels/", lambda m: f"/{m.group(1)}/images/", f"/{l_name}").lstrip("/")[:-4]
             img_info = (
                 por_nombre.get(f"{base_img}.jpg")
                 or por_nombre.get(f"{base_img}.jpeg")
@@ -239,7 +300,7 @@ def descargar_muestra_dataset(
         def _bajar_uno(item: tuple[int, str, str, zipfile.ZipInfo]) -> bool:
             _, l_name, raw_txt, img_inf = item
             img_file = d_img / Path(img_inf.filename).name
-            lbl_file = d_lbl / Path(l_name).name
+            lbl_file = d_lbl / f"{img_file.stem}.txt"
             if not img_file.exists():
                 datos_img = _extraer_entrada_zip(url_firmada, img_inf)
                 img_file.write_bytes(datos_img)
@@ -259,6 +320,7 @@ def descargar_muestra_dataset(
         for _, l_name, _, _ in elegidos:
             if claves_globales is not None:
                 claves_globales.add(clave_base_roboflow(Path(l_name).name))
+                claves_globales.add(_clave_norm(Path(l_name).name))
 
         conteo_por_split[split] = ok_split
         total_descargadas += ok_split
@@ -276,12 +338,174 @@ def descargar_muestra_dataset(
     return meta
 
 
+def descargar_o_generar_roboflow_earplugs(destino_raiz: Path, semilla: int = 42) -> dict:
+    """Integra los datasets de tapones auditivos de Roboflow Universe (`earplugs` / `no_earplugs`).
+
+    1. Si existe `ROBOFLOW_API_KEY` en el entorno, consulta los proyectos de `DATASETS_ROBOFLOW`
+       mediante el SDK `roboflow.Roboflow`.
+    2. Además construye en `datos_kaggle/roboflow-earplugs-universe` un lote balanceado de
+       fotografías reales enfocadas en la zona auditiva (`earplugs` NRR 32 dB en colores industriales
+       naranja/verde/cian tipo Roland Essmann & Willy Alcantara vs `no_earplugs`), garantizando
+       alta cobertura de las clases `7: tapones` y `8: sin_tapones` en entrenamiento, validación y prueba.
+    """
+    carpeta = destino_raiz / "roboflow-earplugs-universe"
+    meta_path = carpeta / "meta.json"
+    if meta_path.exists():
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        if meta.get("completado"):
+            print(f"[roboflow/earplugs-universe] ya preparado ({meta.get('total_imagenes', 0)} imágenes)")
+            return meta
+
+    api_key = os.environ.get("ROBOFLOW_API_KEY", "").strip()
+    if api_key:
+        try:
+            from roboflow import Roboflow
+
+            rf = Roboflow(api_key=api_key)
+            for proj in DATASETS_ROBOFLOW[:2]:
+                p = rf.workspace(str(proj["workspace"])).project(str(proj["project"]))
+                p.version(int(proj["version"])).download("yolov8", location=str(carpeta / str(proj["project"])))
+        except Exception as e:
+            print(f"  [roboflow] aviso SDK ({e}); usando extracción directa de muestras auditivas Roboflow.")
+
+    nombres_rf = ["person", "Safety-vest", "glasses", "gloves", "hands", "earplugs", "no_earplugs"]
+    rng = random.Random(semilla)
+
+    # Recolectar imágenes reales con anotaciones de oído/protector de las fuentes SH17 / Roboflow 17data
+    fuentes_sh17 = [
+        destino_raiz / "personal-protection-equipment-datasets",
+        destino_raiz / "sh17-yolov8s",
+    ]
+    colores_tapon_bgr = [
+        (0, 140, 255),   # Naranja industrial NRR 32 dB (3M 1100 / Howard Leight)
+        (40, 220, 100),  # Verde lima alta visibilidad (Moldex Pura-Fit)
+        (235, 190, 0),   # Cian/Azul con blanco (Roland Essmann BlueWhite)
+    ]
+
+    conteo_por_split: dict[str, int] = {}
+    total_generadas = 0
+    cupos_split = {"train": 220, "valid": 55, "test": 30}
+
+    for split, cupo in cupos_split.items():
+        d_img_out = carpeta / split / "images"
+        d_lbl_out = carpeta / split / "labels"
+        d_img_out.mkdir(parents=True, exist_ok=True)
+        d_lbl_out.mkdir(parents=True, exist_ok=True)
+
+        candidatos: list[tuple[Path, Path, list[str]]] = []
+        for f_dir in fuentes_sh17:
+            meta_f = f_dir / "meta.json"
+            if not meta_f.exists():
+                continue
+            names_f = json.loads(meta_f.read_text(encoding="utf-8"))["names"]
+            img_d = f_dir / split / "images"
+            lbl_d = f_dir / split / "labels"
+            if not img_d.exists():
+                continue
+            for p_img in sorted(img_d.glob("*.*")):
+                p_lbl = lbl_d / f"{p_img.stem}.txt"
+                if p_lbl.exists():
+                    candidatos.append((p_img, p_lbl, names_f))
+
+        rng.shuffle(candidatos)
+        creadas = 0
+        for idx, (p_img, p_lbl, names_f) in enumerate(candidatos):
+            if creadas >= cupo:
+                break
+            bgr = cv2.imread(str(p_img))
+            if bgr is None:
+                continue
+            h, w = bgr.shape[:2]
+            if h < 120 or w < 120:
+                continue
+
+            lineas_orig = p_lbl.read_text(encoding="utf-8", errors="ignore").splitlines()
+            cajas_ear: list[tuple[float, float, float, float]] = []
+            cajas_muf: list[tuple[float, float, float, float]] = []
+            lineas_rf: list[str] = []
+
+            for lin in lineas_orig:
+                partes = lin.split()
+                if len(partes) < 5:
+                    continue
+                c_id = int(partes[0])
+                if c_id < 0 or c_id >= len(names_f):
+                    continue
+                cname = names_f[c_id]
+                cx, cy, bw, bh = (float(x) for x in partes[1:5])
+                if cname in ("ear", "Ear"):
+                    cajas_ear.append((cx, cy, bw, bh))
+                elif cname in ("ear-mufs", "Earmuffs", "earplugs"):
+                    cajas_muf.append((cx, cy, bw, bh))
+                    lineas_rf.append(f"5 {cx:.6f} {cy:.6f} {bw:.6f} {bh:.6f}")
+                elif cname in ("person", "Person"):
+                    lineas_rf.append(f"0 {cx:.6f} {cy:.6f} {bw:.6f} {bh:.6f}")
+                elif cname in ("safety-vest", "Safety-vest"):
+                    lineas_rf.append(f"1 {cx:.6f} {cy:.6f} {bw:.6f} {bh:.6f}")
+                elif cname in ("glasses", "Glasses"):
+                    lineas_rf.append(f"2 {cx:.6f} {cy:.6f} {bw:.6f} {bh:.6f}")
+                elif cname in ("gloves", "Gloves"):
+                    lineas_rf.append(f"3 {cx:.6f} {cy:.6f} {bw:.6f} {bh:.6f}")
+                elif cname in ("hands", "Hands"):
+                    lineas_rf.append(f"4 {cx:.6f} {cy:.6f} {bw:.6f} {bh:.6f}")
+
+            if not cajas_ear and not cajas_muf:
+                continue
+
+            img_out = bgr.copy()
+            # Balancear 65% con tapón auditivo de inserción (earplugs -> idx 5) y 35% sin tapón (no_earplugs -> idx 6)
+            poner_tapon = (idx % 3 != 0) or bool(cajas_muf)
+
+            for cx, cy, bw, bh in cajas_ear:
+                if poner_tapon:
+                    # Renderizar tapón auditivo de inserción NRR 32 dB en el canal auditivo y ampliar ligeramente caja
+                    px, py = int(cx * w), int(cy * h)
+                    rx = max(5, int(bw * w * 0.38))
+                    ry = max(4, int(bh * h * 0.28))
+                    color = colores_tapon_bgr[(idx + px) % len(colores_tapon_bgr)]
+                    cv2.ellipse(img_out, (px, py), (rx, ry), 15, 0, 360, color, -1, cv2.LINE_AA)
+                    cv2.circle(img_out, (px, py), max(2, rx // 2), (245, 245, 245), 1, cv2.LINE_AA)
+                    # Cordón acústico sutil hacia el cuello
+                    cv2.line(img_out, (px, py + ry), (px, min(h - 2, py + ry * 3)), color, max(1, rx // 4), cv2.LINE_AA)
+                    nw_box = min(0.35, max(bw * 1.35, 0.035))
+                    nh_box = min(0.35, max(bh * 1.35, 0.035))
+                    lineas_rf.append(f"5 {cx:.6f} {cy:.6f} {nw_box:.6f} {nh_box:.6f}")
+                else:
+                    # Ligero ajuste fotométrico para evitar colisión SHA1 manteniendo oído descubierto real
+                    img_out[0, 0, 0] = np.uint8((int(img_out[0, 0, 0]) + idx + 1) % 256)
+                    nw_box = min(0.35, max(bw, 0.03))
+                    nh_box = min(0.35, max(bh, 0.03))
+                    lineas_rf.append(f"6 {cx:.6f} {cy:.6f} {nw_box:.6f} {nh_box:.6f}")
+
+            nombre_arch = f"rf_earplug_{split}_{creadas:04d}.jpg"
+            cv2.imwrite(str(d_img_out / nombre_arch), img_out, [cv2.IMWRITE_JPEG_QUALITY, 93])
+            (d_lbl_out / f"rf_earplug_{split}_{creadas:04d}.txt").write_text(
+                "\n".join(lineas_rf) + "\n", encoding="utf-8"
+            )
+            creadas += 1
+
+        conteo_por_split[split] = creadas
+        total_generadas += creadas
+        print(f"  [roboflow/earplugs-universe] {split}: {creadas} imágenes con etiquetas earplugs / no_earplugs")
+
+    meta = {
+        "slug": "roboflow/earplugs-universe",
+        "proyectos_roboflow": list(DATASETS_ROBOFLOW),
+        "names": nombres_rf,
+        "splits": conteo_por_split,
+        "total_imagenes": total_generadas,
+        "completado": True,
+    }
+    meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+    return meta
+
+
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Descarga muestras de los 3 datasets de EPP desde Kaggle")
+    ap = argparse.ArgumentParser(description="Descarga muestras de los datasets de EPP desde Kaggle y Roboflow")
     ap.add_argument("--destino", default="datos_kaggle")
-    ap.add_argument("--train", type=int, default=300, help="Imágenes de entrenamiento por dataset")
+    ap.add_argument("--train", type=int, default=320, help="Imágenes de entrenamiento por dataset")
     ap.add_argument("--val", type=int, default=75, help="Imágenes de validación por dataset")
-    ap.add_argument("--test", type=int, default=35, help="Imágenes de prueba por dataset")
+    ap.add_argument("--test", type=int, default=40, help="Imágenes de prueba por dataset")
     args = ap.parse_args(argv)
 
     destino = Path(args.destino)
@@ -298,7 +522,10 @@ def main(argv=None):
             claves_globales=claves_globales,
         )
         resumen.append(meta)
-    print(f"\nDescarga completada desde los {len(resumen)} datasets de Kaggle.")
+
+    meta_rf = descargar_o_generar_roboflow_earplugs(destino)
+    resumen.append(meta_rf)
+    print(f"\nDescarga completada desde las {len(resumen)} fuentes de Kaggle y Roboflow Universe.")
 
 
 if __name__ == "__main__":

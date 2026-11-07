@@ -1,15 +1,34 @@
 {
-  "mAP50": 0.672,
-  "mAP50-95": 0.3367,
-  "precision": 0.6639,
-  "recall": 0.6008,
+  "mAP50": 0.6567,
+  "mAP50_pct": 65.67,
+  "mAP50-95": 0.3501,
+  "mAP50-95_pct": 35.01,
+  "precision": 0.7108,
+  "precision_pct": 71.08,
+  "recall": 0.5982,
+  "recall_pct": 59.82,
+  "f1_score": 0.6497,
+  "f1_score_pct": 64.97,
   "por_clase": {
-    "persona": 0.9411,
-    "chaleco": 0.8676,
-    "sin_chaleco": 0.755,
-    "lentes": 0.4188,
-    "sin_lentes": 0.5272,
-    "guantes": 0.6804,
-    "sin_guantes": 0.514
+    "persona": 0.9262,
+    "chaleco": 0.817,
+    "sin_chaleco": 0.6976,
+    "lentes": 0.5703,
+    "sin_lentes": 0.5012,
+    "guantes": 0.3668,
+    "sin_guantes": 0.6754,
+    "tapones": 0.7746,
+    "sin_tapones": 0.5812
+  },
+  "por_clase_pct": {
+    "persona": 92.62,
+    "chaleco": 81.7,
+    "sin_chaleco": 69.76,
+    "lentes": 57.03,
+    "sin_lentes": 50.12,
+    "guantes": 36.68,
+    "sin_guantes": 67.54,
+    "tapones": 77.46,
+    "sin_tapones": 58.12
   }
 }
