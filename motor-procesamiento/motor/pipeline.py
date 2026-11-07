@@ -159,7 +159,9 @@ def procesar(
                     confianza=votado["prendas"][pr]["confianza"],
                     caja=ep_orig.caja if ep_orig else None,
                 )
-            rec_p, rec_z = anotar.recortar_persona_y_zona(img_f, pers_f)
+            rec_p, rec_z = anotar.recortar_persona_y_zona(
+                img_f, pers_f, prendas_requeridas=t.prendas_requeridas
+            )
             ruta_p = d_recortes / f"{t.posicion}.jpg"
             ruta_z = d_recortes / f"{t.posicion}_zona.jpg"
             cv2.imwrite(str(ruta_p), rec_p, [cv2.IMWRITE_JPEG_QUALITY, 90])
@@ -235,7 +237,9 @@ def _escribir_video_anotado(
             if t.posicion in mejor_por_pos:
                 _, _, _, pers_f = mejor_por_pos[t.posicion]
                 titulo = f"{t.posicion} · {t.nombre}"
-                frame = anotar.dibujar_persona(frame, pers_f, titulo)
+                frame = anotar.dibujar_persona(
+                    frame, pers_f, titulo, prendas_requeridas=t.prendas_requeridas
+                )
             writer.write(frame)
             idx += 1
     finally:

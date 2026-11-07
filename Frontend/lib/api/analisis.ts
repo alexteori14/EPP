@@ -69,18 +69,18 @@ export async function ejecutarTarjetaJurado(tarjeta: string): Promise<RespuestaE
 /**
  * Kiosco de turno en vivo: evalúa un preset demostrativo o una foto capturada en base64.
  */
-export const evaluarKioscoPreset = (preset: PresetKiosco) =>
+export const evaluarKioscoPreset = (preset: PresetKiosco, requiere_guantes = true) =>
   pedir<RespuestaKiosco>('/motor/kiosco/evaluar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ preset }),
+    body: JSON.stringify({ preset, requiere_guantes }),
   });
 
-export const evaluarKioscoImagenB64 = (imagen_b64: string) =>
+export const evaluarKioscoImagenB64 = (imagen_b64: string, requiere_guantes = true) =>
   pedir<RespuestaKiosco>('/motor/kiosco/evaluar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ imagen_b64 }),
+    body: JSON.stringify({ imagen_b64, requiere_guantes }),
   });
 
 /** Asistente RAG sobre la corrida activa o "demo". */

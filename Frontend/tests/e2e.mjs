@@ -9,7 +9,7 @@ async function assert(condition, message) {
 }
 
 async function run() {
-  console.log(`Iniciando verificación E2E de Vigía EPP en ${BASE_URL}...`);
+  console.log(`Iniciando verificación E2E de Vigía EPP (Opción 1 + 4 Zonas + Guantes Opcionales) en ${BASE_URL}...`);
   const browser = await chromium.launch({
     headless: true,
     executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome',
@@ -17,7 +17,7 @@ async function run() {
   const page = await browser.newPage();
 
   try {
-    // 1. Resumen (/resumen)
+    // 1. Monitor de Caseta (/resumen)
     await page.goto(`${BASE_URL}/resumen`, { waitUntil: 'networkidle' });
     const heroText = await page.getByTestId('hero-frase').textContent();
     console.log('Hero frase:', heroText);
@@ -26,33 +26,62 @@ async function run() {
       'La frase hero en /resumen debe mostrar trabajadores sin EPP completo'
     );
 
-    // Probar Modo Jurado en Vivo (tarjeta sin_lentes)
-    await page.getByTestId('jurado-btn-sin_lentes').click();
+    // Probar Modo Jurado en Vivo (tarjeta sin_tapones)
+    await page.getByTestId('jurado-btn-sin_tapones').click();
     await page.getByTestId('jurado-resultado').waitFor({ state: 'visible', timeout: 8000 });
     const juradoTexto = await page.getByTestId('jurado-resultado').textContent();
     await assert(
-      juradoTexto && juradoTexto.includes('Carlos Mendoza'),
-      'Modo Jurado debe mostrar el hallazgo emergente de Carlos Mendoza'
+      juradoTexto && juradoTexto.includes('Luis Fernando Vega'),
+      'Modo Jurado debe mostrar el hallazgo de falta de tapones auditivos de Luis Fernando Vega'
     );
-    console.log('✓ /resumen y Modo Jurado verificados');
+    console.log('✓ /resumen y Modo Jurado (con tapones auditivos) verificados');
 
-    // 2. Kiosco en vivo (/kiosco)
+    // 2. Torniquete en vivo (/kiosco) — 4 zonas y Guantes Opcionales por Puesto
     await page.goto(`${BASE_URL}/kiosco`, { waitUntil: 'networkidle' });
     await page.waitForFunction(
-      () => document.querySelector('[data-testid="kiosco-veredicto"]')?.textContent?.includes('PASE DE TURNO AUTORIZADO'),
+      () =>
+        document
+          .querySelector('[data-testid="kiosco-veredicto"]')
+          ?.textContent?.includes('PASE DE TURNO AUTORIZADO'),
       { timeout: 8000 }
     );
-    await page.getByTestId('kiosco-preset-sin_lentes').click();
+
+    // Verificar que las 4 zonas existen (lentes, tapones, chaleco, guantes)
+    await assert(
+      await page.getByTestId('kiosco-prenda-tapones').isVisible(),
+      'La zona de Tapones Auditivos debe estar visible en /kiosco'
+    );
+
+    // Probar preset sin_tapones -> bloqueado
+    await page.getByTestId('kiosco-preset-sin_tapones').click();
     await page.waitForFunction(
-      () => document.querySelector('[data-testid="kiosco-veredicto"]')?.textContent?.includes('ACCESO DETENIDO'),
+      () =>
+        document
+          .querySelector('[data-testid="kiosco-veredicto"]')
+          ?.textContent?.includes('ACCESO DETENIDO'),
       { timeout: 8000 }
     );
-    await page.getByTestId('kiosco-preset-completo').click();
+
+    // Probar preset sin_guantes en puesto operativo (requiere guantes) -> bloqueado
+    await page.getByTestId('kiosco-preset-sin_guantes').click();
     await page.waitForFunction(
-      () => document.querySelector('[data-testid="kiosco-veredicto"]')?.textContent?.includes('PASE DE TURNO AUTORIZADO'),
+      () =>
+        document
+          .querySelector('[data-testid="kiosco-veredicto"]')
+          ?.textContent?.includes('ACCESO DETENIDO'),
       { timeout: 8000 }
     );
-    console.log('✓ /kiosco y sus 3 zonas anatómicas verificados');
+
+    // Cambiar a Puesto con Guantes Opcionales -> debe AUTORIZAR aunque no lleve guantes
+    await page.getByTestId('kiosco-rol-sin-guantes').click();
+    await page.waitForFunction(
+      () =>
+        document
+          .querySelector('[data-testid="kiosco-veredicto"]')
+          ?.textContent?.includes('PASE DE TURNO AUTORIZADO'),
+      { timeout: 8000 }
+    );
+    console.log('✓ /kiosco, 4 zonas anatómicas y Guantes Opcionales por Puesto verificados');
 
     // 3. Recorrido (/recorrido)
     await page.goto(`${BASE_URL}/recorrido`, { waitUntil: 'networkidle' });
@@ -63,15 +92,17 @@ async function run() {
     );
     console.log('✓ /recorrido verificado');
 
-    // 4. Cuadrilla y Gemelo Anatómico (/cuadrilla)
+    // 4. Cuadrilla y Gemelo Anatómico de 4 Zonas (/cuadrilla)
     await page.goto(`${BASE_URL}/cuadrilla`, { waitUntil: 'networkidle' });
-    await page.getByTestId('estacion-card-L1-T2').click();
+    await page.getByTestId('estacion-card-L3-T1').click();
     const gemeloTexto = await page.getByTestId('gemelo-anatomico-panel').textContent();
     await assert(
-      gemeloTexto && gemeloTexto.includes('Marco Antonio Ríos'),
-      'El Gemelo Anatómico debe mostrar el detalle de Marco Antonio Ríos (L1-T2)'
+      gemeloTexto &&
+        gemeloTexto.includes('Alejandro Cabrera') &&
+        gemeloTexto.includes('OPCIONAL EN SU PUESTO'),
+      'El Gemelo Anatómico de 4 zonas debe mostrar a Alejandro Cabrera (L3-T1) con guantes opcionales en su puesto'
     );
-    console.log('✓ /cuadrilla y Gemelo Anatómico de 3 zonas verificados');
+    console.log('✓ /cuadrilla y Gemelo Anatómico de 4 zonas verificados');
 
     // 5. Hallazgos y Persistencia Transaccional (/hallazgos)
     await page.goto(`${BASE_URL}/hallazgos`, { waitUntil: 'networkidle' });
@@ -111,14 +142,14 @@ async function run() {
     );
     console.log('✓ /analizar verificado');
 
-    // 8. Asistente IA RAG (/asistente)
+    // 8. Inspector IA RAG (/asistente)
     await page.goto(`${BASE_URL}/asistente`, { waitUntil: 'networkidle' });
     await page.getByTestId('sugerencia-chat-0').click();
     await page.getByTestId('mensaje-asistente-2').waitFor({ state: 'visible', timeout: 8000 });
     const respChat = await page.getByTestId('mensaje-asistente-2').textContent();
     await assert(
       respChat && respChat.includes('Marco Antonio Ríos'),
-      'El Asistente IA debe responder citando a los trabajadores de la corrida'
+      'El Inspector IA debe responder citando a los trabajadores de la corrida'
     );
     console.log('✓ /asistente RAG verificado');
 

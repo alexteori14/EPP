@@ -14,6 +14,7 @@ from motor.asociar import PersonaAsociada
 COLOR_OK = (80, 185, 22)        # Verde esmeralda
 COLOR_FALTA = (38, 38, 220)     # Rojo alerta
 COLOR_DUDOSO = (10, 155, 235)   # Ámbar
+COLOR_OPCIONAL = (195, 165, 45) # Cian/Acero (prenda opcional por puesto)
 COLOR_PERSONA = (180, 160, 20)  # Teal industrial
 
 
@@ -21,18 +22,23 @@ def dibujar_persona(
     img: np.ndarray,
     persona: PersonaAsociada,
     etiqueta_titulo: str | None = None,
+    prendas_requeridas: tuple[str, ...] = contrato.PRENDAS,
 ) -> np.ndarray:
-    """Dibuja la envolvente del trabajador y el estado de sus 3 zonas anatómicas (lentes, chaleco, guantes)."""
+    """Dibuja la envolvente del trabajador y el estado de sus 4 zonas anatómicas (lentes, tapones, chaleco, guantes)."""
     out = img.copy()
     h, w = out.shape[:2]
     x1, y1, x2, y2 = (int(round(v)) for v in persona.caja)
     x1, y1 = max(0, x1), max(0, y1)
     x2, y2 = min(w - 1, x2), min(h - 1, y2)
 
-    estados = [persona.prendas[pr].estado for pr in contrato.PRENDAS if pr in persona.prendas]
-    if "falta" in estados:
+    estados_req = [
+        persona.prendas[pr].estado
+        for pr in prendas_requeridas
+        if pr in persona.prendas
+    ]
+    if "falta" in estados_req:
         color_p = COLOR_FALTA
-    elif "dudoso" in estados:
+    elif "dudoso" in estados_req:
         color_p = COLOR_DUDOSO
     else:
         color_p = COLOR_OK
@@ -46,7 +52,14 @@ def dibujar_persona(
         ep = persona.prendas.get(prenda)
         if ep is None:
             continue
-        c_zona = COLOR_OK if ep.estado == "ok" else COLOR_FALTA if ep.estado == "falta" else COLOR_DUDOSO
+        es_req = prenda in prendas_requeridas
+        if not es_req and ep.estado != "ok":
+            c_zona = COLOR_OPCIONAL
+            simbolo = "OPCIONAL"
+        else:
+            c_zona = COLOR_OK if ep.estado == "ok" else COLOR_FALTA if ep.estado == "falta" else COLOR_DUDOSO
+            simbolo = "OK" if ep.estado == "ok" else "FALTA" if ep.estado == "falta" else "REVISAR"
+
         if ep.caja is not None:
             zx1, zy1, zx2, zy2 = (int(round(v)) for v in ep.caja)
         else:
@@ -56,7 +69,6 @@ def dibujar_persona(
         zx1, zy1 = max(0, zx1), max(0, zy1)
         zx2, zy2 = min(w - 1, zx2), min(h - 1, zy2)
         cv2.rectangle(out, (zx1, zy1), (zx2, zy2), c_zona, 2)
-        simbolo = "OK" if ep.estado == "ok" else "FALTA" if ep.estado == "falta" else "REVISAR"
         texto_z = f"{prenda.upper()}: {simbolo}"
         _etiqueta_caja(out, texto_z, zx1, max(22, zy1 - 4), c_zona)
 
@@ -85,9 +97,10 @@ def _etiqueta_caja(
 def recortar_persona_y_zona(
     img: np.ndarray,
     persona: PersonaAsociada,
+    prendas_requeridas: tuple[str, ...] = contrato.PRENDAS,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Devuelve (recorte_persona_anotado, recorte_zona_foco) en formato 16:9 amigable para el tablero."""
-    anotada = dibujar_persona(img, persona)
+    """Devuelve (recorte_persona_anotado, recorte_zona_foco) en formato amigable para el tablero."""
+    anotada = dibujar_persona(img, persona, prendas_requeridas=prendas_requeridas)
     h, w = img.shape[:2]
     x1, y1, x2, y2 = (int(round(v)) for v in persona.caja)
     pad_x = int((x2 - x1) * 0.25)
@@ -98,14 +111,14 @@ def recortar_persona_y_zona(
     if recorte_p.size == 0:
         recorte_p = anotada
 
-    # Zona prioritaria: la primera prenda en "falta", o en "dudoso", o el torso
+    # Zona prioritaria: la primera prenda requerida en "falta", o en "dudoso", o el torso
     prenda_foco = "chaleco"
-    for pr in contrato.PRENDAS:
+    for pr in prendas_requeridas:
         if persona.prendas.get(pr) and persona.prendas[pr].estado == "falta":
             prenda_foco = pr
             break
     else:
-        for pr in contrato.PRENDAS:
+        for pr in prendas_requeridas:
             if persona.prendas.get(pr) and persona.prendas[pr].estado == "dudoso":
                 prenda_foco = pr
                 break

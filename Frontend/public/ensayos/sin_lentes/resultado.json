@@ -10,13 +10,14 @@
     "trabajador": "Carlos Mendoza",
     "id_empleado": "EMP-101",
     "puesto": "Operador de Corte CNC",
+    "requiere_guantes": true,
     "linea": 1,
     "posicion": 1,
     "prendas_faltantes": [
       "lentes"
     ],
-    "prendas_completas": 2,
-    "prendas_requeridas": 3,
+    "prendas_completas": 3,
+    "prendas_requeridas": 4,
     "impacto_diario": 420.0,
     "cuadro": 9,
     "segundo": 0.38,
@@ -35,13 +36,14 @@
       "trabajador": "Carlos Mendoza",
       "id_empleado": "EMP-101",
       "puesto": "Operador de Corte CNC",
+      "requiere_guantes": true,
       "linea": 1,
       "posicion": 1,
       "prendas_faltantes": [
         "lentes"
       ],
-      "prendas_completas": 2,
-      "prendas_requeridas": 3,
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
       "impacto_diario": 420.0,
       "cuadro": 9,
       "segundo": 0.38,

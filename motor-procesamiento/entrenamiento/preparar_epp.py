@@ -57,6 +57,27 @@ MAPEO_NOMBRES: dict[str, int] = {
     "no_gloves": 6,
     "NO-Gloves": 6,
     "no-gloves": 6,
+    # 7: tapones (protectores auditivos de inserción / auditivos)
+    "earplugs": 7,
+    "Earplugs": 7,
+    "ear-plugs": 7,
+    "ear_plugs": 7,
+    "ear_protection": 7,
+    "Ear-Protection": 7,
+    "earmuffs": 7,
+    "Earmuffs": 7,
+    "tapones": 7,
+    "tapones_auditivos": 7,
+    # 8: sin_tapones
+    "no_earplugs": 8,
+    "NO-Earplugs": 8,
+    "no-earplugs": 8,
+    "no_ear_protection": 8,
+    "NO-Ear-Protection": 8,
+    "no-ear-protection": 8,
+    "no_earmuffs": 8,
+    "NO-Earmuffs": 8,
+    "sin_tapones": 8,
 }
 
 

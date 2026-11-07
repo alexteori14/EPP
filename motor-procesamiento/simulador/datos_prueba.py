@@ -1,8 +1,9 @@
 """Genera escena/escena.json con las 12 posiciones del turno y los errores sembrados de EPP.
 
-Al igual que en Ubik (8 errores en 12 posiciones), el turno de demostración tiene 12
-trabajadores (3 líneas × 4 estaciones) con incumplimientos sembrados en los 3 equipos
-obligatorios (Lentes, Chaleco, Guantes) para demostrar todas las reglas del cruce.
+Evalúa los 4 componentes de EPP de la planta (sin casco ni mascarilla):
+- Obligatorios generales (3): Lentes (`lentes`), Tapones auditivos de inserción (`tapones`) y Chaleco (`chaleco`).
+- Condicional / opcional por puesto (1): Guantes anticorte (`guantes`), obligatorios solo en puestos
+  operativos de corte/soldadura/prensa/maniobras y opcionales en supervisión/inspección/montacargas.
 """
 from __future__ import annotations
 
@@ -15,27 +16,31 @@ ESCENA_DEMO: list[dict] = [
     {
         "posicion": "L1-T1",
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok",
-        "nota": "EPP completo (3/3)",
+        "nota": "EPP completo (4/4 requeridos para Corte CNC)",
     },
     {
         "posicion": "L1-T2",
         "lentes": "falta",
+        "tapones": "falta",
         "chaleco": "ok",
         "guantes": "falta",
-        "nota": "Soldador sin lentes ni guantes (múltiples EPP faltantes: US$760/día)",
+        "nota": "Soldador sin lentes, sin tapones auditivos ni guantes (múltiples EPP faltantes: US$1,140/día)",
     },
     {
         "posicion": "L1-T3",
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok",
-        "nota": "EPP completo (3/3)",
+        "nota": "EPP completo (4/4 requeridos para Troquelado)",
     },
     {
         "posicion": "L1-T4",
         "lentes": "falta",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok",
         "nota": "Operador de prensa sin lentes de seguridad (US$420/día)",
@@ -43,81 +48,94 @@ ESCENA_DEMO: list[dict] = [
     {
         "posicion": "L2-T1",
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "falta",
-        "guantes": "ok",
-        "nota": "Operador de montacargas sin chaleco de alta visibilidad (US$290/día)",
+        "guantes": "falta",
+        "nota": "Operador de montacargas sin chaleco (US$290/día · guantes opcionales en su puesto)",
     },
     {
         "posicion": "L2-T2",
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "falta",
-        "nota": "Auxiliar de maniobras sin guantes anticorte (US$340/día)",
+        "nota": "Auxiliar de maniobras sin guantes anticorte obligatorios en su puesto (US$340/día)",
     },
     {
         "posicion": "L2-T3",
         "lentes": "ok",
+        "tapones": "dudoso",
         "chaleco": "ok",
-        "guantes": "dudoso",
-        "nota": "Manos parcialmente fuera de cuadro: lectura dudosa (revisar en caseta, US$0)",
+        "guantes": "falta",
+        "nota": "Supervisor de patio: zona auditiva parcialmente oculta (revisar en caseta, US$0 · guantes opcionales)",
     },
     {
         "posicion": "L2-T4",
         "lentes": "falta",
+        "tapones": "ok",
         "chaleco": "falta",
-        "guantes": "ok",
-        "nota": "Almacenista sin lentes ni chaleco (múltiples EPP faltantes: US$710/día)",
+        "guantes": "falta",
+        "nota": "Almacenista sin lentes ni chaleco (US$710/día · guantes opcionales en almacén)",
     },
     {
         "posicion": "L3-T1",
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
-        "guantes": "ok",
-        "nota": "EPP completo (3/3)",
+        "guantes": "falta",
+        "nota": "Inspector de calidad autorizado (3/3 requeridos: Lentes + Tapones + Chaleco · Guantes opcionales)",
     },
     {
         "posicion": "L3-T2",
-        "lentes": "falta",
+        "lentes": "ok",
+        "tapones": "falta",
         "chaleco": "ok",
         "guantes": "ok",
-        "nota": "Operador de esmerilado sin lentes de seguridad (US$420/día)",
+        "nota": "Operador de esmerilado sin tapones auditivos de inserción en zona de 96 dB (US$380/día)",
     },
     {
         "posicion": "L3-T3",
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "falta",
-        "nota": "Técnico de mantenimiento sin guantes anticorte (US$340/día)",
+        "nota": "Técnico de mantenimiento sin guantes anticorte obligatorios (US$340/día)",
     },
     {
         "posicion": "L3-T4",
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok",
-        "nota": "EPP completo (3/3)",
+        "nota": "EPP completo (4/4 requeridos para Subensambles)",
     },
 ]
 
-# Las 4 tarjetas del Modo Jurado (cada una introduce un hallazgo nuevo sobre una posición limpia)
+# Tarjetas del Modo Jurado (cada una introduce un hallazgo nuevo sobre una posición limpia)
 TARJETAS_JURADO: dict[str, dict] = {
     "sin_lentes": {
         "posicion": "L1-T1",
-        "cambio": {"lentes": "falta", "chaleco": "ok", "guantes": "ok"},
+        "cambio": {"lentes": "falta", "tapones": "ok", "chaleco": "ok", "guantes": "ok"},
         "descripcion": "Carlos Mendoza (L1-T1) intenta ingresar sin lentes de seguridad",
+    },
+    "sin_tapones": {
+        "posicion": "L1-T3",
+        "cambio": {"lentes": "ok", "tapones": "falta", "chaleco": "ok", "guantes": "ok"},
+        "descripcion": "Luis Fernando Vega (L1-T3 · Troquelado 95 dB) intenta ingresar sin tapones auditivos",
     },
     "sin_guantes": {
         "posicion": "L1-T3",
-        "cambio": {"lentes": "ok", "chaleco": "ok", "guantes": "falta"},
+        "cambio": {"lentes": "ok", "tapones": "ok", "chaleco": "ok", "guantes": "falta"},
         "descripcion": "Luis Fernando Vega (L1-T3) intenta ingresar sin guantes anticorte",
     },
     "sin_chaleco": {
         "posicion": "L3-T1",
-        "cambio": {"lentes": "ok", "chaleco": "falta", "guantes": "ok"},
+        "cambio": {"lentes": "ok", "tapones": "ok", "chaleco": "falta", "guantes": "falta"},
         "descripcion": "Alejandro Cabrera (L3-T1) intenta ingresar sin chaleco reflejante",
     },
     "multiple_faltante": {
         "posicion": "L3-T4",
-        "cambio": {"lentes": "falta", "chaleco": "falta", "guantes": "falta"},
+        "cambio": {"lentes": "falta", "tapones": "falta", "chaleco": "falta", "guantes": "falta"},
         "descripcion": "Eduardo Castañeda (L3-T4) intenta ingresar sin ningún equipo de protección",
     },
 }
@@ -135,8 +153,11 @@ def generar_escena(dir_raiz: Path = Path(".")):
                 "id_empleado": t.id_empleado,
                 "nombre": t.nombre,
                 "puesto": t.puesto,
+                "requiere_guantes": t.requiere_guantes,
+                "prendas_requeridas": list(t.prendas_requeridas),
                 "prendas": {
                     "lentes": item["lentes"],
+                    "tapones": item["tapones"],
                     "chaleco": item["chaleco"],
                     "guantes": item["guantes"],
                 },

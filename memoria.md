@@ -6,13 +6,16 @@
 
 ## 1. Invariantes Críticas del Dominio (NUNCA ROMPER)
 
-1. **EXCLUSIÓN ABSOLUTA DE CASCO Y MASCARILLA:**
+1. **EXCLUSIÓN ABSOLUTA DE CASCO Y MASCARILLA + 4 EQUIPOS EVALUADOS (`PRENDAS`):**
    - En la planta donde opera el software **NO se pide casco (`casco`) ni mascarilla (`mascarilla`)**.
-   - Solo existen **3 prendas obligatorias** en todo el sistema (`motor.contrato.PRENDAS`):
-     - `"lentes"` (Lentes Policarbonato Anti-Impacto ANSI Z87.1) $\rightarrow$ Riesgo diario: **`US$420.00/día`** · Stock en caseta: **`18`** · Paro: **`US$950.00`**
-     - `"chaleco"` (Chaleco Reflejante Clase 2 Alta Visibilidad) $\rightarrow$ Riesgo diario: **`US$290.00/día`** · Stock en caseta: **`12`** · Paro: **`US$820.00`**
-     - `"guantes"` (Guantes Nitrilo Anticorte Nivel A4) $\rightarrow$ Riesgo diario: **`US$340.00/día`** · Stock en caseta: **`24`** · Paro: **`US$880.00`**
-2. **ESQUEMA CANÓNICO DE 7 CLASES YOLO11 (`motor.contrato.CLASES`):**
+   - Se evalúan **4 componentes de EPP** (`motor.contrato.PRENDAS = ("lentes", "tapones", "chaleco", "guantes")`):
+     - **Obligatorios generales (`PRENDAS_GENERALES = ("lentes", "tapones", "chaleco")`):**
+       - `"lentes"` (Lentes Policarbonato Anti-Impacto ANSI Z87.1) $\rightarrow$ Riesgo diario: **`US$420.00/día`** · Stock en caseta: **`18`** · Paro: **`US$950.00`**
+       - `"tapones"` (Tapones Auditivos de Inserción NRR 32 dB NOM-011-STPS para evitar daño auditivo por ruido $>85\text{ dB(A)}$) $\rightarrow$ Riesgo diario: **`US$380.00/día`** · Stock en caseta: **`40`** · Paro: **`US$890.00`**
+       - `"chaleco"` (Chaleco Reflejante Clase 2 Alta Visibilidad) $\rightarrow$ Riesgo diario: **`US$290.00/día`** · Stock en caseta: **`12`** · Paro: **`US$820.00`**
+     - **Condicional / Opcional según el puesto (`PRENDAS_OPCIONALES_POR_PUESTO = ("guantes",)`):**
+       - `"guantes"` (Guantes Nitrilo Anticorte Nivel A4) $\rightarrow$ Riesgo diario: **`US$340.00/día`** (solo cuando el puesto lo exige; **`US$0.00`** y **autorizado** en `PUESTOS_GUANTES_OPCIONALES`: *Operador de Montacargas*, *Supervisor de Patio*, *Almacenista de Acero*, *Inspector de Calidad*, *Coordinador de Logística*).
+2. **ESQUEMA CANÓNICO DE 9 CLASES YOLO11 (`motor.contrato.CLASES`):**
    - `0: "persona"`
    - `1: "chaleco"`
    - `2: "sin_chaleco"`
@@ -20,7 +23,12 @@
    - `4: "sin_lentes"`
    - `5: "guantes"`
    - `6: "sin_guantes"`
-3. **PRINCIPIO DE HONESTIDAD OPERATIVA (`dudoso` / `revisar` = `US$0.00`):**
+   - `7: "tapones"`
+   - `8: "sin_tapones"`
+3. **INTERFAZ PROPIA OPCIÓN 1 (CERO PARECIDO VISUAL CON `ubik`):**
+   - Se eliminó por completo la barra lateral izquierda (`Sidebar.tsx`), el fondo claro retail y el color `teal-600` heredados de `ubik`.
+   - La interfaz es un **Centro de Comando Industrial y Caseta de Torniquete (*Tactical Dark & High-Vis Safety*)** en acero carbón (`#080c14`), ámbar de alta visibilidad (`#F59E0B`), verde torniquete (`#10B981`), rojo sirena (`#F43F5E`) y cian técnico (`#06B6D4` para guantes opcionales por puesto), con HUD superior de telemetría acústica (`94.2 dB(A)`) y **Gemelo Anatómico SVG de 4 zonas (`SiluetaAnatomica4Zonas`)**.
+4. **PRINCIPIO DE HONESTIDAD OPERATIVA (`dudoso` / `revisar` = `US$0.00`):**
    - Cuando una zona anatómica está cortada por el borde del encuadre, tiene confianza `< 0.55` (`CONFIANZA_MINIMA_PRENDA`) o hay empate técnico entre clase positiva y negativa (`abs(conf_pos - conf_neg) < 0.15`, `UMBRAL_CONFLICTO_DUDA`), el estado de la prenda es `"dudoso"` y el hallazgo se clasifica como `"revisar"` con **`impacto_diario = 0.0`**.
 
 ---

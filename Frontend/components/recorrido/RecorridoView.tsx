@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Clock, ExternalLink, Play, ShieldAlert } from 'lucide-react';
+import { Clock, ExternalLink, Play } from 'lucide-react';
 import { Hallazgo, SalidaHallazgos } from '@/types/hallazgos';
 import {
   formatearMoneda,
@@ -34,24 +34,25 @@ export function RecorridoView({ data }: { data: SalidaHallazgos }) {
   const ordenadosPorTiempo = [...hallazgos].sort((a, b) => a.segundo - b.segundo);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="space-y-6">
       <TituloPagina
         icono={ICONO_PANTALLA.recorrido}
-        titulo="Recorrido de Fila con Cajas Anatómicas Anotadas"
+        titulo="Recorrido de Fila con Cajas Anatómicas Anotadas (4 Zonas)"
       >
-        Inspección cuadro a cuadro del video de ingreso al turno ({resumen.video ?? 'recorrido_turno.mp4'}
-        ). Haz clic en cualquier marcador para saltar al segundo exacto.
+        Inspección cuadro a cuadro del circuito cerrado de ingreso al turno (
+        {resumen.video ?? 'recorrido_turno.mp4'}). Haz clic en cualquier marcador para saltar al
+        segundo exacto de la retención.
       </TituloPagina>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Reproductor de video anotado */}
-        <section className="lg:col-span-8 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-sm flex flex-col justify-between">
-          <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between text-xs text-slate-300">
-            <span className="font-mono font-semibold text-white">
-              {resumen.video ?? 'recorrido_turno.mp4'} · 24 FPS · Cajas de Lentes, Chaleco y Guantes
+        <section className="lg:col-span-8 bg-slate-950 rounded-lg border border-slate-800 overflow-hidden shadow-xl flex flex-col justify-between">
+          <div className="px-4 py-3 bg-[#060911] border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
+            <span className="font-bold text-white">
+              {resumen.video ?? 'recorrido_turno.mp4'} · 24 FPS · Lentes, Tapones, Chaleco y Guantes
             </span>
-            <span className="text-teal-400 font-mono">
-              {ordenadosPorTiempo.length} incidencias marcadas
+            <span className="text-amber-400 font-bold">
+              {ordenadosPorTiempo.length} EVENTOS MARCADOS
             </span>
           </div>
 
@@ -67,9 +68,9 @@ export function RecorridoView({ data }: { data: SalidaHallazgos }) {
           </div>
 
           {/* Barra de marcadores temporales */}
-          <div className="p-4 bg-slate-900 border-t border-slate-800 space-y-2">
-            <div className="text-xs text-slate-400 font-medium">
-              Línea de tiempo de omisiones detectadas (clic para saltar al cuadro):
+          <div className="p-4 bg-[#070b12] border-t border-slate-800 space-y-2">
+            <div className="text-xs font-mono text-slate-400 font-bold uppercase">
+              LÍNEA DE TIEMPO DE RETENCIONES (CLIC PARA SALTAR AL CUADRO):
             </div>
             <div className="flex flex-wrap gap-2">
               {ordenadosPorTiempo.map((h) => {
@@ -79,9 +80,9 @@ export function RecorridoView({ data }: { data: SalidaHallazgos }) {
                     key={h.id}
                     type="button"
                     onClick={() => saltarASegundo(h)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono transition-colors ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono transition-colors ${
                       activo
-                        ? 'bg-teal-600 text-white font-bold'
+                        ? 'bg-amber-500 text-slate-950 font-black'
                         : h.tipo === 'revisar'
                         ? 'bg-amber-950/80 text-amber-300 border border-amber-700/60 hover:bg-amber-900/80'
                         : 'bg-rose-950/80 text-rose-300 border border-rose-700/60 hover:bg-rose-900/80'
@@ -97,10 +98,13 @@ export function RecorridoView({ data }: { data: SalidaHallazgos }) {
         </section>
 
         {/* Lista lateral de eventos del recorrido */}
-        <section className="lg:col-span-4 bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col justify-between space-y-4 max-h-[640px] overflow-y-auto">
+        <section className="lg:col-span-4 panel-caseta rounded-lg p-5 flex flex-col justify-between space-y-4 max-h-[640px] overflow-y-auto">
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-slate-900">Momentos clave en el video</h3>
-            <p className="text-xs text-slate-500">
+            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400">
+              BITÁCORA DE VIDEO // CCTV
+            </div>
+            <h3 className="text-base font-bold text-white">Momentos clave en el filtro</h3>
+            <p className="text-xs text-slate-400">
               Ordenados cronológicamente conforme la cámara recorre las 3 líneas del turno.
             </p>
           </div>
@@ -112,18 +116,18 @@ export function RecorridoView({ data }: { data: SalidaHallazgos }) {
                 <div
                   key={h.id}
                   onClick={() => saltarASegundo(h)}
-                  className={`p-3 rounded-lg border cursor-pointer transition-all space-y-2 ${
+                  className={`p-3 rounded border cursor-pointer transition-all space-y-2 ${
                     activo
-                      ? 'border-teal-600 bg-teal-50/40 ring-1 ring-teal-600'
-                      : 'border-slate-200 hover:border-slate-300 bg-slate-50/60'
+                      ? 'border-amber-400 bg-amber-500/10 ring-1 ring-amber-400'
+                      : 'border-slate-800 hover:border-slate-600 bg-slate-950/80'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-slate-800">
-                      <Clock className="w-3.5 h-3.5 text-teal-600" />
+                  <div className="flex items-center justify-between gap-2 font-mono">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300">
+                      <Clock className="w-3.5 h-3.5 text-amber-400" />
                       {formatearTiempoVideo(h.segundo)} (cuadro #{h.cuadro})
                     </span>
-                    <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-slate-200 text-slate-800 font-semibold">
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-white font-bold">
                       {h.codigo}
                     </span>
                   </div>
@@ -132,25 +136,23 @@ export function RecorridoView({ data }: { data: SalidaHallazgos }) {
                     <img
                       src={h.evidencia_crop}
                       alt={h.trabajador}
-                      className="w-12 h-12 rounded-md object-cover border border-slate-200 bg-slate-900 shrink-0"
+                      className="w-12 h-12 rounded object-cover border border-slate-700 bg-slate-900 shrink-0"
                     />
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-slate-900 truncate">
-                        {h.trabajador}
-                      </div>
-                      <div className="text-[11px] text-slate-600 truncate">
+                      <div className="text-xs font-bold text-white truncate">{h.trabajador}</div>
+                      <div className="text-[11px] text-slate-400 truncate">
                         {traducirTipoHallazgo(h.tipo)}
                       </div>
                       {h.prendas_faltantes.length > 0 && (
-                        <div className="text-[11px] text-rose-700 font-medium truncate">
+                        <div className="text-[11px] text-rose-400 font-mono font-semibold truncate">
                           Sin: {h.prendas_faltantes.map(traducirPrenda).join(', ')}
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/70 text-xs">
-                    <span className="font-bold text-rose-600 font-tabular">
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-800 text-xs font-mono">
+                    <span className="font-bold text-rose-400 font-tabular">
                       {h.impacto_diario > 0
                         ? `${formatearMoneda(h.impacto_diario, moneda)}/día`
                         : 'US$0.00 (Revisar)'}
@@ -158,9 +160,9 @@ export function RecorridoView({ data }: { data: SalidaHallazgos }) {
                     <Link
                       href={`/cuadrilla?pos=${h.codigo}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-700 hover:underline"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-400 hover:underline"
                     >
-                      Abrir en Cuadrilla
+                      GEMELO 4Z
                       <ExternalLink className="w-3 h-3" />
                     </Link>
                   </div>

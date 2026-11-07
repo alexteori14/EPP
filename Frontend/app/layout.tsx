@@ -1,13 +1,12 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { getHallazgosData } from '@/lib/data/loader';
 
 export const metadata: Metadata = {
-  title: 'Vigía EPP · Inspección Pre-Turno de Equipo de Protección Personal',
+  title: 'VIGÍA EPP // Centro de Comando de Torniquete y Seguridad Industrial',
   description:
-    'Sistema de visión artificial con YOLO11 para verificar Lentes, Chaleco y Guantes antes de iniciar el turno industrial.',
+    'Sistema SCADA de visión artificial con YOLO11 para control de acceso en torniquete: Lentes, Tapones Auditivos y Chaleco obligatorios + Guantes condicionales por puesto.',
 };
 
 export const dynamic = 'force-dynamic';
@@ -19,17 +18,26 @@ export default async function RootLayout({
 }) {
   const { resumen } = await getHallazgosData();
   return (
-    <html lang="es" className="h-full">
-      <body className="h-full bg-slate-50 text-slate-900 antialiased font-sans">
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex-1 ml-60 flex flex-col min-w-0">
-            <Header fechaEscaneo={resumen.fecha_escaneo} disclaimer={resumen.disclaimer} />
-            <main className="flex-1 p-4 sm:p-5 lg:p-6 max-w-7xl mx-auto w-full">
-              {children}
-            </main>
-          </div>
-        </div>
+    <html lang="es" className="h-full dark">
+      <body className="min-h-screen bg-[#080c14] text-slate-100 antialiased font-sans flex flex-col">
+        <Header
+          fechaEscaneo={resumen.fecha_escaneo}
+          disclaimer={resumen.disclaimer}
+          riesgoDiario={resumen.dinero_en_riesgo_diario}
+          incompletos={resumen.trabajadores_incompletos}
+          cumplimientoPct={resumen.cumplimiento_turno_pct}
+        />
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-[1440px] mx-auto w-full">
+          {children}
+        </main>
+        <footer className="border-t border-slate-800/90 bg-[#060911] px-6 py-3 text-[11px] font-mono text-slate-400 flex flex-wrap items-center justify-between gap-3">
+          <span>
+            CASETA DE CONTROL PRE-TURNO · PLANTA MTY-N01 · YOLO11 ANATOMICAL ENGINE (4 ZONAS)
+          </span>
+          <span className="text-amber-400/90">
+            OBLIGATORIO GENERAL: LENTES + TAPONES AUDITIVOS + CHALECO · CONDICIONAL POR PUESTO: GUANTES
+          </span>
+        </footer>
       </body>
     </html>
   );

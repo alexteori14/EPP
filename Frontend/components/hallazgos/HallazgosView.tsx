@@ -2,15 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import {
-  CheckCircle2,
-  Clock,
-  Filter,
-  Loader2,
-  RotateCcw,
-  ShieldAlert,
-  ShieldCheck,
-} from 'lucide-react';
+import { Clock, Filter, Loader2, RotateCcw, ShieldCheck } from 'lucide-react';
 import { Hallazgo, PrendaEPP, SalidaHallazgos } from '@/types/hallazgos';
 import {
   formatearMoneda,
@@ -62,36 +54,37 @@ export function HallazgosView({ initialData }: { initialData: SalidaHallazgos })
   const corregidosCount = hallazgos.filter((h) => h.corregido).length;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <TituloPagina
           icono={ICONO_PANTALLA.hallazgos}
-          titulo="Hallazgos Accionables y Autorización en Caseta"
+          titulo="Bitácora de Retenciones, Multas STPS y Liberación de Torniquete"
         >
-          Ordenados por exposición diaria en dólares ({moneda}/día). Al entregar la prenda faltante
-          y marcar como autorizado, el cambio se guarda en disco y recalcula el riesgo del turno.
+          Ordenados por exposición diaria en dólares ({moneda}/día). Al entregar la prenda en
+          ventanilla y autorizar el pase, el cambio se persiste en disco (`PATCH`) y recalcula el
+          riesgo del turno.
         </TituloPagina>
 
         {/* Tarjeta compacta de riesgo vivo vs recuperado */}
-        <div className="flex items-center gap-4 bg-white px-4 py-3 rounded-xl border border-slate-200 shadow-sm shrink-0">
+        <div className="flex items-center gap-4 bg-slate-950 px-4 py-3 rounded border border-slate-800 shrink-0 font-mono">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Riesgo Activo
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              RIESGO ACTIVO EN FILA
             </div>
             <div
               data-testid="hallazgos-riesgo-activo"
-              className="text-lg font-bold text-rose-600 font-tabular"
+              className="text-lg font-black text-rose-400 font-tabular"
             >
               {formatearMoneda(resumen.dinero_en_riesgo_diario, moneda)}/día
             </div>
           </div>
-          <div className="border-l border-slate-200 pl-4">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
-              Mitigado en Caseta
+          <div className="border-l border-slate-800 pl-4">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+              MITIGADO EN CASETA
             </div>
             <div
               data-testid="hallazgos-riesgo-recuperado"
-              className="text-lg font-bold text-emerald-600 font-tabular"
+              className="text-lg font-black text-emerald-400 font-tabular"
             >
               {formatearMoneda(resumen.dinero_recuperado_diario ?? 0, moneda)}/día
             </div>
@@ -100,22 +93,22 @@ export function HallazgosView({ initialData }: { initialData: SalidaHallazgos })
       </div>
 
       {/* Controles de filtrado */}
-      <section className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 text-xs">
-          <Filter className="w-4 h-4 text-slate-400 mr-1" />
+      <section className="panel-caseta rounded-lg p-4 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+        <div className="flex items-center gap-1.5">
+          <Filter className="w-4 h-4 text-amber-400 mr-1" />
           {[
-            { id: 'todos', label: `Todos (${hallazgos.length})` },
-            { id: 'pendientes', label: `Pendientes (${pendientesCount})` },
-            { id: 'corregidos', label: `Autorizados (${corregidosCount})` },
+            { id: 'todos', label: `TODOS (${hallazgos.length})` },
+            { id: 'pendientes', label: `RETENIDOS (${pendientesCount})` },
+            { id: 'corregidos', label: `LIBERADOS (${corregidosCount})` },
           ].map((f) => (
             <button
               key={f.id}
               type="button"
               onClick={() => setFiltroEstado(f.id as typeof filtroEstado)}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
+              className={`px-3 py-1.5 rounded font-bold transition-colors ${
                 filtroEstado === f.id
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-amber-500 text-slate-950'
+                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
               {f.label}
@@ -123,22 +116,23 @@ export function HallazgosView({ initialData }: { initialData: SalidaHallazgos })
           ))}
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs">
-          <span className="text-slate-500 font-medium mr-1">Filtrar por prenda:</span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-slate-400 font-bold mr-1">FILTRAR POR EPP:</span>
           {[
-            { id: 'todas', label: 'Todas (3 EPP)' },
-            { id: 'lentes', label: 'Sin Lentes' },
-            { id: 'chaleco', label: 'Sin Chaleco' },
-            { id: 'guantes', label: 'Sin Guantes' },
+            { id: 'todas', label: 'TODOS (4 EPP)' },
+            { id: 'lentes', label: 'SIN LENTES' },
+            { id: 'tapones', label: 'SIN TAPONES AUDITIVOS' },
+            { id: 'chaleco', label: 'SIN CHALECO' },
+            { id: 'guantes', label: 'SIN GUANTES (PUESTO OP)' },
           ].map((p) => (
             <button
               key={p.id}
               type="button"
               onClick={() => setFiltroPrenda(p.id as typeof filtroPrenda)}
-              className={`px-2.5 py-1.5 rounded-lg font-medium transition-colors ${
+              className={`px-2.5 py-1.5 rounded font-bold transition-colors ${
                 filtroPrenda === p.id
-                  ? 'bg-teal-600 text-white font-semibold'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/60'
+                  : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
               }`}
             >
               {p.label}
@@ -148,7 +142,7 @@ export function HallazgosView({ initialData }: { initialData: SalidaHallazgos })
       </section>
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
+        <div className="p-4 rounded bg-rose-950/60 border border-rose-700 text-xs text-rose-200 font-mono">
           {errorMsg}
         </div>
       )}
@@ -161,79 +155,79 @@ export function HallazgosView({ initialData }: { initialData: SalidaHallazgos })
             <article
               key={h.id}
               data-testid={`hallazgo-card-${h.id}`}
-              className={`rounded-xl border p-5 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-sm ${
+              className={`rounded-lg border p-5 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-5 ${
                 h.corregido
-                  ? 'bg-emerald-50/40 border-emerald-200'
+                  ? 'bg-emerald-950/20 border-emerald-500/40'
                   : h.tipo === 'revisar'
-                  ? 'bg-amber-50/30 border-amber-200'
-                  : 'bg-white border-slate-200'
+                  ? 'bg-amber-950/20 border-amber-500/40'
+                  : 'panel-caseta border-rose-500/40'
               }`}
             >
               <div className="flex items-start gap-4 min-w-0 flex-1">
                 <img
                   src={h.evidencia_persona || h.evidencia_crop}
                   alt={h.trabajador}
-                  className="w-20 h-20 rounded-xl object-cover border border-slate-200 bg-slate-900 shrink-0"
+                  className="w-20 h-20 rounded object-cover border border-slate-700 bg-slate-900 shrink-0"
                 />
 
                 <div className="space-y-1.5 min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-900 text-white">
+                  <div className="flex flex-wrap items-center gap-2 font-mono">
+                    <span className="text-xs font-black px-2 py-0.5 rounded bg-amber-500 text-slate-950">
                       {h.codigo}
                     </span>
-                    <span className="font-mono text-xs text-slate-500">{h.id_empleado}</span>
+                    <span className="text-xs text-slate-400">{h.id_empleado}</span>
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                      className={`px-2 py-0.5 rounded text-xs font-bold border ${
                         h.corregido
-                          ? 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                           : h.tipo === 'revisar'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-rose-100 text-rose-800'
+                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                          : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                       }`}
                     >
-                      {h.corregido ? 'Pase Autorizado tras Entrega' : traducirTipoHallazgo(h.tipo)}
+                      {h.corregido ? 'TORNIQUETE LIBERADO TRAS DOTACIÓN' : traducirTipoHallazgo(h.tipo)}
                     </span>
                     <Link
                       href={`/recorrido`}
-                      className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-teal-700 font-mono"
+                      className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-amber-300"
                     >
                       <Clock className="w-3 h-3" />
                       {formatearTiempoVideo(h.segundo)} (cuadro #{h.cuadro})
                     </Link>
                   </div>
 
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-extrabold text-white">
                     {h.trabajador}{' '}
-                    <span className="text-xs font-normal text-slate-500">· {h.puesto}</span>
+                    <span className="text-xs font-normal text-slate-400">· {h.puesto}</span>
                   </h3>
 
-                  <p className="text-xs text-slate-600">{h.descripcion}</p>
+                  <p className="text-xs text-slate-300">{h.descripcion}</p>
 
-                  <div className="pt-1 flex flex-wrap items-center gap-2 text-xs">
-                    <span className="font-semibold text-slate-800">Acción en caseta:</span>
-                    <span className="text-slate-600">{h.accion_sugerida}</span>
+                  <div className="pt-1 flex flex-wrap items-center gap-2 text-xs font-mono">
+                    <span className="font-bold text-amber-400">PROTOCOLO CASETA:</span>
+                    <span className="text-slate-300">{h.accion_sugerida}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-3 border-t md:border-t-0 border-slate-100 pt-3 md:pt-0 shrink-0">
+              <div className="flex md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-3 border-t md:border-t-0 border-slate-800 pt-3 md:pt-0 shrink-0 font-mono">
                 <div className="text-left md:text-right">
-                  <div className="text-[11px] text-slate-500 uppercase tracking-wider">
-                    {h.corregido ? 'Riesgo Mitigado' : 'Exposición Diaria'}
+                  <div className="text-[10px] text-slate-400 uppercase tracking-wider">
+                    {h.corregido ? 'RIESGO MITIGADO' : 'EXPOSICIÓN DIARIA'}
                   </div>
                   <div
-                    className={`text-xl font-bold font-tabular ${
+                    className={`text-xl font-black font-tabular ${
                       h.corregido
-                        ? 'text-emerald-600 line-through'
+                        ? 'text-emerald-400 line-through'
                         : h.impacto_diario > 0
-                        ? 'text-rose-600'
-                        : 'text-amber-700'
+                        ? 'text-rose-400'
+                        : 'text-amber-400'
                     }`}
                   >
                     {formatearMoneda(h.impacto_diario, moneda)}/día
                   </div>
                   {h.prendas_faltantes.length > 0 && (
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-[11px] text-slate-400">
                       Falta: {h.prendas_faltantes.map(traducirPrenda).join(' + ')}
                     </div>
                   )}
@@ -244,10 +238,10 @@ export function HallazgosView({ initialData }: { initialData: SalidaHallazgos })
                   data-testid={`btn-corregir-${h.id}`}
                   disabled={procesando}
                   onClick={() => alternarCorregido(h)}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm ${
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded text-xs font-bold uppercase transition-colors ${
                     h.corregido
-                      ? 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'
-                      : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                      ? 'bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800'
+                      : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold shadow-[0_0_14px_rgba(16,185,129,0.25)]'
                   }`}
                 >
                   {procesando ? (
@@ -257,7 +251,7 @@ export function HallazgosView({ initialData }: { initialData: SalidaHallazgos })
                   ) : (
                     <ShieldCheck className="w-3.5 h-3.5" />
                   )}
-                  {h.corregido ? 'Revertir a pendiente' : 'Autorizar tras entrega'}
+                  {h.corregido ? 'Revertir a retenido' : 'Autorizar tras entrega'}
                 </button>
               </div>
             </article>

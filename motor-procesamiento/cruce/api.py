@@ -108,21 +108,29 @@ class DetectorFijoPreset:
 def evaluar_kiosco_payload(raiz: Path, content_type: str, raw_body: bytes, detector_real) -> dict:
     """Procesa una petición de /kiosco/evaluar (imagen binaria, data URL JSON o preset de prueba)."""
     presets_map = {
-        "completo": {"lentes": "ok", "chaleco": "ok", "guantes": "ok"},
-        "sin_lentes": {"lentes": "falta", "chaleco": "ok", "guantes": "ok"},
-        "sin_guantes": {"lentes": "ok", "chaleco": "ok", "guantes": "falta"},
-        "sin_chaleco": {"lentes": "ok", "chaleco": "falta", "guantes": "ok"},
-        "incompleto_multiple": {"lentes": "falta", "chaleco": "ok", "guantes": "falta"},
+        "completo": {"lentes": "ok", "tapones": "ok", "chaleco": "ok", "guantes": "ok"},
+        "sin_lentes": {"lentes": "falta", "tapones": "ok", "chaleco": "ok", "guantes": "ok"},
+        "sin_tapones": {"lentes": "ok", "tapones": "falta", "chaleco": "ok", "guantes": "ok"},
+        "sin_guantes": {"lentes": "ok", "tapones": "ok", "chaleco": "ok", "guantes": "falta"},
+        "sin_chaleco": {"lentes": "ok", "tapones": "ok", "chaleco": "falta", "guantes": "ok"},
+        "incompleto_multiple": {"lentes": "falta", "tapones": "falta", "chaleco": "ok", "guantes": "falta"},
     }
     if "application/json" in content_type:
         datos = json.loads(raw_body.decode("utf-8") or "{}")
+        requiere_guantes = bool(datos.get("requiere_guantes", True))
+        puesto = datos.get("puesto")
         if "imagen_b64" in datos and datos["imagen_b64"]:
             b64_str = datos["imagen_b64"].split(",")[-1]
             arr = np.frombuffer(base64.b64decode(b64_str), dtype=np.uint8)
             img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
             if img is None:
                 raise ValueError("No se pudo decodificar imagen_b64")
-            return kiosco.evaluar_imagen(img, detector=detector_real)
+            return kiosco.evaluar_imagen(
+                img,
+                detector=detector_real,
+                requiere_guantes=requiere_guantes,
+                puesto=puesto,
+            )
 
         preset = datos.get("preset", "completo")
         estados = presets_map.get(preset, presets_map["completo"])
@@ -140,7 +148,12 @@ def evaluar_kiosco_payload(raiz: Path, content_type: str, raw_body: bytes, detec
         for pr, ep in pers.prendas.items():
             cls_name = contrato.CLASE_POSITIVA[pr] if ep.estado == "ok" else contrato.CLASE_NEGATIVA[pr]
             dets_sinteticas.append(asociar.Deteccion(cls_name, ep.confianza, ep.caja or pers.caja))
-        return kiosco.evaluar_imagen(cuadro, detector=DetectorFijoPreset(dets_sinteticas))
+        return kiosco.evaluar_imagen(
+            cuadro,
+            detector=DetectorFijoPreset(dets_sinteticas),
+            requiere_guantes=requiere_guantes,
+            puesto=puesto,
+        )
 
     # Cuerpo binario (image/jpeg o image/png)
     arr = np.frombuffer(raw_body, dtype=np.uint8)

@@ -35,8 +35,9 @@ EMBEDDINGS_DEFECTO = "gemini-embedding-001"
 
 SISTEMA_PROMPT = """Eres el asistente de seguridad industrial de Vigía EPP (Planta Monterrey Norte).
 Respondes preguntas sobre UNA corrida de inspección de Equipo de Protección Personal (EPP)
-previo al inicio de turno. En esta planta solo son obligatorios 3 equipos: Lentes de seguridad,
-Chaleco reflejante y Guantes anticorte (no se pide casco ni mascarilla).
+previo al inicio de turno. En esta planta se evalúan 4 equipos: Lentes de seguridad, Tapones auditivos
+de inserción y Chaleco reflejante (obligatorios generales), y Guantes anticorte (opcionales en puestos
+de supervisión/inspección/montacargas y obligatorios en puestos operativos; no se pide casco ni mascarilla).
 
 Reglas:
 - Usa únicamente los fragmentos de contexto proporcionados. No inventes cifras ni nombres.
@@ -120,7 +121,7 @@ def construir_fragmentos_corrida(raiz: Path, corrida: str = "demo") -> list[Frag
     lineas_res = [
         f"Frase principal: {res['frase']}",
         f"Planta: {res.get('planta_nombre')} · {res.get('turno_nombre')}",
-        f"Equipos obligatorios evaluados (3): Lentes de seguridad, Chaleco reflejante y Guantes anticorte (no se requiere casco ni mascarilla).",
+        f"Equipos evaluados (4): Lentes de seguridad, Tapones auditivos de inserción y Chaleco reflejante (obligatorios generales), y Guantes anticorte (opcionales según el puesto; no se requiere casco ni mascarilla).",
         f"Trabajadores sin EPP completo: {res['trabajadores_incompletos']} de {len(datos['posiciones'])}",
         f"Cumplimiento del turno: {res['cumplimiento_turno_pct']}%",
         f"Dinero en riesgo diario: {res['moneda']}{res['dinero_en_riesgo_diario']:.2f}/día",

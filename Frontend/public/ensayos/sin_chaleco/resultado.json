@@ -10,6 +10,7 @@
     "trabajador": "Alejandro Cabrera",
     "id_empleado": "EMP-301",
     "puesto": "Inspector de Calidad",
+    "requiere_guantes": false,
     "linea": 3,
     "posicion": 1,
     "prendas_faltantes": [
@@ -35,6 +36,7 @@
       "trabajador": "Alejandro Cabrera",
       "id_empleado": "EMP-301",
       "puesto": "Inspector de Calidad",
+      "requiere_guantes": false,
       "linea": 3,
       "posicion": 1,
       "prendas_faltantes": [

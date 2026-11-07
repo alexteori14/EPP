@@ -130,13 +130,18 @@ def renderizar_todo(dir_raiz: Path = Path(".")):
         pers.cuadro = cuadro_rep
 
         titulo = f"{pos_info['posicion']} · {pos_info['nombre']}"
-        cuadro_anotado = anotar.dibujar_persona(cuadro_base, pers, titulo)
+        req_tuple = tuple(pos_info.get("prendas_requeridas") or contrato.PRENDAS)
+        cuadro_anotado = anotar.dibujar_persona(
+            cuadro_base, pers, titulo, prendas_requeridas=req_tuple
+        )
 
         for k in range(cuadros_por_pos):
             writer.write(cuadro_base)
             writer_anot.write(cuadro_anotado)
 
-        rec_p, rec_z = anotar.recortar_persona_y_zona(cuadro_base, pers)
+        rec_p, rec_z = anotar.recortar_persona_y_zona(
+            cuadro_base, pers, prendas_requeridas=req_tuple
+        )
         p_id = pos_info["posicion"]
         cv2.imwrite(str(d_recortes / f"{p_id}.jpg"), rec_p, [cv2.IMWRITE_JPEG_QUALITY, 90])
         cv2.imwrite(str(d_recortes / f"{p_id}_zona.jpg"), rec_z, [cv2.IMWRITE_JPEG_QUALITY, 92])

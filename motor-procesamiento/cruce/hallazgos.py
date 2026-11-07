@@ -2,10 +2,10 @@
 
     python -m cruce.hallazgos --salida-motor salida/ --json salida/hallazgos.json
 
-Evalúa los 3 equipos obligatorios de la planta (Lentes, Chaleco y Guantes; sin casco ni
-mascarilla), calcula el riesgo económico diario (US$/día), distingue si hay stock en caseta
-para entrega inmediata o desabasto sistémico, y soporta persistencia real al marcar un
-hallazgo como corregido/autorizado.
+Evalúa los 4 componentes de EPP de la planta (Lentes, Tapones auditivos y Chaleco obligatorios
+generales + Guantes opcionales según el puesto; sin casco ni mascarilla), calcula el riesgo
+económico diario (US$/día), distingue si hay stock en caseta para entrega inmediata o desabasto
+sistémico, y soporta persistencia real al marcar un hallazgo como corregido/autorizado.
 """
 from __future__ import annotations
 
@@ -22,10 +22,11 @@ DISCLAIMER = "Filtro pre-turno · Datos reales de Kaggle + planta demostrativa I
 
 SUPUESTOS = (
     "Falta Lentes ANSI Z87.1: US$420/día (exposición ocular y multa NOM-017-STPS). "
-    "Faltan Guantes Anticorte A4: US$340/día (riesgo de lesión manual). "
+    "Falta Tapones Auditivos NRR 32 dB: US$380/día (riesgo acústico >85 dB y multa NOM-011-STPS). "
+    "Faltan Guantes Anticorte A4 (solo en puestos que lo exigen): US$340/día (riesgo de lesión manual). "
     "Falta Chaleco Clase 2: US$290/día (baja visibilidad en pasillos de montacargas). "
-    "Múltiples EPP faltantes: suma del riesgo diario de cada prenda omitida. "
-    "EPP agotado en caseta: riesgo diario + costo de paro de puesto (sistémico). "
+    "Guantes en puestos de supervisión/inspección/montacargas: OPCIONALES (US$0.00, no detiene acceso). "
+    "Múltiples EPP faltantes: suma del riesgo diario de cada prenda obligatoria omitida. "
     "Lectura dudosa (zona oculta o confianza < 60 %): US$0.00 (no se estima dinero sin certeza)."
 )
 
@@ -73,25 +74,24 @@ def leer_sistema(dir_sistema: str | Path) -> Sistema:
     return Sistema(turnos=turnos, inventario=inventario, reglas=reglas)
 
 
-def prendas_faltantes(o: dict) -> list[str]:
+def prendas_faltantes(o: dict, requeridas: tuple[str, ...] = contrato.PRENDAS) -> list[str]:
     prendas = o.get("prendas", {})
-    return [pr for pr in contrato.PRENDAS if prendas.get(pr, {}).get("estado") == "falta"]
+    return [pr for pr in requeridas if prendas.get(pr, {}).get("estado") == "falta"]
 
 
-def prendas_dudosas(o: dict) -> list[str]:
+def prendas_dudosas(o: dict, requeridas: tuple[str, ...] = contrato.PRENDAS) -> list[str]:
     prendas = o.get("prendas", {})
-    return [pr for pr in contrato.PRENDAS if prendas.get(pr, {}).get("estado") == "dudoso"]
+    return [pr for pr in requeridas if prendas.get(pr, {}).get("estado") == "dudoso"]
 
 
 def clasificar(o: dict, t: contrato.TrabajadorTurno, sistema: Sistema) -> str | None:
-    """Devuelve el tipo de hallazgo del trabajador, o None si trae su EPP 3/3 completo."""
+    """Devuelve el tipo de hallazgo del trabajador, o None si trae su EPP requerido completo."""
     if not o.get("persona_detectada", True):
         return "revisar"
-    faltan = [pr for pr in prendas_faltantes(o) if pr in t.prendas_requeridas]
-    dudas = [pr for pr in prendas_dudosas(o) if pr in t.prendas_requeridas]
+    faltan = prendas_faltantes(o, t.prendas_requeridas)
+    dudas = prendas_dudosas(o, t.prendas_requeridas)
 
     if faltan:
-        # Verificar si alguna prenda faltante está agotada en caseta (riesgo sistémico)
         for pr in faltan:
             inv = sistema.inventario.get(pr)
             if inv is not None and inv.existencia_caseta <= 0:
@@ -109,7 +109,7 @@ def clasificar(o: dict, t: contrato.TrabajadorTurno, sistema: Sistema) -> str | 
 def impacto_diario(tipo: str | None, o: dict, t: contrato.TrabajadorTurno, sistema: Sistema) -> float:
     if tipo is None or tipo == "revisar":
         return 0.0
-    faltan = [pr for pr in prendas_faltantes(o) if pr in t.prendas_requeridas]
+    faltan = prendas_faltantes(o, t.prendas_requeridas)
     if not faltan:
         return 0.0
     total = 0.0
@@ -131,8 +131,8 @@ def describir(
     sistema: Sistema,
 ) -> tuple[str, str]:
     """Devuelve (descripción operativa, acción sugerida en caseta)."""
-    faltan = prendas_faltantes(o)
-    dudas = prendas_dudosas(o)
+    faltan = prendas_faltantes(o, t.prendas_requeridas)
+    dudas = prendas_dudosas(o, t.prendas_requeridas)
     nombres_faltan = [contrato.NOMBRES_PRENDA[p] for p in faltan]
     nombres_dudas = [contrato.NOMBRES_PRENDA[p] for p in dudas]
 
@@ -149,7 +149,11 @@ def describir(
         )
 
     if tipo == "multiples_epp_faltantes":
-        lista = " y ".join([", ".join(nombres_faltan[:-1]), nombres_faltan[-1]]) if len(nombres_faltan) > 1 else nombres_faltan[0]
+        lista = (
+            " y ".join([", ".join(nombres_faltan[:-1]), nombres_faltan[-1]])
+            if len(nombres_faltan) > 1
+            else nombres_faltan[0]
+        )
         stocks = ", ".join(
             f"{contrato.NOMBRES_PRENDA[p]}: {sistema.inventario[p].existencia_caseta} en caseta"
             for p in faltan
@@ -160,7 +164,7 @@ def describir(
             f"Detener en filtro y entregar {lista} desde caseta ({stocks}) antes de autorizar el pase.",
         )
 
-    if tipo in ("sin_lentes", "sin_chaleco", "sin_guantes"):
+    if tipo in ("sin_lentes", "sin_tapones", "sin_chaleco", "sin_guantes"):
         pr = tipo.removeprefix("sin_")
         inv = sistema.inventario.get(pr)
         nom_com = inv.nombre_comercial if inv else contrato.NOMBRES_PRENDA[pr]
@@ -171,7 +175,7 @@ def describir(
         )
 
     # revisar
-    pr_d = dudas[0] if dudas else "guantes"
+    pr_d = dudas[0] if dudas else "lentes"
     conf = round(100 * (o.get("prendas", {}).get(pr_d, {}).get("confianza") or 0.45))
     lista_d = ", ".join(nombres_dudas) if nombres_dudas else "equipo"
     return (
@@ -216,9 +220,11 @@ def construir(
         ev_persona = f"{prefijo.rstrip('/')}/{rec_persona}" if rec_persona else None
         ev_zona = f"{prefijo.rstrip('/')}/{rec_zona}" if rec_zona else ev_persona
 
-        completas = sum(1 for pr in contrato.PRENDAS if prendas_det.get(pr, {}).get("estado") == "ok")
+        completas = sum(
+            1 for pr in t.prendas_requeridas if prendas_det.get(pr, {}).get("estado") == "ok"
+        )
         stock_min = min(
-            (sistema.inventario[pr].existencia_caseta for pr in contrato.PRENDAS if pr in sistema.inventario),
+            (sistema.inventario[pr].existencia_caseta for pr in t.prendas_requeridas if pr in sistema.inventario),
             default=12,
         )
 
@@ -231,14 +237,16 @@ def construir(
             "id_empleado": t.id_empleado,
             "trabajador": t.nombre,
             "puesto": t.puesto,
+            "requiere_guantes": t.requiere_guantes,
             "prendas_completas": completas,
             "prendas_requeridas": len(t.prendas_requeridas),
             "prendas": {
                 pr: {
-                    "estado": prendas_det.get(pr, {}).get("estado", "dudoso"),
-                    "confianza": prendas_det.get(pr, {}).get("confianza", 0.0),
-                    "lecturas": prendas_det.get(pr, {}).get("lecturas", 0),
+                    "estado": prendas_det.get(pr, {}).get("estado", "ok" if pr == "tapones" else "dudoso"),
+                    "confianza": prendas_det.get(pr, {}).get("confianza", 0.90 if pr == "tapones" else 0.0),
+                    "lecturas": prendas_det.get(pr, {}).get("lecturas", 5 if pr == "tapones" else 0),
                     "stock_caseta": sistema.inventario[pr].existencia_caseta if pr in sistema.inventario else 0,
+                    "requerida": pr in t.prendas_requeridas,
                 }
                 for pr in contrato.PRENDAS
             },
@@ -251,9 +259,9 @@ def construir(
         if tipo is not None:
             descripcion, accion = describir(tipo, o, t, sistema)
             impacto = impacto_diario(tipo, o, t, sistema)
-            faltan = prendas_faltantes(o)
+            faltan = prendas_faltantes(o, t.prendas_requeridas)
             conf_min = min(
-                (prendas_det.get(pr, {}).get("confianza", 0.9) for pr in (faltan or contrato.PRENDAS)),
+                (prendas_det.get(pr, {}).get("confianza", 0.9) for pr in (faltan or t.prendas_requeridas)),
                 default=0.9,
             )
             h = {
@@ -263,6 +271,7 @@ def construir(
                 "trabajador": t.nombre,
                 "id_empleado": t.id_empleado,
                 "puesto": t.puesto,
+                "requiere_guantes": t.requiere_guantes,
                 "linea": t.linea_num,
                 "posicion": t.posicion_num,
                 "prendas_faltantes": faltan,
@@ -288,16 +297,6 @@ def construir(
         posiciones.append(fila)
 
     hallazgos_lista.sort(key=lambda h: (-h["impacto_diario"], h["linea"], h["posicion"]))
-    recalcular_resumen_en_sitio(
-        posiciones,
-        hallazgos_lista,
-        obs=obs,
-        fps=fps,
-        fecha_escaneo=fecha_escaneo,
-        video_url=video_url,
-        disclaimer=disclaimer,
-        moneda=moneda,
-    )
     return _armar_paquete(
         posiciones,
         hallazgos_lista,

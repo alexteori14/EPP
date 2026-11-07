@@ -73,7 +73,7 @@ def _zona_cortada_en_borde(
 ) -> bool:
     """Detecta si la zona anatómica de la persona está cortada por el borde de la imagen."""
     px1, py1, px2, py2 = caja_persona
-    if prenda == "lentes" and py1 <= alto * 0.02:
+    if prenda in ("lentes", "tapones") and py1 <= alto * 0.02:
         return True
     if prenda == "guantes" and (py2 >= alto * 0.98 or px1 <= ancho * 0.01 or px2 >= ancho * 0.99):
         return True

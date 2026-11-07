@@ -1,4 +1,4 @@
-export type PrendaEPP = 'lentes' | 'chaleco' | 'guantes';
+export type PrendaEPP = 'lentes' | 'tapones' | 'chaleco' | 'guantes';
 
 export type EstadoPrenda = 'ok' | 'falta' | 'dudoso';
 
@@ -6,6 +6,7 @@ export type EstadoPosicion = 'ok' | 'error' | 'revisar';
 
 export type TipoHallazgo =
   | 'sin_lentes'
+  | 'sin_tapones'
   | 'sin_guantes'
   | 'sin_chaleco'
   | 'multiples_epp_faltantes'
@@ -18,6 +19,7 @@ export interface DetallePrendaPosicion {
   confianza: number;
   lecturas: number;
   stock_caseta: number;
+  requerida?: boolean;
 }
 
 export interface PosicionTurno {
@@ -29,6 +31,7 @@ export interface PosicionTurno {
   id_empleado: string;
   trabajador: string;
   puesto: string;
+  requiere_guantes?: boolean;
   prendas_completas: number;
   prendas_requeridas: number;
   prendas: Record<PrendaEPP, DetallePrendaPosicion>;
@@ -48,6 +51,7 @@ export interface Hallazgo {
   trabajador: string;
   id_empleado: string;
   puesto: string;
+  requiere_guantes?: boolean;
   linea: number;
   posicion: number;
   prendas_faltantes: PrendaEPP[];

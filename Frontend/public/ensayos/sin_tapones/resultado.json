@@ -1,0 +1,58 @@
+{
+  "status": "completado",
+  "completado": true,
+  "tarjeta": "sin_tapones",
+  "segundos_proceso": 3.2,
+  "hallazgo_nuevo": {
+    "id": "hallazgo-l1-t3",
+    "tipo": "sin_tapones",
+    "codigo": "L1-T3",
+    "trabajador": "Luis Fernando Vega",
+    "id_empleado": "EMP-103",
+    "puesto": "Técnico de Troquelado",
+    "requiere_guantes": true,
+    "linea": 1,
+    "posicion": 3,
+    "prendas_faltantes": [
+      "tapones"
+    ],
+    "prendas_completas": 3,
+    "prendas_requeridas": 4,
+    "impacto_diario": 380.0,
+    "cuadro": 45,
+    "segundo": 1.88,
+    "descripcion": "Luis Fernando Vega (Técnico de Troquelado) se presentó en la fila sin tapones auditivos.",
+    "accion_sugerida": "Entregar Tapones Auditivos de Inserción NRR 32 dB NOM-011 en caseta (40 piezas disponibles) y re-escanear en kiosco.",
+    "evidencia_crop": "/ensayos/sin_tapones/recortes/L1-T3_zona.jpg",
+    "evidencia_persona": "/ensayos/sin_tapones/recortes/L1-T3.jpg",
+    "corregido": false,
+    "confianza": 0.9
+  },
+  "hallazgos_nuevos": [
+    {
+      "id": "hallazgo-l1-t3",
+      "tipo": "sin_tapones",
+      "codigo": "L1-T3",
+      "trabajador": "Luis Fernando Vega",
+      "id_empleado": "EMP-103",
+      "puesto": "Técnico de Troquelado",
+      "requiere_guantes": true,
+      "linea": 1,
+      "posicion": 3,
+      "prendas_faltantes": [
+        "tapones"
+      ],
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
+      "impacto_diario": 380.0,
+      "cuadro": 45,
+      "segundo": 1.88,
+      "descripcion": "Luis Fernando Vega (Técnico de Troquelado) se presentó en la fila sin tapones auditivos.",
+      "accion_sugerida": "Entregar Tapones Auditivos de Inserción NRR 32 dB NOM-011 en caseta (40 piezas disponibles) y re-escanear en kiosco.",
+      "evidencia_crop": "/ensayos/sin_tapones/recortes/L1-T3_zona.jpg",
+      "evidencia_persona": "/ensayos/sin_tapones/recortes/L1-T3.jpg",
+      "corregido": false,
+      "confianza": 0.9
+    }
+  ]
+}

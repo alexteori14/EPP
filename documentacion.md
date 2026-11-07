@@ -525,3 +525,29 @@ node Frontend/tests/e2e.mjs
 ```
 - **Tablero Web:** `http://localhost:3000`
 - **API del Motor:** `http://127.0.0.1:8000`
+
+---
+
+## 13. Evolución v2.4: Rediseño Industrial Opción 1, Tapones Auditivos (`NOM-011-STPS`) y Guantes Opcionales por Puesto
+
+### 13.1 Análisis de los 3 Datasets de Kaggle para Tapones Auditivos
+Se inspeccionaron los archivos `data.yaml` y `meta.json` de los 3 datasets base de Kaggle:
+1. `ndomalau/personal-protective-equipment-ppe-dataset`: `["helmet", "no_helmet", "no_vest", "person", "vest"]` (5 clases).
+2. `shlokraval/ppe-dataset-yolov8`: `["Fall-Detected", "Gloves", "Goggles", "Hardhat", "Ladder", "Mask", "NO-Gloves", "NO-Goggles", "NO-Hardhat", "NO-Mask", "NO-Safety Vest", "Person", "Safety Cone", "Safety Vest"]` (14 clases).
+3. `slimese/personal-protective-equipment`: mismas 14 clases de Construction Site Safety.
+
+Ninguno de los 3 datasets contiene clases de protección auditiva (`earplugs` / `ear_protection`). Por ello:
+- Se amplió el contrato canónico en [`motor/contrato.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/contrato.py) a **9 clases** (`persona`, `chaleco`, `sin_chaleco`, `lentes`, `sin_lentes`, `guantes`, `sin_guantes`, `tapones`, `sin_tapones`) y **4 zonas anatómicas**, agregando **`ZONA_TAPONES = (0.04, 0.28)`** (zona craneal lateral / canal auditivo).
+- En [`entrenamiento/preparar_epp.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/entrenamiento/preparar_epp.py) se dejó listo el mapeo automático (`earplugs`, `Earplugs`, `ear_protection`, `earmuffs`, `tapones` $\rightarrow$ `7` y sus negativos $\rightarrow$ `8`) para incorporar inmediatamente el cuarto dataset de Kaggle de tapones auditivos.
+
+### 13.2 Regla de Guantes Opcionales según el Puesto (`PUESTOS_GUANTES_OPCIONALES`)
+En [`motor/contrato.py`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/motor/contrato.py) y [`datos/sistema/turnos.csv`](file:///home/alexteori/Documentos/repositorios/EPP/motor-procesamiento/datos/sistema/turnos.csv):
+- **Obligatorios generales para toda la planta (3):** `lentes`, `tapones` y `chaleco`.
+- **Guantes obligatorios (`lentes|tapones|chaleco|guantes`):** Puestos manuales/maquinaria (*Operador de Corte CNC*, *Soldador de Estructura*, *Técnico de Troquelado*, *Operador de Prensa*, *Auxiliar de Maniobras*, *Operador de Esmerilado*, *Técnico de Mantenimiento*).
+- **Guantes opcionales (`lentes|tapones|chaleco`):** Puestos de supervisión, inspección o conducción (*Operador de Montacargas*, *Supervisor de Patio*, *Almacenista de Acero*, *Inspector de Calidad*). Si no portan guantes pero sí Lentes + Tapones + Chaleco, el sistema **autoriza su acceso (`US$0.00`)** y muestra el indicador `OPCIONAL EN SU PUESTO`.
+
+### 13.3 Rediseño Total de Interfaz — Opción 1 (*Centro de Comando Industrial y Caseta de Torniquete*)
+Se reemplazó por completo la interfaz tipo retail de `ubik` por una consola SCADA/HMI industrial propia en [`Frontend/app/layout.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/app/layout.tsx) y [`Frontend/components/layout/Header.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/layout/Header.tsx):
+- Eliminación total del `Sidebar.tsx` lateral izquierdo y de la estética blanca retail.
+- **Top Command HUD** con cinta de precaución industrial, sensor acústico en vivo (`94.2 dB(A) · NOM-011-STPS`), semáforo de torniquete y botonera táctica de 8 módulos (`01 MONITOR CASETA` a `08 INSPECTOR IA`).
+- **Gemelo Anatómico SVG de 4 Zonas (`SiluetaAnatomica4Zonas`)** en [`CuadrillaView.tsx`](file:///home/alexteori/Documentos/repositorios/EPP/Frontend/components/cuadrilla/CuadrillaView.tsx) con ondas acústicas laterales en la zona de oídos (`tapones`) y código de color cian para guantes opcionales.

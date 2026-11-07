@@ -14,6 +14,7 @@ def test_clasificar_y_calcular_impacto_diario():
         "confianza_persona": 0.95,
         "prendas": {
             "lentes": {"estado": "falta", "confianza": 0.91, "lecturas": 5},
+            "tapones": {"estado": "ok", "confianza": 0.93, "lecturas": 5},
             "chaleco": {"estado": "ok", "confianza": 0.94, "lecturas": 5},
             "guantes": {"estado": "ok", "confianza": 0.92, "lecturas": 5},
         },
@@ -33,6 +34,7 @@ def test_clasificar_y_calcular_impacto_diario():
         "confianza_persona": 0.95,
         "prendas": {
             "lentes": {"estado": "falta", "confianza": 0.91, "lecturas": 5},
+            "tapones": {"estado": "ok", "confianza": 0.93, "lecturas": 5},
             "chaleco": {"estado": "ok", "confianza": 0.94, "lecturas": 5},
             "guantes": {"estado": "falta", "confianza": 0.89, "lecturas": 5},
         },
@@ -49,6 +51,7 @@ def test_clasificar_y_calcular_impacto_diario():
         "confianza_persona": 0.90,
         "prendas": {
             "lentes": {"estado": "ok", "confianza": 0.91, "lecturas": 5},
+            "tapones": {"estado": "ok", "confianza": 0.93, "lecturas": 5},
             "chaleco": {"estado": "ok", "confianza": 0.94, "lecturas": 5},
             "guantes": {"estado": "dudoso", "confianza": 0.45, "lecturas": 1},
         },
@@ -57,6 +60,23 @@ def test_clasificar_y_calcular_impacto_diario():
     tipo_d = hallazgos.clasificar(obs_duda, t, sistema)
     assert tipo_d == "revisar"
     assert hallazgos.impacto_diario(tipo_d, obs_duda, t, sistema) == 0.0
+
+    # 4. Puesto con guantes opcionales (L3-T1 Inspector de Calidad): sin guantes -> autorizado (None)
+    t_inspector = next(tr for tr in sistema.turnos if tr.posicion == "L3-T1")
+    obs_sin_guantes_opcional = {
+        "posicion": "L3-T1",
+        "persona_detectada": True,
+        "confianza_persona": 0.95,
+        "prendas": {
+            "lentes": {"estado": "ok", "confianza": 0.92, "lecturas": 5},
+            "tapones": {"estado": "ok", "confianza": 0.91, "lecturas": 5},
+            "chaleco": {"estado": "ok", "confianza": 0.94, "lecturas": 5},
+            "guantes": {"estado": "falta", "confianza": 0.90, "lecturas": 5},
+        },
+        "cuadro": 150,
+    }
+    assert hallazgos.clasificar(obs_sin_guantes_opcional, t_inspector, sistema) is None
+    assert hallazgos.impacto_diario(None, obs_sin_guantes_opcional, t_inspector, sistema) == 0.0
 
 
 def test_persistencia_marcar_corregido(tmp_path: Path):

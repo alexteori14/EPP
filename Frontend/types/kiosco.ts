@@ -3,6 +3,7 @@ import { PrendaEPP, EstadoPrenda } from './hallazgos';
 export type PresetKiosco =
   | 'completo'
   | 'sin_lentes'
+  | 'sin_tapones'
   | 'sin_guantes'
   | 'sin_chaleco'
   | 'incompleto_multiple';
@@ -11,6 +12,7 @@ export interface EvaluacionZonaKiosco {
   nombre: string;
   estado: EstadoPrenda;
   confianza: number;
+  requerida?: boolean;
 }
 
 export interface RespuestaKiosco {
@@ -19,6 +21,7 @@ export interface RespuestaKiosco {
   mensaje: string;
   prendas_completas: number;
   prendas_requeridas: number;
+  requiere_guantes?: boolean;
   faltantes: PrendaEPP[];
   dudosas: PrendaEPP[];
   zonas: Record<PrendaEPP, EvaluacionZonaKiosco>;

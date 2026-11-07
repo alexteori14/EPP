@@ -106,29 +106,29 @@ export function AnalizarView() {
         titulo="Subir y Procesar Nuevo Video de Turno"
       >
         Sube una grabación de ingreso a turno ({EXTENSIONES_VIDEO.join(', ')}) para ejecutar el
-        detector YOLO11 (`modelos/epp.pt`), asociar Lentes, Chaleco y Guantes por trabajador y
-        cruzar contra el inventario de caseta.
+        detector YOLO11 (`modelos/epp.pt`), asociar Lentes, Tapones Auditivos, Chaleco y Guantes por
+        trabajador y cruzar contra el inventario de caseta.
       </TituloPagina>
 
       {/* Zona de carga Drag & Drop */}
-      <section className="bg-white rounded-xl border-2 border-dashed border-slate-300 hover:border-teal-500 p-8 text-center transition-colors shadow-sm space-y-4">
-        <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto">
+      <section className="panel-caseta rounded-lg border-2 border-dashed border-amber-500/40 hover:border-amber-400 p-8 text-center transition-colors space-y-4">
+        <div className="w-12 h-12 rounded bg-amber-500/15 text-amber-400 border border-amber-500/40 flex items-center justify-center mx-auto">
           <Upload className="w-6 h-6" />
         </div>
         <div className="space-y-1">
-          <h3 className="text-base font-bold text-slate-900">
+          <h3 className="text-base font-bold text-white">
             Selecciona o arrastra un video de formación pre-turno
           </h3>
-          <p className="text-xs text-slate-500 max-w-lg mx-auto">
-            El motor seleccionará los cuadros más nítidos, evaluará las 3 zonas anatómicas (Lentes,
-            Chaleco y Guantes) y generará el video anotado en H.264.
+          <p className="text-xs text-slate-400 max-w-lg mx-auto">
+            El motor seleccionará los cuadros más nítidos, evaluará las 4 zonas anatómicas (Lentes,
+            Tapones Auditivos, Chaleco y Guantes según puesto) y generará el video anotado en H.264.
           </p>
         </div>
 
         <div>
-          <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold cursor-pointer shadow-sm transition-colors">
+          <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-extrabold uppercase cursor-pointer shadow transition-colors">
             <FileVideo className="w-4 h-4" />
-            Elegir archivo de video
+            ELEGIR ARCHIVO DE VIDEO
             <input
               type="file"
               accept={EXTENSIONES_VIDEO.join(',')}
@@ -140,44 +140,41 @@ export function AnalizarView() {
 
         {subiendoPct !== null && (
           <div className="max-w-md mx-auto space-y-1.5 pt-2">
-            <div className="flex justify-between text-xs text-slate-600 font-medium">
-              <span>Subiendo video al motor...</span>
+            <div className="flex justify-between text-xs font-mono text-slate-300 font-bold">
+              <span>SUBIENDO VIDEO AL MOTOR...</span>
               <span className="font-tabular">{subiendoPct}%</span>
             </div>
-            <Proporcion pct={subiendoPct} tono="bg-teal-600" />
+            <Proporcion pct={subiendoPct} tono="bg-amber-500" />
           </div>
         )}
 
         {enCurso && enCurso.status === 'procesando' && (
-          <div className="max-w-md mx-auto p-4 rounded-xl bg-slate-900 text-white text-left space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="inline-flex items-center gap-2 font-semibold text-teal-300">
+          <div className="max-w-md mx-auto p-4 rounded bg-slate-950 border border-amber-500/40 text-white text-left space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="inline-flex items-center gap-2 font-bold text-amber-300">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 {enCurso.paso}
               </span>
-              <span className="font-mono font-tabular">{enCurso.progreso}%</span>
+              <span className="font-tabular">{enCurso.progreso}%</span>
             </div>
-            <Proporcion pct={enCurso.progreso} tono="bg-teal-500" />
+            <Proporcion pct={enCurso.progreso} tono="bg-amber-500" />
           </div>
         )}
 
         {error && (
-          <div className="max-w-md mx-auto p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700">
+          <div className="max-w-md mx-auto p-3 rounded bg-rose-950/60 border border-rose-700 text-xs text-rose-200 font-mono">
             {error}
           </div>
         )}
       </section>
 
       {/* Selector entre recorrido demostrativo e historial de videos subidos */}
-      <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <section className="panel-caseta rounded-lg p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
-              Corridas de inspección disponibles
-            </h3>
-            <p className="text-xs text-slate-500">
-              Elige qué corrida alimenta las pantallas de Resumen, Recorrido, Cuadrilla, Hallazgos y
-              Asistente.
+            <h3 className="text-base font-bold text-white">Corridas de inspección disponibles</h3>
+            <p className="text-xs text-slate-400">
+              Elige qué corrida alimenta los módulos del Centro de Comando Vigía EPP.
             </p>
           </div>
 
@@ -185,10 +182,10 @@ export function AnalizarView() {
             <button
               type="button"
               onClick={() => cambiarActivo(null)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 border border-slate-700 hover:border-amber-500/50 text-slate-200 font-mono text-xs font-bold"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              Volver al recorrido demostrativo
+              VOLVER A CORRIDA DEMO
             </button>
           )}
         </div>
@@ -196,27 +193,26 @@ export function AnalizarView() {
         <div className="space-y-3">
           {/* Recorrido base demostrativo */}
           <div
-            className={`p-4 rounded-xl border flex items-center justify-between gap-4 ${
+            className={`p-4 rounded border flex items-center justify-between gap-4 ${
               activoId === null
-                ? 'border-teal-600 bg-teal-50/30 ring-1 ring-teal-600'
-                : 'border-slate-200 bg-slate-50/60'
+                ? 'border-amber-500 bg-amber-500/10 ring-1 ring-amber-500'
+                : 'border-slate-800 bg-slate-950/80'
             }`}
           >
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-slate-900">
+                <span className="font-bold text-sm text-white">
                   Recorrido de Demostración · Turno Matutino 06:00 (recorrido_turno.mp4)
                 </span>
                 {activoId === null && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-teal-100 text-teal-800">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-amber-500 text-slate-950">
                     <CheckCircle2 className="w-3 h-3" />
-                    Activa en tablero
+                    ACTIVA EN CONSOLA
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                12 estaciones en 3 líneas · 7 trabajadores sin EPP completo · US$3,280.00/día en
-                riesgo
+              <p className="text-xs font-mono text-slate-400 mt-0.5">
+                12 estaciones en 3 líneas · 4 zonas (Lentes, Tapones, Chaleco y Guantes según puesto)
               </p>
             </div>
 
@@ -224,9 +220,9 @@ export function AnalizarView() {
               <button
                 type="button"
                 onClick={() => cambiarActivo(null)}
-                className="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold"
+                className="px-3 py-1.5 rounded bg-amber-500 text-slate-950 font-mono text-xs font-bold"
               >
-                Usar esta corrida
+                USAR ESTA CORRIDA
               </button>
             )}
           </div>
@@ -237,19 +233,19 @@ export function AnalizarView() {
             return (
               <div
                 key={item.id}
-                className={`p-4 rounded-xl border flex items-center justify-between gap-4 ${
+                className={`p-4 rounded border flex items-center justify-between gap-4 ${
                   esActivo
-                    ? 'border-teal-600 bg-teal-50/30 ring-1 ring-teal-600'
-                    : 'border-slate-200 bg-white'
+                    ? 'border-amber-500 bg-amber-500/10 ring-1 ring-amber-500'
+                    : 'border-slate-800 bg-slate-950/80'
                 }`}
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-slate-900 truncate">{item.nombre}</span>
+                    <span className="font-bold text-sm text-white truncate">{item.nombre}</span>
                     <span className="font-mono text-xs text-slate-400">{item.id}</span>
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5">
-                    Estado: <strong>{item.status}</strong>
+                  <div className="text-xs font-mono text-slate-400 mt-0.5">
+                    Estado: <strong className="text-amber-300">{item.status}</strong>
                     {item.resumen && (
                       <>
                         {' '}
@@ -265,16 +261,16 @@ export function AnalizarView() {
                     <button
                       type="button"
                       onClick={() => cambiarActivo(item.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-semibold"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-amber-500 text-slate-950 font-mono text-xs font-bold"
                     >
                       <Play className="w-3 h-3" />
-                      Activar
+                      ACTIVAR
                     </button>
                   )}
                   <button
                     type="button"
                     onClick={() => eliminar(item.id)}
-                    className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50"
+                    className="p-2 rounded text-slate-400 hover:text-rose-400 hover:bg-rose-950/50"
                     title="Eliminar análisis"
                   >
                     <Trash2 className="w-4 h-4" />

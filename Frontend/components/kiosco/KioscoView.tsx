@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   Camera,
   CheckCircle2,
+  Ear,
   Eye,
   Hand,
   Loader2,
@@ -13,6 +14,7 @@ import {
   Shirt,
   Upload,
   VideoOff,
+  Volume2,
 } from 'lucide-react';
 import { PresetKiosco, RespuestaKiosco } from '@/types/kiosco';
 import { PrendaEPP } from '@/types/hallazgos';
@@ -22,25 +24,40 @@ import { ICONO_PANTALLA } from '@/components/iconos';
 import { TituloPagina } from '@/components/layout/TituloPagina';
 
 const PRESETS: { id: PresetKiosco; etiqueta: string; descripcion: string }[] = [
-  { id: 'completo', etiqueta: 'EPP Completo (3/3)', descripcion: 'Lentes + Chaleco + Guantes' },
+  {
+    id: 'completo',
+    etiqueta: 'EPP Completo (4/4)',
+    descripcion: 'Lentes + Tapones + Chaleco + Guantes',
+  },
   { id: 'sin_lentes', etiqueta: 'Sin Lentes', descripcion: 'Falta protección ocular' },
-  { id: 'sin_guantes', etiqueta: 'Sin Guantes', descripcion: 'Falta protección anticorte' },
+  {
+    id: 'sin_tapones',
+    etiqueta: 'Sin Tapones Auditivos',
+    descripcion: 'Sin inserción auditiva (>85 dB)',
+  },
+  {
+    id: 'sin_guantes',
+    etiqueta: 'Sin Guantes',
+    descripcion: 'Condicional según puesto',
+  },
   { id: 'sin_chaleco', etiqueta: 'Sin Chaleco', descripcion: 'Falta alta visibilidad' },
   {
     id: 'incompleto_multiple',
     etiqueta: 'Múltiple Faltante',
-    descripcion: 'Sin lentes ni guantes',
+    descripcion: 'Sin lentes, tapones ni guantes',
   },
 ];
 
 const ICONO_PRENDA: Record<PrendaEPP, React.ElementType> = {
   lentes: Eye,
+  tapones: Ear,
   chaleco: Shirt,
   guantes: Hand,
 };
 
 export function KioscoView() {
   const [presetActivo, setPresetActivo] = useState<PresetKiosco>('completo');
+  const [requiereGuantes, setRequiereGuantes] = useState<boolean>(true);
   const [resultado, setResultado] = useState<RespuestaKiosco | null>(null);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,12 +66,12 @@ export function KioscoView() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  const correrPreset = async (preset: PresetKiosco) => {
+  const correrPreset = async (preset: PresetKiosco, reqGuantes = requiereGuantes) => {
     setPresetActivo(preset);
     setCargando(true);
     setError(null);
     try {
-      const res = await evaluarKioscoPreset(preset);
+      const res = await evaluarKioscoPreset(preset, reqGuantes);
       setResultado(res);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo evaluar en el kiosco');
@@ -63,8 +80,13 @@ export function KioscoView() {
     }
   };
 
+  const cambiarPerfilPuesto = async (exigeGuantes: boolean) => {
+    setRequiereGuantes(exigeGuantes);
+    await correrPreset(presetActivo, exigeGuantes);
+  };
+
   useEffect(() => {
-    correrPreset('completo');
+    correrPreset('completo', true);
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
@@ -94,7 +116,7 @@ export function KioscoView() {
       }, 50);
     } catch {
       setError(
-        'No se detectó cámara web local disponible. Puedes usar los 5 escenarios en vivo o subir una fotografía.'
+        'No se detectó cámara web local disponible. Puedes usar los 6 escenarios en vivo o subir una fotografía.'
       );
     }
   };
@@ -111,7 +133,7 @@ export function KioscoView() {
     setCargando(true);
     setError(null);
     try {
-      const res = await evaluarKioscoImagenB64(dataUrl);
+      const res = await evaluarKioscoImagenB64(dataUrl, requiereGuantes);
       setResultado(res);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Error al evaluar captura');
@@ -129,7 +151,7 @@ export function KioscoView() {
         setCargando(true);
         setError(null);
         try {
-          const res = await evaluarKioscoImagenB64(reader.result);
+          const res = await evaluarKioscoImagenB64(reader.result, requiereGuantes);
           setResultado(res);
         } catch (err: unknown) {
           setError(err instanceof Error ? err.message : 'Error al evaluar imagen');
@@ -146,48 +168,88 @@ export function KioscoView() {
   const esRevision = estadoAcceso === 'revisar' || estadoAcceso === 'sin_persona';
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <TituloPagina
           icono={ICONO_PANTALLA.kiosco}
-          titulo="Kiosco de Pase de Turno en Vivo (< 300 ms)"
+          titulo="Caseta de Torniquete Biométrico en Vivo (< 300 ms)"
         >
-          Inspección instantánea en torniquete antes de entrar a piso de producción (3 prendas
-          obligatorias: Lentes, Chaleco y Guantes).
+          Verifica las 4 zonas anatómicas antes de liberar el torniquete: Lentes, Tapones Auditivos
+          de Inserción y Chaleco (obligatorios generales) + Guantes (según el puesto).
         </TituloPagina>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
             onClick={alternarCamara}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-extrabold uppercase transition-colors"
           >
             {camaraActiva ? <VideoOff className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
-            {camaraActiva ? 'Apagar cámara web' : 'Usar cámara web'}
+            {camaraActiva ? 'APAGAR CÁMARA' : 'ACTIVAR CÁMARA WEB'}
           </button>
 
-          <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer transition-colors">
-            <Upload className="w-4 h-4 text-slate-500" />
-            Evaluar foto
+          <label className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded bg-slate-900 border border-slate-700 hover:border-amber-500/50 text-slate-200 font-mono text-xs font-bold uppercase cursor-pointer transition-colors">
+            <Upload className="w-4 h-4 text-amber-400" />
+            EVALUAR FOTO
             <input type="file" accept="image/*" onChange={subirFoto} className="hidden" />
           </label>
         </div>
       </div>
 
-      {/* Selector de 5 escenarios en vivo con 1 clic */}
-      <section className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-3">
+      {/* Selector de Perfil de Puesto (Guantes Obligatorios vs Opcionales) + 6 Escenarios */}
+      <section className="panel-caseta rounded-lg p-5 space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div className="space-y-1">
+            <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">
+              CONFIGURACIÓN DE PUESTO EN TORNIQUETE // REGLA DE GUANTES CONDICIONALES
+            </div>
+            <p className="text-xs text-slate-400">
+              Los guantes solo son obligatorios para puestos de contacto mecánico/térmico. Cambia el
+              perfil para comprobar cómo responde el torniquete:
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 bg-slate-950 p-1.5 rounded border border-slate-800">
+            <button
+              type="button"
+              data-testid="kiosco-rol-con-guantes"
+              onClick={() => cambiarPerfilPuesto(true)}
+              className={`px-3 py-1.5 rounded font-mono text-xs font-bold transition-all ${
+                requiereGuantes
+                  ? 'bg-amber-500 text-slate-950 shadow'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              PUESTO OPERATIVO · EXIGE GUANTES (4/4 EPP)
+            </button>
+            <button
+              type="button"
+              data-testid="kiosco-rol-sin-guantes"
+              onClick={() => cambiarPerfilPuesto(false)}
+              className={`px-3 py-1.5 rounded font-mono text-xs font-bold transition-all ${
+                !requiereGuantes
+                  ? 'bg-cyan-400 text-slate-950 shadow'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              SUPERVISIÓN / MONTACARGAS · GUANTES OPCIONALES (3/3 EPP)
+            </button>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Simulador de Torniquete · Prueba los 5 casos con el motor en vivo
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+            SIMULADOR DE ESCENARIOS EN TORNIQUETE (6 PRUEBAS EN VIVO)
           </span>
           {resultado && (
-            <span className="font-mono text-xs text-slate-500 font-tabular">
-              Inferencia: <strong className="text-slate-800">{resultado.ms_proceso} ms</strong>
+            <span className="font-mono text-xs text-slate-400 font-tabular">
+              TIEMPO DE RESPUESTA:{' '}
+              <strong className="text-amber-400">{resultado.ms_proceso} ms</strong>
             </span>
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
           {PRESETS.map((p) => {
             const activo = presetActivo === p.id;
             return (
@@ -197,20 +259,14 @@ export function KioscoView() {
                 data-testid={`kiosco-preset-${p.id}`}
                 onClick={() => correrPreset(p.id)}
                 disabled={cargando}
-                className={`p-3 rounded-lg border text-left transition-all ${
+                className={`p-3 rounded border text-left transition-all ${
                   activo
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
+                    ? 'bg-amber-500/15 text-amber-300 border-amber-400 shadow-[inset_0_0_12px_rgba(245,158,11,0.2)]'
+                    : 'bg-slate-950/90 hover:bg-slate-900 text-slate-300 border-slate-800'
                 }`}
               >
-                <div className="font-semibold text-xs">{p.etiqueta}</div>
-                <div
-                  className={`text-[11px] mt-0.5 ${
-                    activo ? 'text-slate-300' : 'text-slate-500'
-                  }`}
-                >
-                  {p.descripcion}
-                </div>
+                <div className="font-mono font-bold text-xs">{p.etiqueta}</div>
+                <div className="text-[11px] mt-0.5 text-slate-400">{p.descripcion}</div>
               </button>
             );
           })}
@@ -218,26 +274,27 @@ export function KioscoView() {
       </section>
 
       {error && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
+        <div className="p-4 rounded bg-amber-950/60 border border-amber-500/50 text-xs text-amber-200 font-mono flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
           {error}
         </div>
       )}
 
-      {/* Visor principal + Veredicto y Gemelo Anatómico de 3 zonas */}
+      {/* Visor Óptico de Torniquete + Semáforo de Acceso y 4 Zonas Anatómicas */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <section className="lg:col-span-7 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-sm flex flex-col justify-between">
-          <div className="p-4 border-b border-slate-800 flex items-center justify-between text-xs text-slate-300">
-            <span className="font-mono font-semibold text-white">
-              CÁMARA DE FILTRO · TORNIQUETE ACCESO NORTE
+        <section className="lg:col-span-7 bg-slate-950 rounded-lg border border-slate-800 overflow-hidden shadow-xl flex flex-col justify-between">
+          <div className="px-4 py-3 bg-[#060911] border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-300">
+            <span className="font-bold text-white flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              CAM-01 // TORNIQUETE ACCESO NORTE
             </span>
-            <span className="inline-flex items-center gap-1.5 text-teal-400 font-mono">
-              <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-              YOLO11 · 3 ZONAS ACTIVAS
+            <span className="inline-flex items-center gap-1.5 text-amber-400">
+              <Volume2 className="w-3.5 h-3.5" />
+              ZONA 94 dB(A) · 4 ZONAS ANATÓMICAS ACTIVAS
             </span>
           </div>
 
-          <div className="relative aspect-video bg-slate-900 flex items-center justify-center overflow-hidden">
+          <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
             {camaraActiva ? (
               <video
                 ref={videoRef}
@@ -253,16 +310,16 @@ export function KioscoView() {
                 className="w-full h-full object-contain"
               />
             ) : (
-              <div className="text-slate-400 text-sm flex items-center gap-2">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Iniciando visor de kiosco...
+              <div className="text-slate-400 text-sm font-mono flex items-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
+                INICIANDO ESCÁNER DE TORNIQUETE...
               </div>
             )}
 
             {cargando && (
-              <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center text-white text-sm font-semibold gap-2">
-                <Loader2 className="w-5 h-5 animate-spin text-teal-400" />
-                Evaluando Lentes, Chaleco y Guantes...
+              <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center text-amber-300 text-xs font-mono font-bold gap-2">
+                <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
+                ESCANEANDO 4 ZONAS (OJOS · OÍDOS · TORSO · MANOS)...
               </div>
             )}
           </div>
@@ -272,39 +329,39 @@ export function KioscoView() {
               <button
                 type="button"
                 onClick={capturarCuadroCamara}
-                className="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold"
+                className="px-4 py-2 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-extrabold uppercase"
               >
-                Capturar y Evaluar Trabajador Ahora
+                CAPTURAR Y VALIDAR PASE DE TURNO
               </button>
             </div>
           )}
         </section>
 
-        {/* Panel derecho: Veredicto de Torniquete y 3 Zonas Anatómicas */}
+        {/* Panel derecho: Semáforo de Torniquete y 4 Zonas Anatómicas */}
         <section className="lg:col-span-5 flex flex-col justify-between gap-4">
           <div
             data-testid="kiosco-veredicto"
-            className={`p-6 rounded-xl border-2 shadow-sm transition-colors ${
+            className={`p-6 rounded-lg border-2 shadow-lg transition-colors ${
               autorizado
-                ? 'bg-emerald-50/90 border-emerald-500 text-emerald-950'
+                ? 'bg-emerald-950/50 border-emerald-500 text-emerald-100'
                 : esRevision
-                ? 'bg-amber-50/90 border-amber-500 text-amber-950'
-                : 'bg-rose-50/90 border-rose-500 text-rose-950'
+                ? 'bg-amber-950/50 border-amber-500 text-amber-100'
+                : 'bg-rose-950/50 border-rose-500 text-rose-100'
             }`}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
               {autorizado ? (
-                <ShieldCheck className="w-10 h-10 text-emerald-600 shrink-0" />
+                <ShieldCheck className="w-11 h-11 text-emerald-400 shrink-0" />
               ) : esRevision ? (
-                <AlertTriangle className="w-10 h-10 text-amber-600 shrink-0" />
+                <AlertTriangle className="w-11 h-11 text-amber-400 shrink-0" />
               ) : (
-                <ShieldAlert className="w-10 h-10 text-rose-600 shrink-0" />
+                <ShieldAlert className="w-11 h-11 text-rose-400 shrink-0" />
               )}
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider opacity-75">
-                  Veredicto de Torniquete Pre-Turno
+                <div className="text-[11px] font-mono font-bold uppercase tracking-wider opacity-80">
+                  SEMÁFORO DE TORNIQUETE PRE-TURNO
                 </div>
-                <h3 className="text-xl font-extrabold tracking-tight">
+                <h3 className="text-xl font-black tracking-tight">
                   {autorizado
                     ? 'PASE DE TURNO AUTORIZADO'
                     : esRevision
@@ -313,18 +370,17 @@ export function KioscoView() {
                 </h3>
               </div>
             </div>
-            <p className="mt-3 text-sm font-medium">
-              {resultado?.mensaje ?? 'Evaluando trabajador...'}
-            </p>
+            <p className="mt-3 text-xs sm:text-sm font-mono">{resultado?.mensaje ?? 'Evaluando...'}</p>
           </div>
 
-          {/* Desglose de las 3 Zonas Anatómicas */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 flex-1">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-bold text-slate-900">
-                Verificación Anatómica por Zona (3/3)
+          {/* Desglose de las 4 Zonas Anatómicas */}
+          <div className="panel-caseta rounded-lg p-5 space-y-3 flex-1">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+                AUDITORÍA POR ZONA ANATÓMICA ({resultado?.prendas_completas ?? 0}/
+                {resultado?.prendas_requeridas ?? 4} REQUERIDAS)
               </h4>
-              <span className="text-xs text-slate-500">Sin casco ni mascarilla</span>
+              <span className="text-[11px] font-mono text-slate-400">SIN CASCO NI MASCARILLA</span>
             </div>
 
             <div className="space-y-2.5">
@@ -332,36 +388,48 @@ export function KioscoView() {
                 const info = DICCIONARIO_PRENDAS[pr];
                 const ev = resultado?.zonas?.[pr];
                 const estado = ev?.estado ?? 'dudoso';
+                const requerida = ev?.requerida ?? (pr !== 'guantes' || requiereGuantes);
+                const esOpcionalNoPortado = !requerida && estado !== 'ok';
                 const Icon = ICONO_PRENDA[pr];
 
-                const badgeClass =
-                  estado === 'ok'
-                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                    : estado === 'falta'
-                    ? 'bg-rose-100 text-rose-800 border-rose-300'
-                    : 'bg-amber-100 text-amber-800 border-amber-300';
+                const badgeClass = esOpcionalNoPortado
+                  ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                  : estado === 'ok'
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  : estado === 'falta'
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                  : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
 
                 return (
                   <div
                     key={pr}
                     data-testid={`kiosco-prenda-${pr}`}
-                    className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/70 flex items-center justify-between gap-3"
+                    className="p-3.5 rounded border border-slate-800 bg-slate-950/80 flex items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                          estado === 'ok'
-                            ? 'bg-emerald-100 text-emerald-700'
+                        className={`w-9 h-9 rounded flex items-center justify-center shrink-0 border ${
+                          esOpcionalNoPortado
+                            ? 'bg-cyan-950/60 text-cyan-300 border-cyan-500/40'
+                            : estado === 'ok'
+                            ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40'
                             : estado === 'falta'
-                            ? 'bg-rose-100 text-rose-700'
-                            : 'bg-amber-100 text-amber-700'
+                            ? 'bg-rose-950/60 text-rose-400 border-rose-500/40'
+                            : 'bg-amber-950/60 text-amber-400 border-amber-500/40'
                         }`}
                       >
                         <Icon className="w-5 h-5" />
                       </span>
                       <div className="min-w-0">
-                        <div className="font-semibold text-sm text-slate-900">{info.nombre}</div>
-                        <div className="text-xs text-slate-500 truncate">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-white">{info.nombre}</span>
+                          {!requerida && (
+                            <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                              OPCIONAL EN ESTE PUESTO
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] font-mono text-slate-400 truncate">
                           {info.norma} · {info.zona}
                         </div>
                       </div>
@@ -369,14 +437,14 @@ export function KioscoView() {
 
                     <div className="text-right shrink-0">
                       <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeClass}`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-mono font-bold border ${badgeClass}`}
                       >
                         {estado === 'ok' && <CheckCircle2 className="w-3.5 h-3.5" />}
-                        {traducirEstadoPrenda(estado)}
+                        {traducirEstadoPrenda(estado, requerida)}
                       </span>
                       {ev && (
-                        <div className="text-[11px] text-slate-500 font-tabular mt-1">
-                          Confianza {Math.round(ev.confianza * 100)}%
+                        <div className="text-[11px] font-mono text-slate-400 font-tabular mt-1">
+                          Conf. {Math.round(ev.confianza * 100)}%
                         </div>
                       )}
                     </div>

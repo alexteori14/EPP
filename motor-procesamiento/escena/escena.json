@@ -9,12 +9,20 @@
       "id_empleado": "EMP-101",
       "nombre": "Carlos Mendoza",
       "puesto": "Operador de Corte CNC",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok"
       },
-      "nota": "EPP completo (3/3)"
+      "nota": "EPP completo (4/4 requeridos para Corte CNC)"
     },
     {
       "posicion": "L1-T2",
@@ -22,12 +30,20 @@
       "id_empleado": "EMP-102",
       "nombre": "Marco Antonio Ríos",
       "puesto": "Soldador de Estructura",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
         "lentes": "falta",
+        "tapones": "falta",
         "chaleco": "ok",
         "guantes": "falta"
       },
-      "nota": "Soldador sin lentes ni guantes (múltiples EPP faltantes: US$760/día)"
+      "nota": "Soldador sin lentes, sin tapones auditivos ni guantes (múltiples EPP faltantes: US$1,140/día)"
     },
     {
       "posicion": "L1-T3",
@@ -35,12 +51,20 @@
       "id_empleado": "EMP-103",
       "nombre": "Luis Fernando Vega",
       "puesto": "Técnico de Troquelado",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok"
       },
-      "nota": "EPP completo (3/3)"
+      "nota": "EPP completo (4/4 requeridos para Troquelado)"
     },
     {
       "posicion": "L1-T4",
@@ -48,8 +72,16 @@
       "id_empleado": "EMP-104",
       "nombre": "Jorge Alberto Soto",
       "puesto": "Operador de Prensa",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
         "lentes": "falta",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok"
       },
@@ -61,12 +93,19 @@
       "id_empleado": "EMP-201",
       "nombre": "Ricardo Morales",
       "puesto": "Operador de Montacargas",
+      "requiere_guantes": false,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "falta",
-        "guantes": "ok"
+        "guantes": "falta"
       },
-      "nota": "Operador de montacargas sin chaleco de alta visibilidad (US$290/día)"
+      "nota": "Operador de montacargas sin chaleco (US$290/día · guantes opcionales en su puesto)"
     },
     {
       "posicion": "L2-T2",
@@ -74,12 +113,20 @@
       "id_empleado": "EMP-202",
       "nombre": "Roberto Domínguez",
       "puesto": "Auxiliar de Maniobras",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "falta"
       },
-      "nota": "Auxiliar de maniobras sin guantes anticorte (US$340/día)"
+      "nota": "Auxiliar de maniobras sin guantes anticorte obligatorios en su puesto (US$340/día)"
     },
     {
       "posicion": "L2-T3",
@@ -87,12 +134,19 @@
       "id_empleado": "EMP-203",
       "nombre": "Daniel Espinoza",
       "puesto": "Supervisor de Patio",
+      "requiere_guantes": false,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "dudoso",
         "chaleco": "ok",
-        "guantes": "dudoso"
+        "guantes": "falta"
       },
-      "nota": "Manos parcialmente fuera de cuadro: lectura dudosa (revisar en caseta, US$0)"
+      "nota": "Supervisor de patio: zona auditiva parcialmente oculta (revisar en caseta, US$0 · guantes opcionales)"
     },
     {
       "posicion": "L2-T4",
@@ -100,12 +154,19 @@
       "id_empleado": "EMP-204",
       "nombre": "Héctor Navarro",
       "puesto": "Almacenista de Acero",
+      "requiere_guantes": false,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco"
+      ],
       "prendas": {
         "lentes": "falta",
+        "tapones": "ok",
         "chaleco": "falta",
-        "guantes": "ok"
+        "guantes": "falta"
       },
-      "nota": "Almacenista sin lentes ni chaleco (múltiples EPP faltantes: US$710/día)"
+      "nota": "Almacenista sin lentes ni chaleco (US$710/día · guantes opcionales en almacén)"
     },
     {
       "posicion": "L3-T1",
@@ -113,12 +174,19 @@
       "id_empleado": "EMP-301",
       "nombre": "Alejandro Cabrera",
       "puesto": "Inspector de Calidad",
+      "requiere_guantes": false,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
-        "guantes": "ok"
+        "guantes": "falta"
       },
-      "nota": "EPP completo (3/3)"
+      "nota": "Inspector de calidad autorizado (3/3 requeridos: Lentes + Tapones + Chaleco · Guantes opcionales)"
     },
     {
       "posicion": "L3-T2",
@@ -126,12 +194,20 @@
       "id_empleado": "EMP-302",
       "nombre": "Sergio Valenzuela",
       "puesto": "Operador de Esmerilado",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
-        "lentes": "falta",
+        "lentes": "ok",
+        "tapones": "falta",
         "chaleco": "ok",
         "guantes": "ok"
       },
-      "nota": "Operador de esmerilado sin lentes de seguridad (US$420/día)"
+      "nota": "Operador de esmerilado sin tapones auditivos de inserción en zona de 96 dB (US$380/día)"
     },
     {
       "posicion": "L3-T3",
@@ -139,12 +215,20 @@
       "id_empleado": "EMP-303",
       "nombre": "Miguel Ángel Luna",
       "puesto": "Técnico de Mantenimiento",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "falta"
       },
-      "nota": "Técnico de mantenimiento sin guantes anticorte (US$340/día)"
+      "nota": "Técnico de mantenimiento sin guantes anticorte obligatorios (US$340/día)"
     },
     {
       "posicion": "L3-T4",
@@ -152,12 +236,20 @@
       "id_empleado": "EMP-304",
       "nombre": "Eduardo Castañeda",
       "puesto": "Armador de Subensambles",
+      "requiere_guantes": true,
+      "prendas_requeridas": [
+        "lentes",
+        "tapones",
+        "chaleco",
+        "guantes"
+      ],
       "prendas": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok"
       },
-      "nota": "EPP completo (3/3)"
+      "nota": "EPP completo (4/4 requeridos para Subensambles)"
     }
   ],
   "tarjetas_jurado": {
@@ -165,15 +257,27 @@
       "posicion": "L1-T1",
       "cambio": {
         "lentes": "falta",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "ok"
       },
       "descripcion": "Carlos Mendoza (L1-T1) intenta ingresar sin lentes de seguridad"
     },
+    "sin_tapones": {
+      "posicion": "L1-T3",
+      "cambio": {
+        "lentes": "ok",
+        "tapones": "falta",
+        "chaleco": "ok",
+        "guantes": "ok"
+      },
+      "descripcion": "Luis Fernando Vega (L1-T3 · Troquelado 95 dB) intenta ingresar sin tapones auditivos"
+    },
     "sin_guantes": {
       "posicion": "L1-T3",
       "cambio": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "ok",
         "guantes": "falta"
       },
@@ -183,8 +287,9 @@
       "posicion": "L3-T1",
       "cambio": {
         "lentes": "ok",
+        "tapones": "ok",
         "chaleco": "falta",
-        "guantes": "ok"
+        "guantes": "falta"
       },
       "descripcion": "Alejandro Cabrera (L3-T1) intenta ingresar sin chaleco reflejante"
     },
@@ -192,6 +297,7 @@
       "posicion": "L3-T4",
       "cambio": {
         "lentes": "falta",
+        "tapones": "falta",
         "chaleco": "falta",
         "guantes": "falta"
       },

@@ -10,13 +10,14 @@
     "trabajador": "Luis Fernando Vega",
     "id_empleado": "EMP-103",
     "puesto": "Técnico de Troquelado",
+    "requiere_guantes": true,
     "linea": 1,
     "posicion": 3,
     "prendas_faltantes": [
       "guantes"
     ],
-    "prendas_completas": 2,
-    "prendas_requeridas": 3,
+    "prendas_completas": 3,
+    "prendas_requeridas": 4,
     "impacto_diario": 340.0,
     "cuadro": 45,
     "segundo": 1.88,
@@ -35,13 +36,14 @@
       "trabajador": "Luis Fernando Vega",
       "id_empleado": "EMP-103",
       "puesto": "Técnico de Troquelado",
+      "requiere_guantes": true,
       "linea": 1,
       "posicion": 3,
       "prendas_faltantes": [
         "guantes"
       ],
-      "prendas_completas": 2,
-      "prendas_requeridas": 3,
+      "prendas_completas": 3,
+      "prendas_requeridas": 4,
       "impacto_diario": 340.0,
       "cuadro": 45,
       "segundo": 1.88,
